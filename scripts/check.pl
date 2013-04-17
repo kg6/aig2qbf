@@ -47,6 +47,8 @@ for my $k (@ks) {
 	
 		exit 2;
 	}
+	
+	print `$script_path/../tools/aigor $file $file-or.aig`;
 
 	my $mcaiger_out = trim(`$script_path/../tools/mcaiger -r $k $file-or.aig 2>&1`);
 	my $mcaiger_sat;
