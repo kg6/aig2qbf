@@ -1,0 +1,125 @@
+aig 527 11 52 1 464
+2
+4
+6
+8
+10
+142
+152
+160
+184
+220
+12
+14
+232
+244
+256
+266
+300
+320
+348
+370
+396
+422
+444
+462
+474
+488
+500
+524
+534
+544
+554
+564
+582
+604
+622
+630
+638
+644
+652
+660
+668
+700
+718
+724
+16
+18
+734
+736
+20
+22
+1052
+1
+1054
+_dhkdH	bNE` ÇÖâçäçëïâ,8Ü†£é•©•™≠±©≥∑©]2í≈<é≤h•∏ªu	∏fLÄÄgÈœãL¶ÛHÆ˜pä˚7©ëMW26¨M¶®dmHH!'.¿a•ºx|:Üä2dd=DI‹í9ìèû¢1|Ç¨ÄÛßå™å¥∏Ñíò©ô´õå…√±û¥≥ ÷⁄€µ¶»±…ù‡“Ó⁄Ãº∑@Ò…-Äœ5›Œ…>ÑçΩ√⁄´fâíõÀ—Ë˝†ÇùÄ·Ùˆc‹ﬂ€‰Ò¡®å‡ñßæñ±º†Ëüâ—´ﬁ¥ìŸ2µçP'˙;A·G«üN¢->êQX˜]‹µLP°cjâoÓa±`tˆj¶kÆ˛q¨ÜÑﬁÖﬂDåÊÉÁBîÓÅÔ@úı?•˘ÊÀ–¡Ó≤∑ÀΩΩ√ó’D’§µœŒÔr‰‘ÈxÏy€ﬁ‚—œœËà≤ËÕ œ¬◊¬á¢ßπΩ»õ¡≈◊˝ Õﬁø«‘◊€©ŒÉá–ë≈…¸ˇŒ“◊°÷⁄äå˚ Â¡÷…„µ∑πÎ∂¬¬ı∑ÀÕ
+…ªÃπáëpÜÊŸÍÌÎÜâ¶rßiûôë†ñ£
+ØêÉ
+∞à	≥º∑£∂2§§GÎ≥ù∆≥µL`oèïù©≥Ω√«Õ◊€ÂÔ˘˝ÅÖâçﬂÂ“ŒÛŸ¥Â ˚òõ≤ûi0 AIGER_NEXT_RUNNING_a_4
+i1 AIGER_NEXT_RUNNING_a_3
+i2 AIGER_NEXT_RUNNING_a_2
+i3 AIGER_NEXT_RUNNING_a_1
+i4 AIGER_NEXT_RUNNING_a_0
+i5 AIGER_NEXT_s_o_req_a_1
+i6 AIGER_NEXT_s_o_req_a_0
+i7 AIGER_NEXT_s_o_afile
+i8 AIGER_NEXT_AIGER_NOT_s_o_afirst
+i9 AIGER_NEXT_AIGER_NOT_s_o_SAFE
+i10 AIGER_NEXT_read___K_o_new
+l0 RUNNING_a_4
+l1 RUNNING_a_3
+l2 RUNNING_a_2
+l3 RUNNING_a_1
+l4 RUNNING_a_0
+l5 s_o_K_o_first
+l6 s_o_K_o_last
+l7 s_o_K_o_toggle
+l8 s_o_K___full
+l9 s_o_L
+l10 s_o_req_a_1
+l11 s_o_req_a_0
+l12 s_o_req___full
+l13 AIGER_NOT_s_o_conf_a_1
+l14 s_o_conf_a_0
+l15 s_o_conf___full
+l16 s_o_spc_a_2
+l17 AIGER_NOT_s_o_spc_a_1
+l18 AIGER_NOT_s_o_spc_a_0
+l19 AIGER_NOT_s_o_sfirst
+l20 s_o_stoggle
+l21 s_o_file_a_1
+l22 AIGER_NOT_s_o_file_a_0
+l23 s_o_rn
+l24 s_o_stimer1___on
+l25 s_o_stimer1___enabled
+l26 s_o_stimer2___on
+l27 s_o_stimer2___enabled
+l28 s_o_ind___indication_a_1
+l29 s_o_ind___indication_a_0
+l30 s_o_ind___full
+l31 s_o_ind___error
+l32 AIGER_NOT_s_o_rpc_a_2
+l33 s_o_rpc_a_1
+l34 s_o_rpc_a_0
+l35 AIGER_NOT_s_o_rfirst
+l36 s_o_rtoggle
+l37 s_o_ctoggle
+l38 s_o_msg_o_first
+l39 s_o_msg_o_last
+l40 s_o_msg_o_toggle
+l41 AIGER_NOT_s_o_rtimer___on
+l42 s_o_rtimer___enabled
+l43 s_o_abusy
+l44 s_o_afile
+l45 AIGER_NOT_s_o_afirst
+l46 s_o_aerror
+l47 AIGER_NOT_s_o_data___is___safe
+l48 AIGER_NOT_s_o_SAFE
+l49 read___K_o_new
+l50 AIGER_VALID
+l51 AIGER_INITIALIZED
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/nusmv.brp.B.smv

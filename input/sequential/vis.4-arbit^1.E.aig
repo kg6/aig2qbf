@@ -1,0 +1,72 @@
+aig 349 12 23 1 314
+159
+185
+209
+222
+232
+261
+289
+313
+335
+344
+373
+401
+425
+447
+456
+506
+516
+566
+576
+626
+636
+686
+696
+698
+".
+/E'%:0.F
+Gf#g*Ky~ÅÖãEê'Lñú4XüW•(d≠K"≤=:πMqTPNu†§ó® ¨#ü’
+⁄Ã ·ÂÎ≥Ù˙˝É'≤*ã1◊;A¥
+’FπûWÕ`ZX—Ó6Ú6Âˆ8˙;Ìª
+¿¥≤«À—Å⁄‡„È'Ä*Ò1•SAû
+£F£ÑW≥`ZX∑è∆ ŒÃ—À	Õﬁíû˙®	‡!Ωò,ª«¸ÄÑÇáÅ	Éî–ÿÆÆ	ö!ı÷,Ûˇ≤∂∫∏Ω∑	π ÍÙÇˆ	Ë!≠,´∑ËÏÓÛÌ	ÔÄ§Æ∂¸	¢!Â™,„Ü
+i0 P1_randChoice_0_
+i1 P1_randChoice_1_
+i2 P1_randChoice_2_
+i3 P2_randChoice_0_
+i4 P2_randChoice_1_
+i5 P2_randChoice_2_
+i6 P3_randChoice_0_
+i7 P3_randChoice_1_
+i8 P3_randChoice_2_
+i9 P4_randChoice_0_
+i10 P4_randChoice_1_
+i11 P4_randChoice_2_
+l0 AIGER_NOT_C0_prevLeft
+l1 AIGER_NOT_C0_processedLeft
+l2 AIGER_NOT_C0_processedRight
+l3 C0_holdToken
+l4 C0_prevRight
+l5 AIGER_NOT_C1_prevLeft
+l6 AIGER_NOT_C1_processedLeft
+l7 AIGER_NOT_C1_processedRight
+l8 AIGER_NOT_C1_holdToken
+l9 C1_prevRight
+l10 AIGER_NOT_C2_prevLeft
+l11 AIGER_NOT_C2_processedLeft
+l12 AIGER_NOT_C2_processedRight
+l13 AIGER_NOT_C2_holdToken
+l14 C2_prevRight
+l15 P1_procState_bit0
+l16 P1_procState_bit1
+l17 P2_procState_bit0
+l18 P2_procState_bit1
+l19 P3_procState_bit0
+l20 P3_procState_bit1
+l21 P4_procState_bit0
+l22 P4_procState_bit1
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/vis.4-arbit^1.E.smv

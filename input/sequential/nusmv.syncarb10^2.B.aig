@@ -1,0 +1,64 @@
+aig 187 10 20 1 157
+64
+28
+68
+32
+72
+36
+76
+40
+80
+44
+84
+48
+88
+52
+92
+56
+96
+61
+100
+25
+375
+%=%?%A%C%E%G%I%K%M&O.4:@FLR\Z	Ku&}	y0‹
+‡8—
+“B¥"¡Nµ,0$
+±\Ç<@4*
+ÃlÛNRF<
+0"×|ñbfZP
+D6&í”‰x|pf
+ZL<*	'+/37;?CMQUY]aeosw{ƒ‘•™§«¯³½ÁÅÏÓİi0 e10_o_Request
+i1 e9_o_Request
+i2 e8_o_Request
+i3 e7_o_Request
+i4 e6_o_Request
+i5 e5_o_Request
+i6 e4_o_Request
+i7 e3_o_Request
+i8 e2_o_Request
+i9 e1_o_Request
+l0 e10_o_Persistent
+l1 e10_o_Token
+l2 e9_o_Persistent
+l3 e9_o_Token
+l4 e8_o_Persistent
+l5 e8_o_Token
+l6 e7_o_Persistent
+l7 e7_o_Token
+l8 e6_o_Persistent
+l9 e6_o_Token
+l10 e5_o_Persistent
+l11 e5_o_Token
+l12 e4_o_Persistent
+l13 e4_o_Token
+l14 e3_o_Persistent
+l15 e3_o_Token
+l16 e2_o_Persistent
+l17 e2_o_Token
+l18 e1_o_Persistent
+l19 AIGER_NOT_e1_o_Token
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/nusmv.syncarb10^2.B.smv

@@ -1,0 +1,153 @@
+aig 1180 28 40 1 1112
+2
+4
+6
+8
+18
+28
+236
+412
+452
+492
+566
+604
+42
+44
+642
+748
+838
+1014
+1054
+1094
+1168
+1206
+46
+48
+1244
+1350
+1528
+1554
+1580
+1758
+1784
+1810
+1840
+1858
+50
+52
+54
+56
+2358
+1
+2360
+:DH;EAJD))%2.=A!wp2NuEwŒFJOEšXžbš^Ÿ«>d5.©©¨ˆl•”ž™£©
+®ŽŽ±¯º¯¿Å6¡%‘ÃÑÐÚÏÅßå
+êÄÄíëöëû3695?‰xˆ|ðÅÿ÷…Ì“­žÕ>Š«¨ÓÒ
+#$(,Ê»Öžû>„Ô¨ûú
+KLPTÈã– ¤=£§>§„ƒ%+å(ã&çÐ*2 à¬IŸê?ë@JäLKÀ¿')ÞÒ $ˆ˜Œ¢Ø•™‘œ¡
+¤ø”·˜¤À»§ÉÎÓ(ÍÿÓÖÞùÛáÖ°¸§å¼®î¿±.õú÷(ù£Û‚‚‡ƒ+—†×Õ‹âŠ”˜‹•‘š”ýÝãŽŠÙÓ™
+½¶(ž»;½Ò<@E•àNä¼àTåñHZ5$ïïîàbåïîøñçýƒ
+ˆææ‹‰”‰™Ÿ‰’—‡›«ª´§¹¿
+ÄœœÇÅÐÅÕÛ3695?‰xˆ|ÀÅÏíÕ÷’í­ä›H€«î™˜
+#$(,•ÖäÁH„ÔîÁÀ
+KLPTŽ½ÜæêGéíHíúù%+Û(³&·–à*2–¦†Iå°I±JJ´LK¶µ')¤¬ Î˜Ò¢ÎÓÛß×âç
+êÒ”ãý˜ê†		í	”	Ó(“	ÿ™œ	Þ¿¡	§	œ	°¸í«	¼ô´	¿÷.»	À	÷(¿	£¡È	‚ÇÍ	Ó	É	+Ý	Ì	ÍËÑ	¼	Ù	NøÛ	LÛ	JŠ	
+Ï	þîòð (+¦.3ˆ8‡Ú;ð'®CŒH‹Kð(%¾SŽXŒ
+©
+€ 9ðô-ò0HK¨NSêXé·o¤	¢	ÂÇÍ‚ï
+aâ,7Æiþný€‰iòF%Þqv48þ
+£¹V”
+»T»R¦
+©
+	
+µš
+Š
+Ž
+Œ
+ (+Â
+.3ð	8ï	ö;Œ
+'Ê
+Cô	Hó	KŒ
+(%Ú
+Sö	Xõ	¨«
+œ 9Œ-Ž0HKÄNSÒXÑŸoŒŠª¯µâÕaþ,7âiænåàïiŽF%úqøv÷48Þ‰Õ ˆ7Œ8›…õ­¦ÀˆÂ‡–«¸¿™›Ÿ)¢'Ë¥§­)°'"‘#“Ÿ¡¿3Â1Å1È/ü²˜
+´´ƒ<‡=ÉÎßÔÞØ¥8©9¬è•—òØöÜGEúùÓ:×;—œ¯¢®¦õ6ù7OQæáãN®Î°°¯
+Œ³
+ÅÊÛÐÚÔÑ
+ˆÕ
+‰Ø
+ä¡£@ð
+ô”
+IGø÷Š…‹•š­ ¬¤£†§‡QSâïñN“˜–˜””›¨Ÿ¹‹“´–´šš·£¥Ë”ÖÏ•Ú=;ÐÏBFµÉË&Õ°¤Ù±¨GEàßjn³ïñ&ª«®ÞTi0 AIGER_NEXT_init11_0_
+i1 AIGER_NEXT_init11_1_
+i2 AIGER_NEXT_init22_0_
+i3 AIGER_NEXT_init22_1_
+i4 e1_random_push_0_
+i5 e1_random_push_1_
+i6 e1_random_push_2_
+i7 e1_random
+i8 AIGER_NEXT_e1_r_stop
+i9 e2_random_push_0_
+i10 e2_random_push_1_
+i11 e2_random_push_2_
+i12 e2_random
+i13 AIGER_NEXT_e2_r_stop
+i14 main_control_random_up_0_
+i15 main_control_random_down_0_
+i16 main_control_random_up_1_
+i17 main_control_random_down_1_
+i18 main_control_random_up_2_
+i19 main_control_random_down_2_
+i20 AIGER_NEXT_e1_location_0_
+i21 AIGER_NEXT_e1_location_1_
+i22 AIGER_NEXT_e2_location_0_
+i23 AIGER_NEXT_e2_location_1_
+i24 AIGER_NEXT_main_control_locations__1___0_
+i25 AIGER_NEXT_main_control_locations__2___0_
+i26 AIGER_NEXT_main_control_locations__1___1_
+i27 AIGER_NEXT_main_control_locations__2___1_
+l0 init11_0_
+l1 init11_1_
+l2 init22_0_
+l3 init22_1_
+l4 e1_r_stop
+l5 e2_r_stop
+l6 e1_movement
+l7 AIGER_NOT_e1_buttons__0__
+l8 AIGER_NOT_e1_buttons__1__
+l9 AIGER_NOT_e1_buttons__2__
+l10 e1_door_bit0
+l11 e1_door_bit1
+l12 e1_location_0_
+l13 e1_location_1_
+l14 e1_direction
+l15 e1_open_next
+l16 e2_movement
+l17 AIGER_NOT_e2_buttons__0__
+l18 AIGER_NOT_e2_buttons__1__
+l19 AIGER_NOT_e2_buttons__2__
+l20 e2_door_bit0
+l21 e2_door_bit1
+l22 e2_location_0_
+l23 e2_location_1_
+l24 e2_direction
+l25 e2_open_next
+l26 AIGER_NOT_main_control_down_floor_buttons__0__
+l27 AIGER_NOT_main_control_down_floor_buttons__1__
+l28 AIGER_NOT_main_control_down_floor_buttons__2__
+l29 AIGER_NOT_main_control_up_floor_buttons__0__
+l30 AIGER_NOT_main_control_up_floor_buttons__1__
+l31 AIGER_NOT_main_control_up_floor_buttons__2__
+l32 main_control_direction__1__
+l33 main_control_direction__2__
+l34 main_control_locations__1___0_
+l35 main_control_locations__2___0_
+l36 main_control_locations__1___1_
+l37 main_control_locations__2___1_
+l38 AIGER_VALID
+l39 AIGER_INITIALIZED
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/vis.elevator^1.E.smv

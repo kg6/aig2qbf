@@ -1,0 +1,190 @@
+aig 689 28 59 1 602
+194
+220
+234
+256
+270
+284
+300
+318
+474
+510
+542
+564
+584
+598
+628
+658
+672
+687
+700
+714
+744
+101
+764
+778
+792
+838
+852
+866
+880
+894
+908
+928
+942
+124
+956
+101
+970
+1012
+1026
+1056
+101
+1070
+1088
+1102
+1116
+1138
+1152
+1166
+1180
+1200
+1220
+1262
+1276
+1291
+1304
+1318
+1332
+1362
+1376
+1378
+/FHƒš9G?:M9p653\GJNNTK2XL6\
+bI[WcnJr>…?’‹
+†EøŠFü
+_Ø®Ù²
+¤AŸ(=¬B°ßãçæéîİªŠ—åå½èÿƒˆ&ä‹Œ„‘’’–™š4êş ƒ
+‡	‘—&›%¡2¥1«@¯?µL¹K¿ZÃYÉj…p†t¶‡Ò‚¾dŸfiqu{…©ªÚ«õ…Š‘–› ¥®‘­—ÑùÌ– ‰¯´¹½ÃËçâ¬¬7œô¬¶8ºÀ5Ä6”È
+Î3Ç+ÃÌ)Íôßâ4æõ(ĞÓØÕÙİ°‰)õÄòùÅöÿ
+ƒÃı‡Âƒ
+‘ÀŠ•Á›
+Ÿ¾–£¿š©
+Ë¨©¬­Ößåà#›Ÿ¤ê$îß¶Îã·Òé
+‹äè•
+ı|š°üî2˜	ƒ"÷š‰’!¡!±'&ÇĞËÔÑ
+9¬Ğ=­ÔC
+Ú²Ş¶â
+èšìğ
+öğúôş
+„¡d ‹’˜šœ 
+¦”ª˜®
+´Ö¸Ú¼
+Ââ „†ŠŠ’’–šâæ&ïÈôÌÿ
+å–ˆ9†ÈÜÈ’ù—ÿ•š’«
+“…ø›¡£˜§œ­
+±ŒŒµ»
+É†—¿ŞÖ
+äÕˆ¬Ù‰°ß
+éÌîĞ€
+õØúÜ
+Û›ÆœŒ¢“ãàÕÏ¶¥ ĞÔ¦¤¨¬©®²ÚÚ¶Œ	Æë&Í¦	Òª	î
+Ú±	İ·	ü
+å¾	êÂ	Š	
+ñÊ	öÎ	˜	
+ı*Œ	‚	)	±	
+—rº	:·	ú	
+ú	Ä	«s±¥	.Ğ
+ª	-Ô
+İ	
+·	i0 SEqualsT_v1e
+i1 EPCSel_s1m
+i2 Except_s1w
+i3 BLTZnext_s1e
+i4 ItlbMiss_v2e
+i5 BNEnext_s1e
+i6 Match_v2r
+i7 PC_bit31_s2i
+i8 RegPC_s1e
+i9 BGTZnext_s1e
+i10 BGEZnext_s1e
+i11 PCOffset_s2i
+i12 NonCacheable_s1
+i13 MipsMode_s2e
+i14 L2Miss_s2
+i15 MemStall_s1
+i16 SystemBit_s2e
+i17 SIsNegative_v1e
+i18 ICacheLineValid_s2r
+i19 EPCNSel_s1m
+i20 BDynamicBit_v1r
+i21 ImmPC_s1e
+i22 Reset_s1
+i23 ADynamicBit_v1r
+i24 BLEZnext_s1e
+i25 BEQnext_s1e
+i26 PCPacketNum_s2i_0_
+i27 PCPacketNum_s2i_1_
+l0 NonCacheable_s2
+l1 BKill_s1e
+l2 BDrvA_s1e
+l3 SecondIssueCond_s1e
+l4 ReadCache_s2r
+l5 PCOffset_s1r
+l6 Hold_s2e
+l7 SecondIssue_s1e
+l8 TempState_v2_0_
+l9 AIGER_NOT_TempState_v2_1_
+l10 TempState_v2_2_
+l11 TempState_v2_3_
+l12 SecondIssueMips_s1e
+l13 NonCacheableHeld_s1
+l14 AKill_s1e
+l15 ReadCache_s2i
+l16 PrevState_s2_0_
+l17 AIGER_NOT_PrevState_s2_1_
+l18 PrevState_s2_2_
+l19 PrevState_s2_3_
+l20 LatchNonCachePkt_s2
+l21 Clock
+l22 ExtMuxSelect_s1
+l23 ADynamicBit_s2r
+l24 EPCNSel_s2m
+l25 TakenBranch_s2e
+l26 ItlbMiss_s2
+l27 Except_s2w
+l28 Hold_s1e
+l29 ReadCache_s1r
+l30 BDynamicBit_s1e
+l31 ItlbMiss_s1
+l32 ADrvB_s1e
+l33 AIGER_NOT_ExtDataValid_s2
+l34 MipsMode_s1
+l35 Phi1
+l36 ADynamicBit_s1e
+l37 LatchDataReg_s1
+l38 Reset_s2
+l39 ADrvB_s2r
+l40 AIGER_NOT_Phi2
+l41 IFetchStall_s2
+l42 IncPC_s2e
+l43 BDynamicBit_s2r
+l44 PCOffset_s2r
+l45 IFetchStall_s1
+l46 SecondIssue_s2e
+l47 PCPacketNum_s1r_0_
+l48 PCPacketNum_s1r_1_
+l49 IStall_s1
+l50 LatchShiftReg_s1
+l51 WriteCache_s2
+l52 PresState_s1_0_
+l53 AIGER_NOT_PresState_s1_1_
+l54 PresState_s1_2_
+l55 PresState_s1_3_
+l56 IStall_s2
+l57 BDrvA_s2r
+l58 EPCSel_s2m
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/texas.ifetch1^8.E.smv

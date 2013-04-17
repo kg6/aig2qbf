@@ -1,0 +1,140 @@
+aig 850 12 45 1 793
+197
+228
+261
+275
+507
+533
+472
+537
+478
+494
+548
+736
+890
+902
+924
+724
+885
+940
+440
+981
+1012
+1045
+1059
+1213
+1239
+1178
+1243
+1184
+1200
+1254
+1438
+1592
+1604
+1626
+1426
+1587
+1642
+1146
+1655
+1667
+1679
+1690
+44
+1692
+1695
+1700
+AYK
+!
+%`26
+$#bz“•”™²
+’˜­°ÌĞ/‘59ËËÉ&ê%îOUY>]ŒBc
+»œ§Yè}¨œ"¦°´İ²&…	)ªÕº¼Û»á,³´äñğ¤¬ü1úàäãTSäã"”ô“ø¸ü‡†BG¥MPLT˜¢dˆ‹¨u‹¡hÁÂ¸ø…4ÌæËê>¸ó·ùKáJçUW—9X,¿0À•hº4å‹éÖÂ3ëå©T­U´³¤£"´)³/ãñ¨ğ¬‡²±¨Ù@…5ÖÕFBø÷èç"ø(÷,¨6§:”şô•ê™ë£¢Xã³édèh»9Àö©ŸˆúÙRşİ‚Ş†ÍÖÕ…“Ç’Í©°¡3ö.ø÷‘S6š
+™Š‰"š(™,ÊİÉã¢ñµè¹éÃÂVƒ±‰bˆfš§¹ñ’º÷ÊˆøôÓØÒÜİß„ˆY½¦‰ÄËêíÏğÎ’š³<äıÿ5şƒ¸
+üú‚—šÒÖ/û59ùµµ³&ğ%ôOøUY÷>]öBc
+Åï´ÂÊÀ¾¤¨§˜—¨§"Øº×¾ÄúÁŸ
+@EÃKNJR´æ¼¤§ìÍ§¬½fßŞÔ¸ƒ4è	ç¢	>Ô«	Ó±	KıJƒ	UW³9X,ÛÇ	0ÜÍ	hü§å‚	«	§é.í/ôóäŞãâô'ó-£	¯	Â	®	Æ	ƒĞË	¦›@Å	˜—FB¸	·	¨§"¸	(·	,è	6ç	:ÀÎ‘†•‡·¶VİÑãbâf·7ÔğÁ
+İâô—
+,ø›
+üœ
+€‹	”
+“
+Ã
+Ï
+ß
+Î
+å
+£Îß
+¶¬¸·Ï
+-6Ø
+
+×
+È	Ç	"Ø
+(×
+,ˆ×‡İàË±„µ…×	Ö	VıÏƒb‚fš¿
+ŠÕ¥Ö«Æ„°	‰¬	ÏğÎôÙÛ œ
+İ·Ä
+¾å‚š¿ÈÀÌ¦ËÑÌ×²×ÜØà¼ääãèÊ%Ë&ˆ
+Ü†¿i0 pcacheA_proc_nd_count_0_
+i1 pcacheA_proc_nd_count_1_
+i2 pcacheA_proc_nd_count_2_
+i3 pcacheA_hit_miss
+i4 pcacheA_proc_req
+i5 pcacheB_proc_nd_count_0_
+i6 pcacheB_proc_nd_count_1_
+i7 pcacheB_proc_nd_count_2_
+i8 pcacheB_hit_miss
+i9 pcacheB_proc_req
+i10 ndA
+i11 ndB
+l0 AIGER_NOT_pcacheA_proc_count_0_
+l1 pcacheA_proc_count_1_
+l2 AIGER_NOT_pcacheA_proc_count_2_
+l3 AIGER_NOT_pcacheA_valid
+l4 AIGER_NOT_pcacheA_read
+l5 AIGER_NOT_pcacheA_miss
+l6 snoop_typeA_bit0
+l7 AIGER_NOT_snoop_typeA_bit1
+l8 snoop_typeA_bit2
+l9 bus_reqA
+l10 inv_outA
+l11 pcacheA_next_state_bit0
+l12 pcacheA_next_state_bit1
+l13 pcacheA_write
+l14 pcacheA_hit
+l15 pcacheA_state_bit0
+l16 AIGER_NOT_pcacheA_state_bit1
+l17 pcacheA_t_info_avail
+l18 pcacheA_update
+l19 AIGER_NOT_pcacheB_proc_count_0_
+l20 pcacheB_proc_count_1_
+l21 AIGER_NOT_pcacheB_proc_count_2_
+l22 AIGER_NOT_pcacheB_valid
+l23 AIGER_NOT_pcacheB_read
+l24 AIGER_NOT_pcacheB_miss
+l25 snoop_typeB_bit0
+l26 AIGER_NOT_snoop_typeB_bit1
+l27 snoop_typeB_bit2
+l28 bus_reqB
+l29 inv_outB
+l30 pcacheB_next_state_bit0
+l31 pcacheB_next_state_bit1
+l32 pcacheB_write
+l33 pcacheB_hit
+l34 pcacheB_state_bit0
+l35 AIGER_NOT_pcacheB_state_bit1
+l36 pcacheB_t_info_avail
+l37 pcacheB_update
+l38 AIGER_NOT_shared_snoop_bit0
+l39 AIGER_NOT_shared_snoop_bit1
+l40 AIGER_NOT_shared_snoop_bit2
+l41 invalidate
+l42 bus_ackA
+l43 bus_ackB
+l44 is_snoop
+o0 AIGER_NEVER
+c
+smvtoaig
+20061129
+../unmangled/texas.two_proc^5.E.smv
