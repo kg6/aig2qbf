@@ -487,9 +487,6 @@ public class Tree implements Cloneable {
 		
 		o.addInput(globalAnd);
 		
-		// a Tseitin tree must not contain any latch output
-		tree.latchOutputs.clear();
-		
 		// add quantifiers
 		for(Input input : univeralComponentList) {
 			addQuantifier(tree, input, Quantifier.UNIVERSAL);
@@ -498,6 +495,9 @@ public class Tree implements Cloneable {
 		for(Input input : existentialComponentList) {
 			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
 		}
+		
+		// a Tseitin tree must not contain any latch output
+		tree.latchOutputs.clear();
 		
 		// verify the structure of the tree
 		tree.verifyTreeStructure();

@@ -96,7 +96,7 @@ public class SimplePathReduction implements TreeReduction {
 			andR.addInput(notB);
 
 			or.addInput(andL);
-			or.addInput(andR);			
+			or.addInput(andR);
 		}
 		
 		// Make sure that the component has at least 2 inputs
