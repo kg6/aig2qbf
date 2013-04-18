@@ -38,7 +38,7 @@ public abstract class Parser {
 		else if (extension.compareTo("aig") == 0) {
 			return Extension.AIG;
 		}
-		else if (extension.compareTo("qdimacs") == 0) {
+		else if (extension.compareTo("qdimacs") == 0 || extension.compareTo("qbf") == 0) {
 			return Extension.QDIMACS;
 		}
 		else {
