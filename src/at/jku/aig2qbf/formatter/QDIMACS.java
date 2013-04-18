@@ -7,13 +7,11 @@ import java.util.Stack;
 
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
-import at.jku.aig2qbf.component.False;
 import at.jku.aig2qbf.component.Input;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
-import at.jku.aig2qbf.component.True;
 import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 
@@ -146,23 +144,16 @@ public class QDIMACS extends Formatter {
 	private void replaceFalseAig(Tree tree) {
 		Input input = new Input("false");
 		
-		Component globalAnd = new And();
-		globalAnd.addInput(input);
+		Component and = new And();
+		and.addInput(input);
 		
 		Component notInput = new Not();
 		notInput.addInput(input);
 		
-		globalAnd.addInput(notInput);
+		and.addInput(notInput);
 		
 		// replace all false components
-		False cFalse = tree.cFalse;
-		
-		while(!cFalse.outputs.isEmpty()) {
-			Component c = cFalse.outputs.remove(0);
-			c.inputs.remove(cFalse);
-			
-			c.addInput(globalAnd);
-		}
+		tree.replaceComponent(tree.cFalse, and);
 	}
 	
 	private void replaceTrueAig(Tree tree) {
@@ -176,14 +167,7 @@ public class QDIMACS extends Formatter {
 		or.addInput(not);
 		
 		// replace all true components
-		True cTrue = tree.cTrue;
-		
-		while(!cTrue.outputs.isEmpty()) {
-			Component c = cTrue.outputs.remove(0);
-			c.inputs.remove(cTrue);
-			
-			c.addInput(or);
-		}
+		tree.replaceComponent(tree.cTrue, or);
 	}
 	
 	private int getNumberOfVariables(List<Component> componentList) {

@@ -545,32 +545,27 @@ public class Tree implements Cloneable {
 	}
 	
 	public void replaceComponent(Component c1, Component c2) {
-		List<Component> removedComponents = new ArrayList<Component>();
-		
-		for(int i = 0; i < c1.outputs.size(); i++) {
-			Component parentComponent = c1.outputs.get(i);
+		while(!c1.outputs.isEmpty()) {
+			Component parent = c1.outputs.remove(0);
+			while(parent.inputs.remove(c1));
 			
-			if(parentComponent == null) {
-				continue;
-			}
-			
-			int inputIndex = parentComponent.inputs.indexOf(c1);
-			
-			if(inputIndex < 0) {
-				continue;
-			}
-			
-			Component input = parentComponent.inputs.get(inputIndex);
-			
-			while(parentComponent.inputs.remove(input));
-			removedComponents.add(parentComponent);
-			
-			if(c2 != null && !parentComponent.inputs.contains(c2)) {
-				parentComponent.inputs.add(inputIndex, c2);
-			}
+			parent.addInput(c2);
 		}
 		
-		c1.outputs.removeAll(removedComponents);
+		while(!c1.inputs.isEmpty()) {
+			Component child = c1.inputs.remove(0);
+			while(child.outputs.remove(c1));
+			
+			c2.addInput(child);
+		}
+		
+		// replace latch output entry
+		int componentIndex = this.latchOutputs.indexOf(c1);
+		
+		if(componentIndex >= 0) {
+			this.latchOutputs.remove(componentIndex);
+			this.latchOutputs.add(componentIndex, c2);
+		}
 	}
 	
 	public Tree unroll(int k) {

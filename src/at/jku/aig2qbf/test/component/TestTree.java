@@ -449,16 +449,16 @@ public class TestTree {
 		assertSame(outputC, outputNot4.inputs.get(0));
 		
 		//x0
-		Component outputX0 = outputOr2.inputs.get(0);
+		Component outputX0 = outputNot0.inputs.get(0);
 		assertTrue(outputX0 instanceof Input);
-		assertSame(outputX0, outputNot3.inputs.get(0));
-		assertSame(outputX0, outputOr5.inputs.get(1));
+		assertEquals(outputX0, outputOr2.inputs.get(0));
+		assertEquals(outputX0, outputOr5.inputs.get(2));
 		
 		//x1
 		Component outputX1 = outputOr3.inputs.get(0);
 		assertTrue(outputX1 instanceof Input);
-		assertSame(outputX1, outputNot5.inputs.get(0));
-		assertSame(outputX1, outputOr4.inputs.get(0));
+		assertEquals(outputX1, outputNot5.inputs.get(0));
+		assertEquals(outputX1, outputOr4.inputs.get(0));
 	}
 	
 	@Test
@@ -1157,6 +1157,46 @@ public class TestTree {
 			assertSame(k3a, k1i.outputs.get(1));
 		}
 	}
+	
+	@Test
+	public void testReplaceComponent() {
+		Input a = new Input("a");
+		Input b = new Input("b");
+		Output y = new Output("y");
+		
+		Component and = new And();
+		and.addInput(a);
+		and.addInput(b);
+		
+		y.addInput(and);
+		
+		Tree tree = new Tree();
+		tree.outputs.add(y);
+		
+		Component or = new Or();
+		tree.replaceComponent(and, or);
+		
+		tree.verifyTreeStructure();
+		
+		assertEquals(1, y.inputs.size());
+		assertEquals(0, y.outputs.size());
+		
+		assertEquals(2, or.inputs.size());
+		assertEquals(1, or.outputs.size());
+		assertEquals(a, or.inputs.get(0));
+		assertEquals(b, or.inputs.get(1));
+		assertEquals(y, or.outputs.get(0));
+		
+		assertEquals(0, and.inputs.size());
+		assertEquals(0, and.outputs.size());
+		
+		assertEquals(0, a.inputs.size());
+		assertEquals(1, a.outputs.size());
+		
+		assertEquals(0, b.inputs.size());
+		assertEquals(1, b.outputs.size());
+	}
+	
 	private void unrollSanityCheckOriginalTreeSanity(Tree t) {
 		assertNotNull(t);
 		
