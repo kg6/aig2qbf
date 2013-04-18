@@ -13,7 +13,7 @@ my @ks;
 
 if (@ARGV == 1) {
 	$file = $ARGV[0];
-	@ks = (1..3);
+	@ks = (1..10);
 }
 else {
 	$file = $ARGV[1];
