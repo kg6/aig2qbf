@@ -345,8 +345,9 @@ public class Tree implements Cloneable {
 		Stack<Component> stack = new Stack<Component>();
 		stack.push(o.inputs.get(0));
 		
-		// remember all input literals
-		List<Input> inputLiterals = new ArrayList<Input>();
+		// create a list for all universal and existential variables
+		List<Input> univeralComponentList = new ArrayList<Input>();
+		List<Input> existentialComponentList = new ArrayList<Input>();
 		
 		// build a global and to connect the pieces of the tree
 		Component globalAnd = new And();
@@ -373,9 +374,8 @@ public class Tree implements Cloneable {
 					
 					// add every component to the stack that should get a Tseitin node
 					if (c instanceof Input) {
-						inputLiterals.add((Input)c);
-					} 
-					else {
+						existentialComponentList.add((Input)c);
+					} else {
 						stack.push(c);
 					}
 				}
@@ -457,12 +457,10 @@ public class Tree implements Cloneable {
 					throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node.getClass().toString() + " is unknown!");
 				}
 				
-				// add all artificial latch outputs as universally quantified
 				if(tree.latchOutputs.contains(node)) {
-					addQuantifier(tree, xi, Quantifier.UNIVERSAL);
-				} 
-				else {
-					inputLiterals.add(xi);
+					univeralComponentList.add(xi);
+				} else {
+					existentialComponentList.add(xi);
 				}
 				
 				// replace node with xi in the tree
@@ -489,13 +487,17 @@ public class Tree implements Cloneable {
 		
 		o.addInput(globalAnd);
 		
-		// add all remaining inputs as existentially quantified
-		for(Input input : inputLiterals) {
-			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
+		// a Tseitin tree must not contain any latch output
+		tree.latchOutputs.clear();
+		
+		// add quantifiers
+		for(Input input : univeralComponentList) {
+			addQuantifier(tree, input, Quantifier.UNIVERSAL);
 		}
 		
-		// a tseitin tree must not contain any latch output
-		tree.latchOutputs.clear();
+		for(Input input : existentialComponentList) {
+			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
+		}
 		
 		// verify the structure of the tree
 		tree.verifyTreeStructure();
@@ -503,7 +505,7 @@ public class Tree implements Cloneable {
 		return tree;
 	}
 	
-	private void addQuantifier(Tree tree, Input input, Quantifier quantifier) {
+	public void addQuantifier(Tree tree, Input input, Quantifier quantifier) {
 		boolean componentFound = false;
 		
 		for(QuantifierSet q : tree.quantifier) {
