@@ -1,6 +1,7 @@
 package at.jku.aig2qbf.formatter;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -10,10 +11,23 @@ public abstract class Formatter {
 	abstract public String format(Tree tree);
 	
 	public boolean writeToFile (Tree tree, String filepath) {
-		String out = this.format(tree);
+		File outputFile = new File(filepath);
+		
+		if(outputFile.exists()) {
+			outputFile.delete();
+		}
+		
+		File parentDirectory = outputFile.getParentFile();
+		
+		if(parentDirectory == null || !parentDirectory.exists()) {
+			parentDirectory.mkdirs();
+		}		
 		
 		//Write to file
+		String out = this.format(tree);
+		
 		BufferedWriter writer = null;
+		
 		try {
 			writer = new BufferedWriter(new FileWriter(filepath));
 			writer.write(out);
