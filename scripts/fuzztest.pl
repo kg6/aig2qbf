@@ -7,9 +7,15 @@ use File::Slurp;
 use String::Util qw/trim/;
 use Time::HiRes qw/time/;
 
-my $max_k = (@ARGV) ? int($ARGV[0]) : 10;
-
 my $script_path = dirname(__FILE__);
+
+if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
+	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+
+	exit 2;
+}
+
+my $max_k = (@ARGV) ? int($ARGV[0]) : 10;
 
 while (1) {
 	print 'k =';

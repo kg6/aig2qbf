@@ -8,6 +8,12 @@ use String::Util qw/trim/;
 
 my $script_path = dirname(__FILE__);
 
+if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
+	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+
+	exit 5;
+}
+
 my $file;
 my @ks;
 
