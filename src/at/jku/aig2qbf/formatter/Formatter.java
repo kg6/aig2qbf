@@ -9,42 +9,45 @@ import at.jku.aig2qbf.component.Tree;
 
 public abstract class Formatter {
 	abstract public String format(Tree tree);
-	
-	public boolean writeToFile (Tree tree, String filepath) {
+
+	public boolean writeToFile(Tree tree, String filepath) {
 		File outputFile = new File(filepath);
-		
-		if(outputFile.exists()) {
+
+		if (outputFile.exists()) {
 			outputFile.delete();
 		}
-		
+
 		File parentDirectory = outputFile.getParentFile();
-		
-		if(parentDirectory == null || !parentDirectory.exists()) {
+
+		if (parentDirectory == null || ! parentDirectory.exists()) {
 			parentDirectory.mkdirs();
-		}		
-		
-		//Write to file
+		}
+
+		// Write to file
 		String out = this.format(tree);
-		
+
 		BufferedWriter writer = null;
-		
+
 		try {
 			writer = new BufferedWriter(new FileWriter(filepath));
 			writer.write(out);
-			
+
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if(writer != null) {
+		}
+		finally {
+			if (writer != null) {
 				try {
 					writer.close();
-				} catch (IOException e) {
-					
+				}
+				catch (IOException e) {
+
 				}
 			}
 		}
-		
+
 		return false;
 	}
 }

@@ -17,26 +17,26 @@ import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
 public class aig2qbf {
-	
+
 	private static Option getCommandlineOption(String opt, String longOpt, String description, boolean hasArg, String argName) {
 		Option option = new Option(opt, hasArg, description);
-		
-		if(longOpt != null) {
+
+		if (longOpt != null) {
 			option.setLongOpt(longOpt);
 		}
-		
-		if(hasArg && argName != null) {
+
+		if (hasArg && argName != null) {
 			option.setArgName(argName);
 		}
-		
+
 		return option;
 	}
-	
+
 	public static void main(String[] args) {
 		CommandLineParser argParser = new PosixParser();
-		
+
 		Options options = new Options();
-		
+
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
@@ -46,7 +46,7 @@ public class aig2qbf {
 
 		try {
 			CommandLine commandLine = argParser.parse(options, args);
-			
+
 			String input = null;
 			Extension inputExtension = null;
 			String output = null;
@@ -55,7 +55,7 @@ public class aig2qbf {
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
 				inputExtension = Parser.getExtension(input);
-				
+
 				if (inputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", inputExtension));
 				}
@@ -63,7 +63,7 @@ public class aig2qbf {
 			if (commandLine.hasOption('o')) {
 				output = commandLine.getOptionValue('o');
 				outputExtension = Parser.getExtension(output);
-				
+
 				if (outputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", output));
 				}
@@ -76,25 +76,25 @@ public class aig2qbf {
 					throw new RuntimeException("k is not a number");
 				}
 			}
-			
+
 			if (commandLine.hasOption('i')) {
 				Parser p = null;
-				
+
 				switch (inputExtension) {
 					case AAG:
 						p = new at.jku.aig2qbf.parser.AAG();
 					break;
 					case AIG:
-						p = new at.jku.aig2qbf.parser.AIG();	
+						p = new at.jku.aig2qbf.parser.AIG();
 					break;
 					default:
 						throw new RuntimeException(String.format("Parser for input file \"%s\" not implemented", input));
 				}
-				
+
 				Tree t = p.parse(input);
-				
+
 				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
-				
+
 				t = t.unroll(k);
 				t.mergeToOneOutput();
 
@@ -102,13 +102,13 @@ public class aig2qbf {
 					SimplePathReduction reduction = new SimplePathReduction();
 					t = reduction.reduceTree(t, k);
 				}
-				
+
 				if (commandLine.hasOption("visualize")) {
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
 					Formatter f = new QDIMACS();
-					
+
 					switch (outputExtension) {
 						case AAG:
 							f = new at.jku.aig2qbf.formatter.AAG();
@@ -119,7 +119,7 @@ public class aig2qbf {
 						default:
 							throw new RuntimeException(String.format("Formatter for output file \"%s\" not implemented", output));
 					}
-					
+
 					if (output != null) {
 						f.writeToFile(t, output);
 					}
@@ -130,7 +130,7 @@ public class aig2qbf {
 			}
 			else { // + h
 				HelpFormatter helpFormatter = new HelpFormatter();
-				
+
 				helpFormatter.printHelp("aig2qbf", options);
 			}
 		}

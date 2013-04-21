@@ -30,12 +30,12 @@ public class TestSimplePathReduction {
 	public void setUp() throws Exception {
 		Component.Reset();
 	}
-	
+
 	@After
 	public void tearDown() {
 		TestUtil.RemoveOutputFile(TEMP_QDIMACS_FILE);
 	}
-	
+
 	@Test
 	public void SATnot() {
 		{ // 0
@@ -47,7 +47,7 @@ public class TestSimplePathReduction {
 			not.addInput(t.cFalse);
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
-		
+
 		{ // 1
 			Tree t = new Tree();
 			Output o = new Output("a");
@@ -57,9 +57,9 @@ public class TestSimplePathReduction {
 			not.addInput(t.cTrue);
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
-		
+
 	}
-	
+
 	@Test
 	public void SATor() {
 		{ // 00
@@ -103,7 +103,7 @@ public class TestSimplePathReduction {
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 	}
-	
+
 	@Test
 	public void SATand() {
 		{ // 00
@@ -147,80 +147,83 @@ public class TestSimplePathReduction {
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 	}
-	
+
 	@Test
 	public void testSat0() {
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add("input/basic/meetingsample1.aag");
-		
+
 		final int max_k = 50;
-		
-		for(String inputFilePath : inputFiles) {
+
+		for (String inputFilePath : inputFiles) {
 			Tree tree = new AAG().parse(inputFilePath);
-			
+
 			SimplePathReduction reduction = new SimplePathReduction();
-	
-			for(int k = 1; k <= max_k; k++) {
+
+			for (int k = 1; k <= max_k; k++) {
 				final long startTime = System.currentTimeMillis();
-				
+
 				Tree reducedTree = reduction.reduceTree(tree, k);
-				
+
 				final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
-				
+
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
-				
-				if(k <= 2) {
+
+				if (k <= 2) {
 					assertEquals(true, sat);
-				} else {
+				}
+				else {
 					assertEquals(false, sat);
 				}
 			}
 		}
 	}
-	
+
 	@Test
 	public void testSat1() {
 		final int max_k = 10;
-		
-		//Create a tree with max_k latches in a row
-		
+
+		// Create a tree with max_k latches in a row
+
 		Component a = new Input("a");
 		Output b = new Output("b");
-		
+
 		Component parent = a;
-		
-		for(int k = 0; k < max_k; k++) {
+
+		for (int k = 0; k < max_k; k++) {
 			Latch latch = new Latch();
 			latch.addInput(parent);
-			
+
 			parent = latch;
 		}
-		
+
 		b.addInput(parent);
-		
+
 		Tree tree = new Tree();
 		tree.outputs.add(b);
-		
-		//It is expected that the tree needs to be unrolled max_k + 1 in order to be sat once
-		
+
+		// It is expected that the tree needs to be unrolled max_k + 1 in order
+		// to be sat once
+
 		SimplePathReduction reduction = new SimplePathReduction();
-		
+
 		final int max_check = max_k * 2;
-		
-		for(int k = 1; k <= max_check; k++) {
+
+		for (int k = 1; k <= max_check; k++) {
 			final long startTime = System.currentTimeMillis();
-			
+
 			Tree reducedTree = reduction.reduceTree(tree, k);
-			
+
 			final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
-			
+
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
-			
-			if(k != max_k + 1) {
+
+			if (k != max_k + 1) {
 				assertFalse(sat);
-			} else {
+			}
+			else {
 				assertTrue(sat);
 			}
-		}		
+		}
 	}
 }

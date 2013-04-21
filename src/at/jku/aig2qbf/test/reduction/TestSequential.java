@@ -26,12 +26,12 @@ import at.jku.aig2qbf.test.TestUtil;
 public class TestSequential {
 	private final String INPUT_EXTENSION_AIG = ".aig";
 	private final String INPUT_EXTENSION_AAG = ".aag";
-	
+
 	private final String INPUT_SEQUENTIAL_DIRECTORY = "./input/sequential";
 	private final String OUTPUT_FILE = "./output/temp.qbf";
-	
+
 	private final int MAX_K = 10;
-	
+
 	TreeReduction[] reductionMethods = new TreeReduction[] {
 		new SimplePathReduction()
 	};
@@ -49,138 +49,144 @@ public class TestSequential {
 	@Test
 	public void test() {
 		File[] benchmarkFiles = getSequentialBenchmarkFiles();
-		
+
 		List<String> blackList = new ArrayList<String>();
-		
-		for(int k = 1; k <= MAX_K; k++) {
+
+		for (int k = 1; k <= MAX_K; k++) {
 			System.out.println(String.format("Checking k=%s", k));
-			
-			for(File input : benchmarkFiles) {
+
+			for (File input : benchmarkFiles) {
 				System.out.println(String.format("	Checking file %s", input.getName()));
-				
-				if(blackList.contains(input.getName())) {
+
+				if (blackList.contains(input.getName())) {
 					System.out.println("		Skipped");
 					continue;
 				}
-				
-				for(TreeReduction reduction : reductionMethods) {
+
+				for (TreeReduction reduction : reductionMethods) {
 					final long startTime = System.currentTimeMillis();
-					
+
 					System.out.println(String.format("		Applying reduction method %s", reduction.toString()));
-					
+
 					assertTrue(testBenchmark(input, reduction, k));
-					
+
 					System.out.println(String.format("			runtime: %sms", System.currentTimeMillis() - startTime));
 				}
-				
+
 				Component.Reset();
 			}
 		}
 	}
-	
+
 	private boolean testBenchmark(File inputFile, TreeReduction reductionMethod, int k) {
 		Parser parser = getParser(inputFile);
-		
+
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
-		
+
 		Tree reducedTree = reductionMethod.reduceTree(tree, k);
-		
+
 		boolean currentSat = TestUtil.CheckSatisfiablity(reducedTree, OUTPUT_FILE);
 		boolean originalSat = checkOriginalSat(inputFile, k);
-		
-		if(originalSat != currentSat) {
+
+		if (originalSat != currentSat) {
 			File outputFile = new File(OUTPUT_FILE);
-			
-			if(!outputFile.exists()) {
+
+			if (! outputFile.exists()) {
 				throw new RuntimeException("Unable to reduce the output file: File was not found.");
 			}
-			
-			//Call the delta debugger
+
+			// Call the delta debugger
 			minifyAigerFile(outputFile);
-			
+
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private boolean checkOriginalSat(File inputFile, int k) {
 		BufferedReader inputReader = null;
 		BufferedReader errorReader = null;
-		
+
 		try {
 			ProcessBuilder processBuilder = new ProcessBuilder("./tools/mcaiger", "-r", Integer.toString(k), inputFile.getPath());
 			processBuilder.directory(new File("").getAbsoluteFile());
-			
+
 			Process process = processBuilder.start();
-			
+
 			process.waitFor();
-			
+
 			inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String output = inputReader.readLine();
-			
+
 			errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String error = errorReader.readLine();
-			
-			if(error != null && error.length() > 0) {
+
+			if (error != null && error.length() > 0) {
 				throw new RuntimeException("MCAiger has returned an error: " + error);
 			}
-			
-			if(output.compareTo("1") == 0) {
+
+			if (output.compareTo("1") == 0) {
 				return true;
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if(inputReader != null) {
+		}
+		finally {
+			if (inputReader != null) {
 				try {
 					inputReader.close();
-				} catch (IOException e) {
-					
+				}
+				catch (IOException e) {
+
 				}
 			}
-			
-			if(errorReader != null) {
+
+			if (errorReader != null) {
 				try {
 					errorReader.close();
-				} catch (IOException e) {
-					
+				}
+				catch (IOException e) {
+
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private void minifyAigerFile(File outputFile) {
-		//TODO Run delta debugger...
+		// TODO Run delta debugger...
 	}
-	
+
 	private Parser getParser(File inputFile) {
 		String fileName = inputFile.getName();
 		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-		
-		if(fileName.endsWith(INPUT_EXTENSION_AAG)) {
+
+		if (fileName.endsWith(INPUT_EXTENSION_AAG)) {
 			return new AAG();
-		} else if(fileName.endsWith(INPUT_EXTENSION_AIG)) {
+		}
+		else if (fileName.endsWith(INPUT_EXTENSION_AIG)) {
 			return new AIG();
-		} else {
+		}
+		else {
 			throw new RuntimeException(String.format("Unable to run sequential test: Unknown file extension '%s'", fileExtension));
 		}
 	}
 
 	private File[] getSequentialBenchmarkFiles() {
 		File sequentialDirectory = new File(INPUT_SEQUENTIAL_DIRECTORY);
-		
+
 		return sequentialDirectory.listFiles(new InputFileFilter());
 	}
-	
+
 	private class InputFileFilter implements FilenameFilter {
 
 		@Override
 		public boolean accept(File dir, String name) {
 			return name.endsWith(INPUT_EXTENSION_AAG) || name.endsWith(INPUT_EXTENSION_AIG);
 		}
-		
+
 	}
 }

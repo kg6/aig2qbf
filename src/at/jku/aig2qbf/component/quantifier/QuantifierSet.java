@@ -13,7 +13,7 @@ public class QuantifierSet {
 		this.quantifier = quantifier;
 		this.literals = new ArrayList<Input>(literals);
 	}
-	
+
 	public QuantifierSet(Quantifier quantifier, Input literal) {
 		this.quantifier = quantifier;
 		this.literals = new ArrayList<Input>();

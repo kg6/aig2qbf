@@ -22,16 +22,16 @@ public abstract class Parser {
 	public enum Extension {
 		AIG, AAG, QDIMACS
 	}
-	
+
 	public static Extension getExtension(String filename) {
 		int i = filename.lastIndexOf('.');
-		
+
 		if (i == -1) {
 			return null;
 		}
-		
+
 		String extension = filename.substring(i + 1).toLowerCase();
-		
+
 		if (extension.compareTo("aag") == 0) {
 			return Extension.AAG;
 		}
@@ -45,7 +45,7 @@ public abstract class Parser {
 			return null;
 		}
 	}
-	
+
 	protected File checkInputFile(String path, String expectedExtension) {
 		if (path == null) {
 			throw new IllegalArgumentException("Input file path must not be null.");
@@ -74,11 +74,11 @@ public abstract class Parser {
 		DataInputStream inputStream = null;
 
 		try {
-			byte[] fileData = new byte[(int)inputFile.length()];
-			
+			byte[] fileData = new byte[(int) inputFile.length()];
+
 			inputStream = new DataInputStream(new FileInputStream(inputFile));
 			inputStream.readFully(fileData);
-			
+
 			return new String(fileData).split("\n");
 		}
 		catch (Exception e) {
@@ -95,30 +95,30 @@ public abstract class Parser {
 			}
 		}
 	}
-	
+
 	protected List<byte[]> readBinaryFile(File inputFile) {
 		DataInputStream inputStream = null;
 
 		try {
-			byte[] fileData = new byte[(int)inputFile.length()];
-			
+			byte[] fileData = new byte[(int) inputFile.length()];
+
 			inputStream = new DataInputStream(new FileInputStream(inputFile));
 			inputStream.readFully(fileData);
-			
+
 			List<byte[]> resultList = new ArrayList<byte[]>();
-			
+
 			int startIndex = 0;
-			for(int i = 0; i < fileData.length; i++) {
-				if(fileData[i] == (int)'\n') {
+			for (int i = 0; i < fileData.length; i++) {
+				if (fileData[i] == (int) '\n') {
 					resultList.add(Arrays.copyOfRange(fileData, startIndex, i));
 					startIndex = i + 1;
 				}
 			}
-			
-			if(startIndex < fileData.length) {
+
+			if (startIndex < fileData.length) {
 				resultList.add(Arrays.copyOfRange(fileData, startIndex, fileData.length));
-			}			
-			
+			}
+
 			return resultList;
 		}
 		catch (Exception e) {
@@ -135,23 +135,23 @@ public abstract class Parser {
 			}
 		}
 	}
-	
+
 	protected Tree createTree(final int numberOfInputs, final int maximumVariableIndex, final int multipliedMaximumVariableIndex, final int[][] fileLatches, final int[] fileOutputs, final int[][] fileAnds) {
 		Tree tree = new Tree();
-		
+
 		Component[] components = new Component[maximumVariableIndex];
 		Component[] notComponents = new Component[maximumVariableIndex];
-		
+
 		// insert latches
 		for (int i = 0; i < fileLatches.length; i++) {
 			components[fileLatches[i][0] / 2 - 1] = new Latch();
 		}
-		
+
 		// insert ands
 		for (int[] a : fileAnds) {
 			components[a[0] / 2 - 1] = new And();
 		}
-		
+
 		// connect latches
 		for (int i = 0; i < fileLatches.length; i++) {
 			this.prepareOutputComponent(tree, components, notComponents, components[fileLatches[i][0] / 2 - 1], fileLatches[i][1]);
@@ -160,62 +160,62 @@ public abstract class Parser {
 		// connect ands
 		for (int[] a : fileAnds) {
 			Component and = components[a[0] / 2 - 1];
-			
+
 			Component t1 = this.prepareInputComponent(tree, components, notComponents, a[1]);
 			Component t2 = this.prepareInputComponent(tree, components, notComponents, a[2]);
-			
-			and.addInput(t1);	
+
+			and.addInput(t1);
 			and.addInput(t2);
 		}
-		
+
 		// insert and connect outputs
 		for (int i : fileOutputs) {
 			String name = Integer.toString(i / 2);
-			
+
 			if (i == 0 || (i % 2 != 0 && i != 1)) {
 				name = "NOT(" + name + ")";
 			}
-			
+
 			Component o = new Output(name);
 			tree.outputs.add((Output) o);
-			
+
 			this.prepareOutputComponent(tree, components, notComponents, o, i);
 		}
 
 		// remove unneeded components (slicing)
 		HashMap<Component, Component> seen = new HashMap<>();
 		Stack<Component> stack = new Stack<>();
-		
+
 		for (Component i : tree.outputs) {
 			stack.add(i);
 			seen.put(i, null);
 		}
-		
-		while (! stack.isEmpty()) {
+
+		while (!stack.isEmpty()) {
 			Component n = stack.pop();
-			
+
 			for (Component i : n.inputs) {
-				if (! seen.containsKey(i)) {
+				if (!seen.containsKey(i)) {
 					stack.add(i);
 					seen.put(i, null);
 				}
 			}
 		}
-		
+
 		for (Component i : components) {
-			if (i != null && ! seen.containsKey(i)) {
+			if (i != null && !seen.containsKey(i)) {
 				i.remove();
 			}
 		}
 		for (Component i : notComponents) {
-			if (i != null && ! seen.containsKey(i)) {
+			if (i != null && !seen.containsKey(i)) {
 				i.remove();
 			}
 		}
-		
+
 		return tree;
 	}
-	
+
 	private Component prepareInputComponent(Tree tree, Component[] components, Component[] notComponents, int i) {
 		if (i == 0) {
 			return tree.cFalse;
@@ -223,35 +223,35 @@ public abstract class Parser {
 		else if (i == 1) {
 			return tree.cTrue;
 		}
-		
+
 		int index = i / 2 - 1;
-		
+
 		if (components[index] == null) {
 			components[index] = new Input(Integer.toString(i / 2));
 		}
-		
+
 		if (i % 2 == 0) {
 			return components[index];
 		}
-		
+
 		// lets reuse NOT components
 		if (notComponents[index] == null) {
 			Component n = notComponents[index] = new Not();
-			
+
 			n.addInput(components[index]);
-			
+
 			return n;
 		}
 		else {
 			return notComponents[index];
 		}
 	}
-	
+
 	private Component prepareOutputComponent(Tree tree, Component[] components, Component[] notComponents, Component o, int i) {
 		Component c = this.prepareInputComponent(tree, components, notComponents, i);
-		
+
 		o.addInput(c);
-		
+
 		return o;
 	}
 
