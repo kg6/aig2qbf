@@ -22,7 +22,7 @@ import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.test.TestUtil;
 
 public class TestTree {
-	private final String TEMP_QDIMACS_FILE = "./output/temp.txt";
+	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
 	
 	@Before
 	public void setUp() throws Exception {

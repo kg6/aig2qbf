@@ -28,7 +28,7 @@ public class TestSequential {
 	private final String INPUT_EXTENSION_AAG = ".aag";
 	
 	private final String INPUT_SEQUENTIAL_DIRECTORY = "./input/sequential";
-	private final String OUTPUT_FILE = "./output/temp.txt";
+	private final String OUTPUT_FILE = "./output/temp.qbf";
 	
 	private final int MAX_K = 10;
 	

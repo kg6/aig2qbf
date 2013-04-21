@@ -26,7 +26,7 @@ import at.jku.aig2qbf.reduction.SAT;
 import at.jku.aig2qbf.test.TestUtil;
 
 public class TestQDimacs {
-	private final String TEMP_QDIMACS_FILE = "./output/temp.txt";
+	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
 	
 	@Before
 	public void setUp() throws Exception {
