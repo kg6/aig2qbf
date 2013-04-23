@@ -1,11 +1,9 @@
 package at.jku.aig2qbf.test.reduction;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,19 +16,19 @@ import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.reduction.TreeReduction;
 import at.jku.aig2qbf.test.TestUtil;
 
-public class TestSequential {
-	private final String INPUT_EXTENSION_AIG = ".aig";
-	private final String INPUT_EXTENSION_AAG = ".aag";
-
-	private final String INPUT_SEQUENTIAL_DIRECTORY = "./input/sequential";
+public class TestCompetition {
+	private final String INPUT_EXTENSION_CNF = ".cnf";
+	private final String AIGER_FILE = "./output/aiger.aig";
+	
+	private final String INPUT_COMPETITION_DIRECTORY = "./input/competition/2009";
 	private final String OUTPUT_FILE = "./output/temp.qbf";
-
+	
 	private final int MAX_K = 10;
-
+	
 	TreeReduction[] reductionMethods = new TreeReduction[] {
 		new SimplePathReduction()
 	};
-
+	
 	@Before
 	public void setUp() throws Exception {
 		Component.Reset();
@@ -39,37 +37,31 @@ public class TestSequential {
 	@After
 	public void tearDown() throws Exception {
 		TestUtil.RemoveOutputFile(OUTPUT_FILE);
+		TestUtil.RemoveOutputFile(AIGER_FILE);
 	}
 
 	@Test
-	public void test() {
-		File[] benchmarkFiles = TestUtil.GetBenchmarkInputFiles(INPUT_SEQUENTIAL_DIRECTORY, new FilenameFilter() {
+	public void testCompetition() {
+		File[] benchmarkFiles = TestUtil.GetBenchmarkInputFiles(INPUT_COMPETITION_DIRECTORY, new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(INPUT_EXTENSION_AAG) || name.endsWith(INPUT_EXTENSION_AIG);
+				return name.endsWith(INPUT_EXTENSION_CNF);
 			}
 		});
-
-		List<String> blackList = new ArrayList<String>();
-
+		
 		for (int k = 1; k <= MAX_K; k++) {
 			System.out.println(String.format("Checking k=%s", k));
 
 			for (File input : benchmarkFiles) {
 				System.out.println(String.format("	Checking file %s", input.getName()));
 
-				if (blackList.contains(input.getName())) {
-					System.out.println("		Skipped");
-					continue;
-				}
-
 				for (TreeReduction reduction : reductionMethods) {
 					final long startTime = System.currentTimeMillis();
 
 					System.out.println(String.format("		Applying reduction method %s", reduction.toString()));
 
-					assertTrue(testBenchmark(input, reduction, k));
+					assertTrue(testCompetition(input, reduction, k));
 
 					System.out.println(String.format("			runtime: %sms", System.currentTimeMillis() - startTime));
 				}
@@ -78,20 +70,23 @@ public class TestSequential {
 			}
 		}
 	}
-
-	private boolean testBenchmark(File inputFile, TreeReduction reductionMethod, int k) {
-		Parser parser = TestUtil.GetInputFileParser(inputFile);
-
-		Tree tree = parser.parse(inputFile.getAbsolutePath());
+	
+	private boolean testCompetition(File input, TreeReduction reductionMethod, int k) {
+		File aigerFile = new File(AIGER_FILE);
 		
-		tree = tree.unroll(k);
-		tree.mergeToOneOutput();
-
+		if(!TestUtil.ConvertToAiger(input.getAbsolutePath(), aigerFile.getAbsolutePath()) || !aigerFile.exists()) {
+			System.out.println("			Failed to convert CNF to AIG!");
+			return false;
+		}
+		
+		Parser parser = TestUtil.GetInputFileParser(aigerFile);
+		
+		Tree tree = parser.parse(aigerFile.getAbsolutePath());
 		Tree reducedTree = reductionMethod.reduceTree(tree, k);
 
 		final boolean currentSat = TestUtil.CheckSatisfiablity(reducedTree, OUTPUT_FILE);
-		final boolean originalSat = TestUtil.CheckOriginalSat(inputFile, k);
-
+		final boolean originalSat = TestUtil.CheckOriginalSat(aigerFile, k);
+		
 		return currentSat == originalSat;
 	}
 }

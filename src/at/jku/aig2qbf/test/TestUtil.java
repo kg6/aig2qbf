@@ -5,11 +5,15 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.QDIMACS;
+import at.jku.aig2qbf.parser.AAG;
+import at.jku.aig2qbf.parser.AIG;
+import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.reduction.SAT;
 
 public class TestUtil {
@@ -63,6 +67,94 @@ public class TestUtil {
 
 		if (tempFile.exists()) {
 			tempFile.delete();
+		}
+	}
+	
+	public static File[] GetBenchmarkInputFiles(String directoryPath, FilenameFilter fileNameFilter) {
+		File sequentialDirectory = new File(directoryPath);
+
+		return sequentialDirectory.listFiles(fileNameFilter);
+	}
+	
+	public static boolean ConvertToAiger(String inputFilePath, String outputFilePath) {
+		try {
+			ProcessBuilder processBuilder = new ProcessBuilder("./tools/cnf2aig", inputFilePath, outputFilePath);
+			processBuilder.directory(new File("").getAbsoluteFile());
+			
+			Process process = processBuilder.start();
+			process.waitFor();
+			
+			return process.exitValue() == 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public static boolean CheckOriginalSat(File inputFile, int k) {
+		BufferedReader inputReader = null;
+		BufferedReader errorReader = null;
+
+		try {
+			ProcessBuilder processBuilder = new ProcessBuilder("./tools/mcaiger", "-r", Integer.toString(k), inputFile.getPath());
+			processBuilder.directory(new File("").getAbsoluteFile());
+
+			Process process = processBuilder.start();
+			process.waitFor();
+
+			inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String output = inputReader.readLine();
+
+			errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			String error = errorReader.readLine();
+
+			if (error != null && error.length() > 0) {
+				throw new RuntimeException("MCAiger has returned an error: " + error);
+			}
+
+			if (output.compareTo("1") == 0) {
+				return true;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (inputReader != null) {
+				try {
+					inputReader.close();
+				}
+				catch (IOException e) {
+
+				}
+			}
+
+			if (errorReader != null) {
+				try {
+					errorReader.close();
+				}
+				catch (IOException e) {
+
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	public static Parser GetInputFileParser(File inputFile) {
+		String fileName = inputFile.getName();
+		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+
+		if (fileName.endsWith(".aag")) {
+			return new AAG();
+		}
+		else if (fileName.endsWith(".aig")) {
+			return new AIG();
+		}
+		else {
+			throw new RuntimeException(String.format("Unable to run sequential test: Unknown file extension '%s'", fileExtension));
 		}
 	}
 }
