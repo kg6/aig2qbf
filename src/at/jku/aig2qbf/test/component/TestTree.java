@@ -6,6 +6,10 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -1196,6 +1200,110 @@ public class TestTree {
 
 		assertEquals(0, b.inputs.size());
 		assertEquals(1, b.outputs.size());
+	}
+	
+//	@Test
+//	public void testQuantifiers() {
+//		List<Input> positiveInputList = new ArrayList<Input>();
+//		List<Input> negativeInputList = new ArrayList<Input>();
+//		
+//		//TODO: complete this method
+//		
+//		SimplePathReduction reduction = new SimplePathReduction();
+//		QDIMACS q = new QDIMACS();		
+//		
+//		Tree tree = new AIG().parse("input/basic/toggle-re.aig");
+//		
+//		Tree reducedTree = reduction.reduceTree(tree, 2);
+//		
+//		Tree tseitinTree = q.prepare(reducedTree);
+//		List<Input> tseitinInputList = tseitinTree.lastTseitinInputList;
+//		
+//		if(tseitinInputList.size() == 0) {
+//			System.out.println("No inputs found in the reduced tree!");
+//			return;
+//		}
+//		
+//		boolean initialSat = false;
+//		
+//		if(writeToFile(q.format(tseitinTree))) {
+//			initialSat = SAT.Solve(TEMP_QDIMACS_FILE);
+//		}
+//		
+//		if(!initialSat) {
+//			System.out.println("The tree must be SAT initially!");
+//			return;
+//		}
+//		
+//		for(int i = 0; i < tseitinInputList.size(); i++) {
+//			tseitinTree.quantifier.clear();
+//			
+//			tseitinTree.addQuantifier(tseitinTree, tseitinInputList.get(i), Quantifier.UNIVERSAL);
+//			
+//			for(int j = 0; j < tseitinInputList.size(); j++) {
+//				Input input = tseitinInputList.get(j);
+//				
+//				if(j != i) {
+//					tseitinTree.addQuantifier(tseitinTree, input, Quantifier.EXISTENTIAL);
+//				}
+//			}
+//			
+//			boolean sat = false;
+//			
+//			if(writeToFile(q.format(tseitinTree))) {
+//				sat = SAT.Solve(TEMP_QDIMACS_FILE);
+//			}
+//			
+//			System.out.println(String.format("Check: %s", sat ? "SAT" : "UNSAT"));
+//	
+//			if(sat == initialSat) {
+//				positiveInputList.add(tseitinInputList.get(i));
+//			} else {
+//				negativeInputList.add(tseitinInputList.get(i));
+//			}
+//		}
+//		
+//		if(positiveInputList.size() > 0) {
+//			System.out.println("The universal quantifier is valid for the following inputs:");
+//			
+//			for(Input input : positiveInputList) {
+//				System.out.println(String.format("%s: %s, latch output: %s", input.getId(), input.getName(), tseitinTree.latchOutputs.contains(input)));
+//			}
+//			
+//			System.out.println("The universal quantifier is invalid for the following inputs:");
+//			
+//			for(Input input : negativeInputList) {
+//				System.out.println(String.format("%s: %s, latch output: %s", input.getId(), input.getName(), tseitinTree.latchOutputs.contains(input)));
+//			}
+//		} else {
+//			System.out.println("No valid input found which could be universally quantified!");
+//		}
+//	}
+	
+	private boolean writeToFile(String result) {
+		BufferedWriter writer = null;
+		
+		try {
+			writer = new BufferedWriter(new FileWriter(TEMP_QDIMACS_FILE));
+			writer.write(result);
+			
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(writer != null) {
+				try {
+					writer.close();
+				}
+				catch (IOException e) {
+					
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	private void unrollSanityCheckOriginalTreeSanity(Tree t) {
