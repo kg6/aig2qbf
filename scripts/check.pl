@@ -48,7 +48,7 @@ for my $k (@ks) {
 		$debqbf_sat = 0;
 	}
 	else {
-		print "debqf solve error on K=$k\n";
+		print "depqbf solve error on K=$k\n";
 		print "\n$debqbf_out\n";
 	
 		exit 2;
