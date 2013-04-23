@@ -41,9 +41,9 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
-		options.addOption(getCommandlineOption("nu", "no-unroll", "Do not unroll the tree.", false, null));
+		options.addOption(getCommandlineOption("nu", "no-unrolling", "Do not unroll the tree.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
-		options.addOption(getCommandlineOption("visualize", null, "Visualize the tree before the QBF format.", false, null));
+		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the tree before the QBF format.", false, null));
 
 		try {
 			CommandLine commandLine = argParser.parse(options, args);
@@ -106,7 +106,7 @@ public class aig2qbf {
 					t = reduction.reduceTree(t, k);
 				}
 
-				if (commandLine.hasOption("visualize")) {
+				if (commandLine.hasOption("vis")) {
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
