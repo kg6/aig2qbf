@@ -22,6 +22,7 @@ import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
+import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.test.TestUtil;
 
@@ -1080,6 +1081,7 @@ public class TestTree {
 			assertSame(k2a, k2i.outputs.get(0));
 			assertNotSame(k1i, k2i);
 
+			assertSame(k2.cFalse, k2a.inputs.get(1));
 			assertSame(k2a, k1f.outputs.get(1));
 		}
 
@@ -1092,7 +1094,7 @@ public class TestTree {
 			assertEquals(3, k3.outputs.size());
 
 			// k1
-
+			
 			Component k1o = k3.outputs.get(0);
 			assertTrue(k1o instanceof Output);
 			assertEquals(1, k1o.inputs.size());
@@ -1107,14 +1109,14 @@ public class TestTree {
 			Component k1i = k1a.inputs.get(0);
 			assertTrue(k1i instanceof Input);
 			assertEquals(0, k1i.inputs.size());
-			assertEquals(2, k1i.outputs.size());
+			assertEquals(1, k1i.outputs.size());
 			assertSame(k1a, k1i.outputs.get(0));
 
 			Component k1f = k1a.inputs.get(1);
 			assertTrue(k1f instanceof False);
 			assertSame(k3.cFalse, k1f);
 			assertEquals(0, k1f.inputs.size());
-			assertEquals(2, k1f.outputs.size());
+			assertEquals(3, k1f.outputs.size());
 			assertSame(k1a, k1f.outputs.get(0));
 
 			// k2
@@ -1137,11 +1139,93 @@ public class TestTree {
 			assertSame(k2a, k2i.outputs.get(0));
 			assertNotSame(k1i, k2i);
 
+			assertSame(k3.cFalse, k2a.inputs.get(1));
 			assertSame(k2a, k1f.outputs.get(1));
 
 			// k3
 
 			Component k3o = k3.outputs.get(2);
+			assertTrue(k3o instanceof Output);
+			assertEquals(1, k3o.inputs.size());
+			assertEquals(0, k3o.outputs.size());
+
+			Component k3a = k3o.inputs.get(0);
+			assertTrue(k2a instanceof And);
+			assertEquals(2, k3a.inputs.size());
+			assertEquals(1, k3a.outputs.size());
+			assertSame(k3o, k3a.outputs.get(0));
+
+			Component k3i = k3a.inputs.get(0);
+			assertTrue(k3i instanceof Input);
+			assertEquals(0, k3i.inputs.size());
+			assertEquals(1, k3i.outputs.size());
+			assertSame(k3a, k3i.outputs.get(0));
+			assertNotSame(k1i, k3i);
+
+			assertSame(k3.cFalse, k3a.inputs.get(1));
+			assertSame(k3a, k1f.outputs.get(2));
+		}
+		
+		Tree k4 = t.unroll(4);
+		this.unrollSanityCheckOriginalTreeSanity(t);
+
+		{
+			assertNotNull(k4);
+
+			assertEquals(4, k4.outputs.size());
+
+			// k1
+			
+			Component k1o = k4.outputs.get(0);
+			assertTrue(k1o instanceof Output);
+			assertEquals(1, k1o.inputs.size());
+			assertEquals(0, k1o.outputs.size());
+
+			Component k1a = k1o.inputs.get(0);
+			assertTrue(k1a instanceof And);
+			assertEquals(2, k1a.inputs.size());
+			assertEquals(1, k1a.outputs.size());
+			assertSame(k1o, k1a.outputs.get(0));
+
+			Component k1i = k1a.inputs.get(0);
+			assertTrue(k1i instanceof Input);
+			assertEquals(0, k1i.inputs.size());
+			assertEquals(2, k1i.outputs.size());
+			assertSame(k1a, k1i.outputs.get(0));
+
+			Component k1f = k1a.inputs.get(1);
+			assertTrue(k1f instanceof False);
+			assertSame(k4.cFalse, k1f);
+			assertEquals(0, k1f.inputs.size());
+			assertEquals(3, k1f.outputs.size());
+			assertSame(k1a, k1f.outputs.get(0));
+
+			// k2
+
+			Component k2o = k4.outputs.get(1);
+			assertTrue(k2o instanceof Output);
+			assertEquals(1, k2o.inputs.size());
+			assertEquals(0, k2o.outputs.size());
+
+			Component k2a = k2o.inputs.get(0);
+			assertTrue(k2a instanceof And);
+			assertEquals(2, k2a.inputs.size());
+			assertEquals(1, k2a.outputs.size());
+			assertSame(k2o, k2a.outputs.get(0));
+
+			Component k2i = k2a.inputs.get(0);
+			assertTrue(k2i instanceof Input);
+			assertEquals(0, k2i.inputs.size());
+			assertEquals(1, k2i.outputs.size());
+			assertSame(k2a, k2i.outputs.get(0));
+			assertNotSame(k1i, k2i);
+
+			assertSame(k4.cFalse, k2a.inputs.get(1));
+			assertSame(k2a, k1f.outputs.get(1));
+
+			// k3
+
+			Component k3o = k4.outputs.get(2);
 			assertTrue(k3o instanceof Output);
 			assertEquals(1, k3o.inputs.size());
 			assertEquals(0, k3o.outputs.size());
@@ -1159,7 +1243,30 @@ public class TestTree {
 			assertSame(k3a, k3i.outputs.get(0));
 			assertNotSame(k1i, k3i);
 
-			assertSame(k3a, k1i.outputs.get(1));
+			assertSame(k4.cFalse, k3a.inputs.get(1));
+			assertSame(k3a, k1f.outputs.get(2));
+
+			// k4
+
+			Component k4o = k4.outputs.get(3);
+			assertTrue(k4o instanceof Output);
+			assertEquals(1, k4o.inputs.size());
+			assertEquals(0, k4o.outputs.size());
+
+			Component k4a = k4o.inputs.get(0);
+			assertTrue(k4a instanceof And);
+			assertEquals(2, k4a.inputs.size());
+			assertEquals(1, k4a.outputs.size());
+			assertSame(k4o, k4a.outputs.get(0));
+
+			Component k4i = k4a.inputs.get(0);
+			assertTrue(k4i instanceof Input);
+			assertEquals(0, k4i.inputs.size());
+			assertEquals(1, k4i.outputs.size());
+			assertSame(k4a, k4i.outputs.get(0));
+			assertNotSame(k1i, k4i);
+
+			assertSame(k1i, k4a.inputs.get(1));
 		}
 	}
 
@@ -1347,5 +1454,93 @@ public class TestTree {
 		assertSame(l2, l1.outputs.get(0));
 
 		assertSame(l1, i.outputs.get(1));
+	}
+	
+	@Test
+	public void regression3LatchPath() {
+		Tree t = new AAG().parse("input/basic/regression3.aag");
+		
+		Tree k1 = ((Tree) t.clone()).unroll(1);
+		
+		{
+			assertEquals(1, k1.outputs.size());
+	
+			Component o = k1.outputs.get(0);
+			assertTrue(o instanceof Output);
+			assertEquals(1, o.inputs.size());
+			assertEquals(0, o.outputs.size());
+			
+			Component f = o.inputs.get(0);
+			assertTrue(f instanceof False);
+			assertSame(k1.cFalse, f);
+			assertEquals(0, f.inputs.size());
+			assertEquals(1, f.outputs.size());
+			assertSame(o, f.outputs.get(0));
+		}
+		
+		Tree k2 = ((Tree) t.clone()).unroll(2);
+		
+		{
+			assertEquals(2, k2.outputs.size());
+	
+			Component o1 = k2.outputs.get(0);
+			assertTrue(o1 instanceof Output);
+			assertEquals(1, o1.inputs.size());
+			assertEquals(0, o1.outputs.size());
+			
+			Component f1 = o1.inputs.get(0);
+			assertTrue(f1 instanceof False);
+			assertSame(k2.cFalse, f1);
+			assertEquals(0, f1.inputs.size());
+			assertEquals(2, f1.outputs.size());
+			assertSame(o1, f1.outputs.get(0));
+			
+			Component o2 = k2.outputs.get(1);
+			assertTrue(o2 instanceof Output);
+			assertEquals(1, o2.inputs.size());
+			assertEquals(0, o2.outputs.size());
+			
+			Component f2 = o2.inputs.get(0);
+			assertSame(f2, f1);
+			assertSame(o2, f1.outputs.get(1));
+		}
+		
+		Tree k3 = ((Tree) t.clone()).unroll(3);
+		
+		{
+			assertEquals(3, k3.outputs.size());
+	
+			Component o1 = k3.outputs.get(0);
+			assertTrue(o1 instanceof Output);
+			assertEquals(1, o1.inputs.size());
+			assertEquals(0, o1.outputs.size());
+			
+			Component f1 = o1.inputs.get(0);
+			assertTrue(f1 instanceof False);
+			assertSame(k3.cFalse, f1);
+			assertEquals(0, f1.inputs.size());
+			assertEquals(2, f1.outputs.size());
+			assertSame(o1, f1.outputs.get(0));
+			
+			Component o2 = k3.outputs.get(1);
+			assertTrue(o2 instanceof Output);
+			assertEquals(1, o2.inputs.size());
+			assertEquals(0, o2.outputs.size());
+			
+			Component f2 = o2.inputs.get(0);
+			assertSame(f2, f1);
+			assertSame(o2, f1.outputs.get(1));
+			
+			Component o3 = k3.outputs.get(2);
+			assertTrue(o3 instanceof Output);
+			assertEquals(1, o3.inputs.size());
+			assertEquals(0, o3.outputs.size());
+			
+			Component i = o3.inputs.get(0);
+			assertTrue(i instanceof Input);
+			assertEquals(0, i.inputs.size());
+			assertEquals(1, i.outputs.size());
+			assertSame(o3, i.outputs.get(0));
+		}
 	}
 }

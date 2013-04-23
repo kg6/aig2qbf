@@ -640,7 +640,6 @@ public class Tree implements Cloneable {
 							;
 
 						o.addInput(in);
-
 						appendLatchOutput(tree, in, -1);
 					}
 
@@ -706,13 +705,7 @@ public class Tree implements Cloneable {
 				while (o.inputs.remove(l))
 					;
 
-				if (o.getId() > lastT1ComponentID && ! (in instanceof Latch)) {
-					o.addInput(in);
-				}
-				else {
-					o.addInput(tree.cFalse);
-				}
-
+				o.addInput(tree.cFalse);
 				appendLatchOutput(tree, tree.cFalse, 0);
 			}
 

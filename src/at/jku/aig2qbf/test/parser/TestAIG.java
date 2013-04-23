@@ -373,7 +373,7 @@ public class TestAIG {
 
 	@Test
 	public void loadRegressions() {
-		for (int i = 1; i <= 2; i++) {
+		for (int i = 1; i <= 3; i++) {
 			this.loadFile("input/basic/regression" + i);
 		}
 	}
