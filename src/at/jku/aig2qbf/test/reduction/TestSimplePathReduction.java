@@ -160,18 +160,19 @@ public class TestSimplePathReduction {
 
 			SimplePathReduction reduction = new SimplePathReduction();
 
-			for (int k = 1; k <= max_k; k++) {
+			for (int k = 2; k <= max_k; k++) {
 				final long startTime = System.currentTimeMillis();
 				
-				tree = tree.unroll(k);
-				tree.mergeToOneOutput();
-
-				Tree reducedTree = reduction.reduceTree(tree, k);
-
+				Tree unrolledTree = tree.unroll(k);
+				
+				unrolledTree.mergeToOneOutput();
+				
+				Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+				
 				final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
-
+				
 				if (k <= 2) {
 					assertEquals(true, sat);
 				}
@@ -215,10 +216,10 @@ public class TestSimplePathReduction {
 		for (int k = 1; k <= max_check; k++) {
 			final long startTime = System.currentTimeMillis();
 			
-			tree = tree.unroll(k);
-			tree.mergeToOneOutput();
+			Tree unrolledTree = tree.unroll(k);
+			unrolledTree.mergeToOneOutput();
 
-			Tree reducedTree = reduction.reduceTree(tree, k);
+			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
 
 			final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
 
