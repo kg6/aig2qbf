@@ -20,7 +20,9 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
+import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
 public class TestTree {
 	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
@@ -1571,5 +1573,29 @@ public class TestTree {
 			assertEquals(1, i.outputs.size());
 			assertSame(o3, i.outputs.get(0));
 		}
+	}
+	
+	@Test
+	public void regression4() {
+		final int k = 3;
+		
+		SimplePathReduction reduction = new SimplePathReduction();
+		
+		Tree tree = new AIG().parse("input/basic/regression4.aig");
+		
+		TreeVisualizer.DisplayTree(tree, "parsed");
+		
+		Tree unrolledTree = tree.unroll(k);
+		
+		TreeVisualizer.DisplayTree(unrolledTree, "unrolled");
+		
+		Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+		reducedTree.mergeToOneOutput();
+		
+		TreeVisualizer.DisplayTree(reducedTree, "reduced");
+
+		final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
+		
+		System.out.println(sat);
 	}
 }
