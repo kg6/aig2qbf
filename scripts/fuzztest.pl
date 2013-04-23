@@ -4,10 +4,31 @@ use Modern::Perl;
 
 use File::Basename;
 use File::Slurp;
+use Getopt::Compact;
 use String::Util qw/trim/;
 use Time::HiRes qw/time/;
 
 my $script_path = dirname(__FILE__);
+
+my $options = Getopt::Compact->new(
+	name => 'fuzz test for aig2qbf',
+	struct => [
+		[ 'k', 'Max unnrolling steps k', ':i' ],
+		[ 'verbose', 'Verbose output' ],
+	]
+);
+
+my $opts = $options->opts();
+
+if (not $options->status()) {
+	say $options->usage();
+
+	exit 1;
+}
+
+$opts->{k} ||= 10;
+
+my $max_k = $opts->{k};
 
 if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
@@ -15,23 +36,36 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 2;
 }
 
-my $max_k = (@ARGV) ? int($ARGV[0]) : 10;
+my $checker_options = '';
+
+if ($opts->{verbose}) {
+	$checker_options .= ' --verbose';
+}
 
 while (1) {
-	print 'k =';
+	if (not $opts->{verbose}) {
+		print 'k =';
+	}
 	
 	my $base_file = "$script_path/../output/fuzz-tt";
 	print `$script_path/../tools/aigfuzz -s -c > $base_file.aig`;
 
 	for my $k(1..$max_k) {
-		print " $k";
+		if (not $opts->{verbose}) {
+			print " $k";
+		}
 
-		my $time_start = time;
-		my $check_out = `$script_path/../scripts/check.pl $k $base_file.aig`;
-		my $time_end = time;
+		time_start();
+		my $check_out = `$script_path/../scripts/check.pl --k $k --input $base_file.aig$checker_options`;
+		time_end();
 
 		if ($? == 0) {
-			printf('(%d ms)', ($time_end - $time_start) * 1000.0);
+			if ($opts->{verbose}) {
+				print "$check_out";
+			}
+			else {
+				print_elapsed_time();
+			}
 		}
 		else {
 			print "\nCHECK NOT OK\n";
@@ -48,5 +82,16 @@ while (1) {
 		}
 	}
 
-	print "\n";
+	if (not $opts->{verbose}) {
+		print "\n";
+	}
+}
+
+exit 0;
+
+my ($time_start, $time_end);
+sub time_start { $time_start = time; }
+sub time_end { $time_end = time; }
+sub print_elapsed_time {
+	printf("(%d ms)", ($time_end - $time_start) * 1000.0);
 }

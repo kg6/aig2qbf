@@ -4,9 +4,31 @@ use Modern::Perl;
 
 use File::Basename;
 use File::Slurp;
+use Getopt::Compact;
 use String::Util qw/trim/;
+use Time::HiRes qw/time/;
 
 my $script_path = dirname(__FILE__);
+
+my $options = Getopt::Compact->new(
+	name => 'checker if the output of aig2qbf is ok',
+	struct => [
+		[ 'input', 'Input aig file to check', '=s' ],
+		[ 'k', 'Unrolling step k', ':i' ],
+		[ 'verbose', 'Verbose output' ],
+	]
+);
+
+my $opts = $options->opts();
+
+if (not $options->status()) {
+	say $options->usage();
+
+	exit 1;
+}
+
+my $file = $opts->{input};
+my @ks = ($opts->{k}) ? ($opts->{k}) : (1..10);
 
 if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
@@ -14,20 +36,15 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 5;
 }
 
-my $file;
-my @ks;
-
-if (@ARGV == 1) {
-	$file = $ARGV[0];
-	@ks = (1..10);
-}
-else {
-	$file = $ARGV[1];
-	@ks = ($ARGV[0]);
-}
-
 for my $k (@ks) {
+	if ($opts->{verbose}) {
+		print "\nCheck k=$k\n";
+	}
+
+	time_start();
 	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input $file 2>&1`;
+	time_end();
+	print_elapsed_time('aig2qbf');
 
 	if ($out =~ m/Exception in thread/) {
 		print "aig2qbf load error on K=$k\n";
@@ -38,9 +55,13 @@ for my $k (@ks) {
 	
 	write_file("$file-$k.qbf", $out);
 
+	time_start();
 	my $debqbf_out = trim(`$script_path/../tools/depqbf $file-$k.qbf 2>&1`);
-	my $debqbf_sat;
+	time_end();
+	print_elapsed_time('debqbf');
 	
+	my $debqbf_sat;
+
 	if ($debqbf_out eq 'SAT') {
 		$debqbf_sat = 1;
 	}
@@ -56,7 +77,11 @@ for my $k (@ks) {
 	
 	print `$script_path/../tools/aigor $file $file-or.aig`;
 
+	time_start();
 	my $mcaiger_out = trim(`$script_path/../tools/mcaiger -r $k $file-or.aig 2>&1`);
+	time_end();
+	print_elapsed_time('mcaiger');
+
 	my $mcaiger_sat;
 
 	if ($mcaiger_out eq '1') {
@@ -84,3 +109,16 @@ for my $k (@ks) {
 print "Check OK\n";
 
 exit 0;
+
+my ($time_start, $time_end);
+sub time_start { $time_start = time; }
+sub time_end { $time_end = time; }
+sub print_elapsed_time {
+	my ($text) = @_;
+
+	$text ||= '';
+
+	if ($opts->{verbose}) {
+		printf("%s (%d ms)\n", $text, ($time_end - $time_start) * 1000.0);
+	}
+}
