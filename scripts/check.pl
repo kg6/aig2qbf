@@ -58,6 +58,7 @@ my %ignore_files = (
 );
 
 my $file_md5_sum = trim(`md5sum $file 2>&1`);
+$file_md5_sum =~ s/^(.+?)\s.+$/$1/sg;
 
 while (my ($sum, $msg) = each %ignore_files) {
 	if ($file_md5_sum eq $sum) {
