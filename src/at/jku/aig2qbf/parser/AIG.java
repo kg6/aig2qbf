@@ -109,8 +109,13 @@ public class AIG extends Parser {
 
 	private int[][] parseBinary(final List<byte[]> lines, final int numberOfInputs, final int numberOfLatches, final int numberOfOutputs, final int numberOfAndGates, final int multipliedMaximumVariableIndex) {
 		int[][] fileAnds = new int[numberOfAndGates][];
+		
+		if(numberOfAndGates == 0) {
+			return fileAnds;
+		}
 
 		int lineIndex = numberOfLatches + numberOfOutputs + AIG_HEADER_INDEX + 1;
+		
 		if (lineIndex >= lines.size()) {
 			return fileAnds;
 		}
@@ -137,6 +142,7 @@ public class AIG extends Parser {
 
 		int andCounter = 0;
 		int delta0, delta1, lhs, rhs0, rhs1;
+		
 		for (int i = 0; i < decodedLine.size() - 1; i += 2) {
 			delta0 = decodedLine.get(i);
 			delta1 = decodedLine.get(i + 1);

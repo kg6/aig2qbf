@@ -111,6 +111,10 @@ public class AAG extends Parser {
 
 	private int[][] parseAnds(final String[] lines, final int numberOfInputs, final int numberOfLatches, final int numberOfOutputs, final int numberOfAndGates, final int multipliedMaximumVariableIndex) {
 		int[][] fileAnds = new int[numberOfAndGates][];
+		
+		if(numberOfAndGates == 0) {
+			return fileAnds;
+		}
 
 		int lineIndex = numberOfInputs + numberOfLatches + numberOfOutputs + AIG_HEADER_INDEX + 1;
 
