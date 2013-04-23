@@ -13,9 +13,7 @@ public class SimplePathReduction implements TreeReduction {
 
 	@Override
 	public Tree reduceTree(Tree tree, int k) {
-		Tree unrolledTree = tree.unroll(k);
-
-		unrolledTree.mergeToOneOutput(new Or());
+		Tree unrolledTree = (Tree) tree.clone();
 
 		if (k > 1) {
 			Component simplePathAnd = getSimpleStateConstraints(unrolledTree, k);
