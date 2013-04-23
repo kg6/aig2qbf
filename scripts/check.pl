@@ -75,6 +75,10 @@ for my $k (@ks) {
 		exit 2;
 	}
 	
+	if ($opts->{verbose}) {
+		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
+	}
+	
 	print `$script_path/../tools/aigor $file $file-or.aig`;
 
 	time_start();
@@ -96,6 +100,10 @@ for my $k (@ks) {
 	
 		exit 3;
 	}
+	
+	if ($opts->{verbose}) {
+		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
+	}
 
 	if ($debqbf_sat != $mcaiger_sat) {
 		print "debqbf and mcaiger are divided over the satisfiability, error on K=$k\n";
@@ -103,6 +111,10 @@ for my $k (@ks) {
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 
 		exit 4;
+	}
+	
+	if ($opts->{verbose}) {
+		print "AGREED\n";
 	}
 }
 
