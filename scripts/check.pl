@@ -48,6 +48,13 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 5;
 }
 
+# ignore empty AIG files
+if (trim(`md5sum $file 2>&1`) eq 'd392065d0606079baa34d135fd01953e') {
+	print "We ignore empty aiger files.\n";
+
+	exit 6;
+}
+
 for my $k (@ks) {
 	if ($opts->{verbose}) {
 		print "Check k=$k\n";
