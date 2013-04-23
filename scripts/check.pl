@@ -15,6 +15,7 @@ my $options = Getopt::Compact->new(
 	struct => [
 		[ 'input', 'Input aig file to check', '=s' ],
 		[ 'k', 'Unrolling step k', ':i' ],
+		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
 	]
 );
@@ -36,7 +37,7 @@ sub options_validate {
 if (not $options->status() or not options_validate()) {
 	say $options->usage();
 
-	exit 1;
+	exit 7;
 }
 
 my $file = $opts->{input};
@@ -70,6 +71,9 @@ while (my ($sum, $msg) = each %ignore_files) {
 
 my $aig2qbf_options = '';
 
+if ($opts->{'no-sanity'}) {
+	$aig2qbf_options .= ' --no-sanity';
+}
 if ($opts->{verbose}) {
 	$aig2qbf_options .= ' --verbose';
 }
