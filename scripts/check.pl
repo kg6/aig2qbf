@@ -48,6 +48,10 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 5;
 }
 
+if ($opts->{verbose}) {
+	$|++;
+}
+
 my %ignore_files = (
 	'd392065d0606079baa34d135fd01953e' => 'empty aig',
 	'4ffb2c687db357e81e8646cd7ed3c6c4' => 'positive latch',

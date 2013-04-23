@@ -45,6 +45,10 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 2;
 }
 
+if ($opts->{verbose}) {
+	$|++;
+}
+
 my $checker_options = '';
 
 if ($opts->{verbose}) {
