@@ -218,14 +218,14 @@ public class TestSimplePathReduction {
 			
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
-
+			
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
 
 			final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 
-			if (k != max_k + 1) {
+			if (k < max_k + 1) {
 				assertFalse(sat);
 			}
 			else {
