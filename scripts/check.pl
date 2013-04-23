@@ -48,11 +48,19 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 	exit 5;
 }
 
-# ignore empty AIG files
-if (trim(`md5sum $file 2>&1`) eq 'd392065d0606079baa34d135fd01953e') {
-	print "We ignore empty aiger files.\n";
+my %ignore_files = (
+	'd392065d0606079baa34d135fd01953e' => 'empty aig',
+	'4ffb2c687db357e81e8646cd7ed3c6c4' => 'positive latch',
+);
 
-	exit 6;
+my $file_md5_sum = trim(`md5sum $file 2>&1`);
+
+while (my ($sum, $msg) = each %ignore_files) {
+	if ($file_md5_sum eq $sum) {
+		print "IGNORE FILE $msg\n";
+
+		exit 6;
+	}
 }
 
 for my $k (@ks) {
