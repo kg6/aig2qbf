@@ -57,6 +57,7 @@ public class aig2qbf {
 			String output = null;
 			Extension outputExtension = Extension.QDIMACS;
 
+			Configuration.FAST = true;
 			Configuration.SANTIY = ! commandLine.hasOption("ns");
 			Configuration.VERBOSE = commandLine.hasOption('v');
 			

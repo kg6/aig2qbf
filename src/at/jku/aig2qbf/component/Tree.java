@@ -179,11 +179,11 @@ public class Tree implements Cloneable {
 			verify(this.cFalse.inputs.size() == 0, this.cFalse);
 			verify(nTree.cFalse.inputs.size() == 0, nTree.cFalse);
 			verify(this.cFalse.outputs.size() == nTree.cFalse.outputs.size(), nTree.cFalse);
-	
+
 			verify(this.cTrue.inputs.size() == 0, this.cTrue);
 			verify(nTree.cTrue.inputs.size() == 0, nTree.cTrue);
 			verify(this.cTrue.outputs.size() == nTree.cTrue.outputs.size(), nTree.cTrue);
-			
+
 			nTree.verifyTreeStructure();
 		}
 
@@ -325,7 +325,7 @@ public class Tree implements Cloneable {
 	}
 
 	public Tree toTseitinCNF() {
-		Tree tree = (Tree) this.clone();
+		Tree tree = Configuration.FAST ? this : (Tree) this.clone();
 
 		if (tree.outputs.size() == 0) {
 			return tree;
@@ -591,10 +591,10 @@ public class Tree implements Cloneable {
 		if (k < 1) {
 			throw new RuntimeException("k must be a positive number");
 		}
-
-		// clone tree for first T and check basic conditions
+		
 		Tree tree = (Tree) this.clone();
 
+		// check basic conditions
 		if (tree.outputs.size() == 0 || tree.outputs.get(0).inputs.size() == 0) {
 			return tree;
 		}

@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
+import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
@@ -19,7 +20,7 @@ public class QDIMACS extends Formatter {
 	
 	@Override
 	public String format(Tree tree) {
-		tree = (Tree) tree.clone();
+		tree = Configuration.FAST ? tree : (Tree) tree.clone();
 
 		// replace true and false components with logic that is equal to true and false
 		// this is necessary because QDIMACS does not have a symbol for true/false
