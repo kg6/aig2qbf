@@ -109,6 +109,9 @@ while (1) {
 	if (not $opts->{verbose}) {
 		print "\n";
 	}
+	else {
+		print "-\n";
+	}
 }
 
 exit 0;

@@ -81,10 +81,10 @@ for my $k (@ks) {
 	
 	my $debqbf_sat;
 
-	if ($debqbf_out eq 'SAT') {
+	if ($debqbf_out and $debqbf_out eq 'SAT') {
 		$debqbf_sat = 1;
 	}
-	elsif ($debqbf_out eq 'UNSAT') {
+	elsif ($debqbf_out and $debqbf_out eq 'UNSAT') {
 		$debqbf_sat = 0;
 	}
 	else {
