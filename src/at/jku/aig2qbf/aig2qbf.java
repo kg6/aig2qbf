@@ -40,7 +40,8 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
-		options.addOption(getCommandlineOption("noreduction", null, "Do not reduce the tree.", false, null));
+		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
+		options.addOption(getCommandlineOption("nu", "no-unroll", "Do not unroll the tree.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
 		options.addOption(getCommandlineOption("visualize", null, "Visualize the tree before the QBF format.", false, null));
 
@@ -92,13 +93,15 @@ public class aig2qbf {
 				}
 
 				Tree t = p.parse(input);
-
+				
 				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
 
-				t = t.unroll(k);
-				t.mergeToOneOutput();
+				if (! commandLine.hasOption("nu")) {
+					t = t.unroll(k);
+					t.mergeToOneOutput();
+				}
 
-				if (! commandLine.hasOption("noreduction")) {
+				if (! commandLine.hasOption("nr")) {
 					SimplePathReduction reduction = new SimplePathReduction();
 					t = reduction.reduceTree(t, k);
 				}
