@@ -21,7 +21,19 @@ my $options = Getopt::Compact->new(
 
 my $opts = $options->opts();
 
-if (not $options->status()) {
+sub options_validate {
+	if (not $opts->{input}) {
+		return;
+	}
+
+	if ($opts->{k} and $opts =~ m/^\d+$/) {
+		return;
+	}
+
+	return 1;
+}
+
+if (not $options->status() or not options_validate()) {
 	say $options->usage();
 
 	exit 1;

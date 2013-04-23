@@ -14,13 +14,22 @@ my $options = Getopt::Compact->new(
 	name => 'fuzz test for aig2qbf',
 	struct => [
 		[ 'k', 'Max unnrolling steps k', ':i' ],
+		[ 'l', 'Generate large circuits' ],
 		[ 'verbose', 'Verbose output' ],
 	]
 );
 
 my $opts = $options->opts();
 
-if (not $options->status()) {
+sub options_validate {
+	if ($opts->{k} and $opts =~ m/^\d+$/) {
+		return;
+	}
+
+	return 1;
+}
+
+if (not $options->status() or not options_validate()) {
 	say $options->usage();
 
 	exit 1;
@@ -42,13 +51,22 @@ if ($opts->{verbose}) {
 	$checker_options .= ' --verbose';
 }
 
+my $fuzzer_options = '';
+
+if ($opts->{l}) {
+	$fuzzer_options .= ' -l';
+}
+else {
+	$fuzzer_options .= ' -s';
+}
+
 while (1) {
 	if (not $opts->{verbose}) {
 		print 'k =';
 	}
 	
 	my $base_file = "$script_path/../output/fuzz-tt";
-	print `$script_path/../tools/aigfuzz -s -c > $base_file.aig`;
+	print `$script_path/../tools/aigfuzz $fuzzer_options > $base_file.aig`;
 
 	for my $k(1..$max_k) {
 		if (not $opts->{verbose}) {
