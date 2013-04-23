@@ -19,7 +19,7 @@ public abstract class Formatter {
 
 		File parentDirectory = outputFile.getParentFile();
 
-		if (parentDirectory == null || ! parentDirectory.exists()) {
+		if (parentDirectory != null && ! parentDirectory.exists()) {
 			parentDirectory.mkdirs();
 		}
 
