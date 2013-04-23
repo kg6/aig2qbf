@@ -40,9 +40,11 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
+		options.addOption(getCommandlineOption("it", "input-type", "The input type", true, "TYPE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
 		options.addOption(getCommandlineOption("nu", "no-unrolling", "Do not unroll the tree.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
+		options.addOption(getCommandlineOption("ot", "output-type", "The output type", true, "TYPE"));
 		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the tree before the QBF format.", false, null));
 
 		try {
@@ -55,7 +57,7 @@ public class aig2qbf {
 
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
-				inputExtension = Parser.getExtension(input);
+				inputExtension = Parser.getExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
 
 				if (inputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", inputExtension));
@@ -63,10 +65,15 @@ public class aig2qbf {
 			}
 			if (commandLine.hasOption('o')) {
 				output = commandLine.getOptionValue('o');
-				outputExtension = Parser.getExtension(output);
+				outputExtension = Parser.getExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
 
 				if (outputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", output));
+				}
+			}
+			else {
+				if (commandLine.hasOption("ot")) {
+					outputExtension = Parser.getExtension("." + commandLine.getOptionValue("ot"));
 				}
 			}
 			if (commandLine.hasOption('k')) {
@@ -120,7 +127,7 @@ public class aig2qbf {
 							f = new at.jku.aig2qbf.formatter.QDIMACS();
 						break;
 						default:
-							throw new RuntimeException(String.format("Formatter for output file \"%s\" not implemented", output));
+							throw new RuntimeException(String.format("Formatter for output type \"%s\" not implemented", outputExtension));
 					}
 
 					if (output != null) {
