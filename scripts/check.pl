@@ -68,13 +68,19 @@ while (my ($sum, $msg) = each %ignore_files) {
 	}
 }
 
+my $aig2qbf_options = '';
+
+if ($opts->{verbose}) {
+	$aig2qbf_options .= ' --verbose';
+}
+
 for my $k (@ks) {
 	if ($opts->{verbose}) {
 		print "Check k=$k\n";
 	}
 
 	time_start();
-	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input "$file" 2>&1`;
+	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input "$file" $aig2qbf_options 2>&1`;
 	time_end();
 	print_elapsed_time('aig2qbf');
 

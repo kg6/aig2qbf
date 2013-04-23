@@ -37,15 +37,16 @@ public class aig2qbf {
 
 		Options options = new Options();
 
-		options.addOption(getCommandlineOption("d", "debug", "Enable debug mode.", false, null));
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
 		options.addOption(getCommandlineOption("it", "input-type", "The input type", true, "TYPE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
+		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not do any sanity checks.", false, null));
 		options.addOption(getCommandlineOption("nu", "no-unrolling", "Do not unroll the tree.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
 		options.addOption(getCommandlineOption("ot", "output-type", "The output type", true, "TYPE"));
+		options.addOption(getCommandlineOption("v", "verbose", "Enable verbose output.", false, null));
 		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the tree before the QBF format.", false, null));
 
 		try {
@@ -56,12 +57,9 @@ public class aig2qbf {
 			String output = null;
 			Extension outputExtension = Extension.QDIMACS;
 
-			if (commandLine.hasOption('d')) {
-				Configuration.DEBUG = true;
-			}
-			else {
-				Configuration.DEBUG = false;
-			}
+			Configuration.SANTIY = ! commandLine.hasOption("ns");
+			Configuration.VERBOSE = commandLine.hasOption('v');
+			
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
 				inputExtension = Parser.getExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
