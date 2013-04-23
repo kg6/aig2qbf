@@ -80,11 +80,11 @@ while (1) {
 	print `"$script_path/../tools/aigfuzz" $fuzzer_options > "$base_file.aig"`;
 
 	for my $k(1..$max_k) {
-		if (not $opts->{verbose}) {
-			print " $k";
+		if ($opts->{verbose}) {
+			print "-\n";
 		}
 		else {
-			print "-\n";
+			print " $k";
 		}
 
 		time_start();
@@ -100,6 +100,10 @@ while (1) {
 			}
 		}
 		else {
+			if (not $opts->{verbose}) {
+				print "\n";
+			}
+		
 			print "CHECK NOT OK\n";
 
 			if ($check_out =~ m/error on K=(\d+)/) {
