@@ -107,6 +107,8 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		g.fillRect(0, 0, this.width, this.height);
 		g.setColor(NORMAL_COLOR);
 
+		this.usedPointCoordinatesHash.clear();
+		
 		rekDrawNodeChildren(TREE.outputs, (Graphics2D) g, 0, -1, -1);
 
 		Dimension dimension = this.getSize();
