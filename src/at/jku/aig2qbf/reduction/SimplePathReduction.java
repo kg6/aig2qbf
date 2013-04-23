@@ -71,7 +71,7 @@ public class SimplePathReduction implements TreeReduction {
 
 	private Component getNotEqStates(Tree tree, List<Component> latchOutputList1, List<Component> latchOutputList2) {
 		if (latchOutputList1.size() != latchOutputList2.size()) {
-			throw new RuntimeException("Unable to generate simple path constraint: A different number of output latches has been found.");
+			throw new RuntimeException("Unable to generate simple path constraint: A different number of output latches was found.");
 		}
 
 		Or or = new Or();

@@ -53,6 +53,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 	private Hashtable<Component, Boolean> traversingHash;
 	private Hashtable<Component, Point> drawingHash;
 	private Hashtable<Integer, Integer> lineElementHash;
+	private Hashtable<Point, Boolean> usedPointCoordinatesHash;
 
 	private BufferedImage backgroundImage;
 
@@ -67,6 +68,11 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		BACKGROUND_COLOR = Color.WHITE;
 		NORMAL_COLOR = Color.BLACK;
 		CIRCLE_COLOR = Color.RED;
+		
+		this.traversingHash = new Hashtable<>();
+		this.drawingHash = new Hashtable<>();
+		this.lineElementHash = new Hashtable<>();
+		this.usedPointCoordinatesHash = new Hashtable<>();
 
 		this.backgroundImage = null;
 	}
@@ -94,8 +100,8 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 
 		Graphics g = this.backgroundImage.getGraphics();
 
-		this.lineElementHash = new Hashtable<Integer, Integer>();
-		this.drawingHash = new Hashtable<Component, Point>();
+		this.lineElementHash.clear();
+		this.drawingHash.clear();
 
 		g.setColor(BACKGROUND_COLOR);
 		g.fillRect(0, 0, this.width, this.height);
@@ -171,7 +177,9 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 
 			if (this.drawingHash.containsKey(component)) {
 				Point p = this.drawingHash.get(component);
+				
 				drawConnection(g, parentXPos, parentYPos, p.x, p.y, true);
+				
 				continue;
 			}
 
@@ -199,6 +207,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		}
 
 		String name = component.getName();
+		
 		if (name == null) {
 			if (component instanceof And) {
 				name = "AND";
@@ -241,34 +250,37 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		List<Coordinate> coordinates = new ArrayList<Coordinate>();
 
 		if (circleClosing) {
+			final int backwardPathConnectionYPos0 = currentYPos + this.nodeHeight / 2;
+			final int backwardPathConnectionYPos1 = getNextAvailableYCoordinate(currentXPos, parentYPos + this.nodeHeight / 2);
+			
 			if (parentXPos < currentXPos) {
 				coordinates.add(new Coordinate(parentXPos + this.nodeWidth, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(parentXPos + this.nodeWidth + NODE_OFFSET, parentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos + this.nodeWidth + NODE_OFFSET, backwardPathConnectionYPos1));
 
-				coordinates.add(new Coordinate(parentXPos + this.nodeWidth + NODE_OFFSET, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(currentXPos - NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos + this.nodeWidth + NODE_OFFSET, backwardPathConnectionYPos1));
+				coordinates.add(new Coordinate(currentXPos - NODE_OFFSET, backwardPathConnectionYPos0));
 
-				coordinates.add(new Coordinate(currentXPos - NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(currentXPos - NODE_OFFSET, backwardPathConnectionYPos0));
 				coordinates.add(new Coordinate(currentXPos, currentYPos + this.nodeHeight / 2));
 			}
 			else if (parentXPos > currentXPos) {
 				coordinates.add(new Coordinate(parentXPos, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, parentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos1));
 
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(currentXPos + this.nodeWidth + NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos1));
+				coordinates.add(new Coordinate(currentXPos + this.nodeWidth + NODE_OFFSET, backwardPathConnectionYPos0));
 
-				coordinates.add(new Coordinate(currentXPos + this.nodeWidth + NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(currentXPos + this.nodeWidth + NODE_OFFSET, backwardPathConnectionYPos0));
 				coordinates.add(new Coordinate(currentXPos + this.nodeWidth, currentYPos + this.nodeHeight / 2));
 			}
 			else {
 				coordinates.add(new Coordinate(parentXPos, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, parentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos1));
 
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, parentYPos + this.nodeHeight / 2));
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos1));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos0));
 
-				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, currentYPos + this.nodeHeight / 2));
+				coordinates.add(new Coordinate(parentXPos - NODE_OFFSET, backwardPathConnectionYPos0));
 				coordinates.add(new Coordinate(parentXPos, currentYPos + this.nodeHeight / 2));
 			}
 		}
@@ -284,6 +296,18 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		}
 
 		drawArrow(g, coordinates, circleClosing);
+	}
+	
+	private int getNextAvailableYCoordinate(int xPos, int yPos) {
+		Point point = new Point(xPos, yPos);
+		
+		while(this.usedPointCoordinatesHash.containsKey(point)) {
+			point.y += 10;
+		}
+		
+		this.usedPointCoordinatesHash.put(point, true);
+		
+		return point.y;
 	}
 
 	private void drawArrow(Graphics g1, List<Coordinate> coordinates, boolean circleClosing) {
@@ -360,7 +384,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 	}
 
 	private int getGraphHeight() {
-		this.traversingHash = new Hashtable<Component, Boolean>();
+		this.traversingHash.clear();
 
 		return rekGetGraphHeight(TREE.outputs, 0, Integer.MIN_VALUE);
 	}
@@ -389,7 +413,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 	}
 
 	private List<Component> getNodesOfLevel(int expectedLevel) {
-		this.traversingHash = new Hashtable<Component, Boolean>();
+		this.traversingHash.clear();
 
 		List<Component> nodeList = new ArrayList<Component>();
 		rekGetNodesOfLevel(0, expectedLevel, TREE.outputs, nodeList);
