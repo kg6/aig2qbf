@@ -57,7 +57,7 @@ my %ignore_files = (
 	'4ffb2c687db357e81e8646cd7ed3c6c4' => 'positive latch',
 );
 
-my $file_md5_sum = trim(`md5sum $file 2>&1`);
+my $file_md5_sum = trim(`md5sum "$file" 2>&1`);
 $file_md5_sum =~ s/^(.+?)\s.+$/$1/sg;
 
 while (my ($sum, $msg) = each %ignore_files) {
@@ -74,7 +74,7 @@ for my $k (@ks) {
 	}
 
 	time_start();
-	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input $file 2>&1`;
+	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input "$file" 2>&1`;
 	time_end();
 	print_elapsed_time('aig2qbf');
 
@@ -88,7 +88,7 @@ for my $k (@ks) {
 	write_file("$file-$k.qbf", $out);
 
 	time_start();
-	my $debqbf_out = trim(`$script_path/../tools/depqbf $file-$k.qbf 2>&1`);
+	my $debqbf_out = trim(`"$script_path/../tools/depqbf" "$file-$k.qbf" 2>&1`);
 	time_end();
 	print_elapsed_time('debqbf');
 	
@@ -111,10 +111,10 @@ for my $k (@ks) {
 		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 	
-	print `$script_path/../tools/aigor $file $file-or.aig`;
+	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`;
 
 	time_start();
-	my $mcaiger_out = trim(`$script_path/../tools/mcaiger -r $k $file-or.aig 2>&1`);
+	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" -r $k "$file-or.aig" 2>&1`);
 	time_end();
 	print_elapsed_time('mcaiger');
 

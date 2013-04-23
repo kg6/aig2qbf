@@ -73,7 +73,7 @@ while (1) {
 	}
 	
 	my $base_file = "$script_path/../output/fuzz-tt";
-	print `$script_path/../tools/aigfuzz $fuzzer_options > $base_file.aig`;
+	print `"$script_path/../tools/aigfuzz" $fuzzer_options > "$base_file.aig"`;
 
 	for my $k(1..$max_k) {
 		if (not $opts->{verbose}) {
@@ -84,7 +84,7 @@ while (1) {
 		}
 
 		time_start();
-		my $check_out = `$script_path/../scripts/check.pl --k $k --input $base_file.aig$checker_options`;
+		my $check_out = `"$script_path/../scripts/check.pl" --k $k --input "$base_file.aig" $checker_options`;
 		time_end();
 
 		if ($? == 0) {
@@ -103,7 +103,7 @@ while (1) {
 		
 			print "Reduce $base_file.aig to $base_file-reduced.aig with k=$k\n";
 
-			print `$script_path/../scripts/dd.sh "$base_file.aig" "$base_file-reduced.aig" $k`;
+			print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k`;
 			print "Done\n";
 
 			exit 1;
