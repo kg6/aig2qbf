@@ -82,6 +82,9 @@ public class TestSequential {
 		Parser parser = getParser(inputFile);
 
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
+		
+		tree = tree.unroll(k);
+		tree.mergeToOneOutput();
 
 		Tree reducedTree = reductionMethod.reduceTree(tree, k);
 

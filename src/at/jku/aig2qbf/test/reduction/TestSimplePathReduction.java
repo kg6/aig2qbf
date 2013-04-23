@@ -153,7 +153,7 @@ public class TestSimplePathReduction {
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add("input/basic/meetingsample1.aag");
 
-		final int max_k = 50;
+		final int max_k = 5;
 
 		for (String inputFilePath : inputFiles) {
 			Tree tree = new AAG().parse(inputFilePath);
@@ -162,6 +162,9 @@ public class TestSimplePathReduction {
 
 			for (int k = 1; k <= max_k; k++) {
 				final long startTime = System.currentTimeMillis();
+				
+				tree = tree.unroll(k);
+				tree.mergeToOneOutput();
 
 				Tree reducedTree = reduction.reduceTree(tree, k);
 
@@ -181,7 +184,7 @@ public class TestSimplePathReduction {
 
 	@Test
 	public void testSat1() {
-		final int max_k = 10;
+		final int max_k = 5;
 
 		// Create a tree with max_k latches in a row
 
@@ -211,6 +214,9 @@ public class TestSimplePathReduction {
 
 		for (int k = 1; k <= max_check; k++) {
 			final long startTime = System.currentTimeMillis();
+			
+			tree = tree.unroll(k);
+			tree.mergeToOneOutput();
 
 			Tree reducedTree = reduction.reduceTree(tree, k);
 
