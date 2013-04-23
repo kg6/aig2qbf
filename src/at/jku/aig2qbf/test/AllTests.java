@@ -9,6 +9,7 @@ import at.jku.aig2qbf.test.component.TestTree;
 import at.jku.aig2qbf.test.formatter.TestQDimacs;
 import at.jku.aig2qbf.test.parser.TestAAG;
 import at.jku.aig2qbf.test.parser.TestAIG;
+import at.jku.aig2qbf.test.reduction.TestCompetition;
 import at.jku.aig2qbf.test.reduction.TestSequential;
 import at.jku.aig2qbf.test.reduction.TestSimplePathReduction;
 
@@ -21,6 +22,7 @@ import at.jku.aig2qbf.test.reduction.TestSimplePathReduction;
 	TestAAG.class,
 	TestAIG.class,
 	TestSequential.class,
+	TestCompetition.class,
 	TestSimplePathReduction.class,
 })
 public class AllTests {
