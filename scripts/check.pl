@@ -50,7 +50,7 @@ if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
 
 for my $k (@ks) {
 	if ($opts->{verbose}) {
-		print "\nCheck k=$k\n";
+		print "Check k=$k\n";
 	}
 
 	time_start();
