@@ -2,6 +2,7 @@ package at.jku.aig2qbf.reduction;
 
 import java.util.List;
 
+import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Not;
@@ -43,7 +44,9 @@ public class SimplePathReduction implements TreeReduction {
 			}
 		}
 
-		localTree.verifyTreeStructure();
+		if (Configuration.SANTIY) {
+			localTree.verifyTreeStructure();
+		}
 
 		return localTree;
 	}
@@ -64,7 +67,6 @@ public class SimplePathReduction implements TreeReduction {
 		}
 
 		// Make sure that the component has at least 2 inputs
-
 		while (globalAnd.inputs.size() < 2) {
 			globalAnd.inputs.add(tree.cTrue);
 			tree.cTrue.outputs.add(globalAnd);
@@ -103,7 +105,6 @@ public class SimplePathReduction implements TreeReduction {
 		}
 
 		// Make sure that the component has at least 2 inputs
-
 		while (or.inputs.size() < 2) {
 			or.inputs.add(tree.cTrue);
 			tree.cTrue.outputs.add(or);

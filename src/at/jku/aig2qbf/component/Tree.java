@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 
@@ -174,15 +175,17 @@ public class Tree implements Cloneable {
 			nTree.latchOutputs.add(components.get(o));
 		}
 
-		verify(this.cFalse.inputs.size() == 0, this.cFalse);
-		verify(nTree.cFalse.inputs.size() == 0, nTree.cFalse);
-		verify(this.cFalse.outputs.size() == nTree.cFalse.outputs.size(), nTree.cFalse);
-
-		verify(this.cTrue.inputs.size() == 0, this.cTrue);
-		verify(nTree.cTrue.inputs.size() == 0, nTree.cTrue);
-		verify(this.cTrue.outputs.size() == nTree.cTrue.outputs.size(), nTree.cTrue);
-
-		nTree.verifyTreeStructure();
+		if (Configuration.SANTIY) {
+			verify(this.cFalse.inputs.size() == 0, this.cFalse);
+			verify(nTree.cFalse.inputs.size() == 0, nTree.cFalse);
+			verify(this.cFalse.outputs.size() == nTree.cFalse.outputs.size(), nTree.cFalse);
+	
+			verify(this.cTrue.inputs.size() == 0, this.cTrue);
+			verify(nTree.cTrue.inputs.size() == 0, nTree.cTrue);
+			verify(this.cTrue.outputs.size() == nTree.cTrue.outputs.size(), nTree.cTrue);
+			
+			nTree.verifyTreeStructure();
+		}
 
 		return nTree;
 	}
@@ -512,7 +515,9 @@ public class Tree implements Cloneable {
 		tree.latchOutputs.clear();
 
 		// verify the structure of the tree
-		tree.verifyTreeStructure();
+		if (Configuration.SANTIY) {
+			tree.verifyTreeStructure();
+		}
 
 		return tree;
 	}
@@ -741,7 +746,9 @@ public class Tree implements Cloneable {
 		}
 
 		// verify the structure of the tree
-		tree.verifyTreeStructure();
+		if (Configuration.SANTIY) {
+			tree.verifyTreeStructure();
+		}
 
 		return tree;
 	}
