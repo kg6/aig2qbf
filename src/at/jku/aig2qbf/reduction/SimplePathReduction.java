@@ -13,12 +13,12 @@ public class SimplePathReduction implements TreeReduction {
 
 	@Override
 	public Tree reduceTree(Tree tree, int k) {
-		Tree unrolledTree = (Tree) tree.clone();
+		Tree localTree = (Tree) tree.clone();
 
 		if (k > 1) {
-			Component simplePathAnd = getSimpleStateConstraints(unrolledTree, k);
+			Component simplePathAnd = getSimpleStateConstraints(localTree, k);
 
-			Output o = unrolledTree.outputs.get(0);
+			Output o = localTree.outputs.get(0);
 
 			And a = new And();
 
@@ -39,9 +39,9 @@ public class SimplePathReduction implements TreeReduction {
 			}
 		}
 
-		unrolledTree.verifyTreeStructure();
+		localTree.verifyTreeStructure();
 
-		return unrolledTree;
+		return localTree;
 	}
 
 	private Component getSimpleStateConstraints(Tree tree, int k) {

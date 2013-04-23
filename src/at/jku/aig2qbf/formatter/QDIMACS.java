@@ -16,14 +16,13 @@ import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 
 public class QDIMACS extends Formatter {
+	
 	@Override
 	public String format(Tree tree) {
 		tree = (Tree) tree.clone();
 
-		// replace true and false components with logic that is equal to true
-		// and false
-		// this is necessary because QDIMACS does not have a symbol for
-		// true/false
+		// replace true and false components with logic that is equal to true and false
+		// this is necessary because QDIMACS does not have a symbol for true/false
 
 		replaceFalseAig(tree);
 		replaceTrueAig(tree);

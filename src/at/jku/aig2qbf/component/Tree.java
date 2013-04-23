@@ -14,7 +14,7 @@ public class Tree implements Cloneable {
 	public List<QuantifierSet> quantifier;
 
 	public List<Component> latchOutputs;
-
+	
 	public False cFalse;
 	public True cTrue;
 
@@ -22,7 +22,7 @@ public class Tree implements Cloneable {
 		this.outputs = new ArrayList<Output>();
 		this.latchOutputs = new ArrayList<Component>();
 		this.quantifier = new ArrayList<QuantifierSet>();
-
+		
 		this.cFalse = new False();
 		this.cTrue = new True();
 	}
@@ -381,7 +381,9 @@ public class Tree implements Cloneable {
 					// add every component to the stack that should get a
 					// Tseitin node
 					if (c instanceof Input) {
-						existentialComponentList.add((Input) c);
+						if(!existentialComponentList.contains(c) && !univeralComponentList.contains(c)) {
+							univeralComponentList.add((Input) c);
+						}
 					}
 					else {
 						stack.push(c);
@@ -468,10 +470,7 @@ public class Tree implements Cloneable {
 					throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node.getClass().toString() + " is unknown!");
 				}
 
-				if (tree.latchOutputs.contains(node)) {
-					univeralComponentList.add(xi);
-				}
-				else {
+				if(!existentialComponentList.contains(xi)) {
 					existentialComponentList.add(xi);
 				}
 
@@ -499,15 +498,15 @@ public class Tree implements Cloneable {
 		}
 
 		o.addInput(globalAnd);
-
+		
 		// add quantifiers
-//		for (Input input : univeralComponentList) {
-//			addQuantifier(tree, input, Quantifier.UNIVERSAL);
-//		}
-//
-//		for (Input input : existentialComponentList) {
-//			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
-//		}
+		for (Input input : univeralComponentList) {
+			addQuantifier(tree, input, Quantifier.UNIVERSAL);
+		}
+
+		for (Input input : existentialComponentList) {
+			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
+		}
 
 		// a Tseitin tree must not contain any latch output
 		tree.latchOutputs.clear();
@@ -598,8 +597,6 @@ public class Tree implements Cloneable {
 		// find latches for the connections
 		List<Latch> latches = tree.findLatches();
 		ArrayList<Component> tempLatchInputs;
-
-		int lastT1ComponentID = Component.ComponentId;
 
 		// build other Ts
 		if (k > 1) {

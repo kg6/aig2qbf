@@ -160,7 +160,7 @@ public class TestSimplePathReduction {
 
 			SimplePathReduction reduction = new SimplePathReduction();
 
-			for (int k = 2; k <= max_k; k++) {
+			for (int k = 1; k <= max_k; k++) {
 				final long startTime = System.currentTimeMillis();
 				
 				Tree unrolledTree = tree.unroll(k);

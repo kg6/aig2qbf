@@ -6,10 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -1311,6 +1307,8 @@ public class TestTree {
 	
 //	@Test
 //	public void testQuantifiers() {
+//		final int max_k = 4;
+//		
 //		List<Input> positiveInputList = new ArrayList<Input>();
 //		List<Input> negativeInputList = new ArrayList<Input>();
 //		
@@ -1319,9 +1317,40 @@ public class TestTree {
 //		SimplePathReduction reduction = new SimplePathReduction();
 //		QDIMACS q = new QDIMACS();		
 //		
-//		Tree tree = new AIG().parse("input/basic/toggle-re.aig");
+//		//Generate a tree
+//		Input x = new Input("x");
+//		Component parent = x;
+//
+//		for (int i = 0; i < max_k; i++) {
+//			Component not = new Not();
+//			not.addInput(parent);
+//
+//			parent = not;
+//		}
+//
+//		Component and1 = new And();
+//		and1.addInput(x);
+//		and1.addInput(parent);
+//
+//		Component and2 = new And();
+//		and2.addInput(x);
+//		and2.addInput(parent);
+//
+//		Component or = new Or();
+//		or.addInput(and1);
+//		or.addInput(and2);
+//
+//		Output o = new Output("y");
+//		o.addInput(or);
+//
+//		Tree tree = new Tree();
+//		tree.outputs.add(o);
 //		
-//		Tree reducedTree = reduction.reduceTree(tree, 2);
+//		//Reduce the tree
+//		Tree unrolledTree = tree.unroll(max_k);
+//		unrolledTree.mergeToOneOutput();
+//		
+//		Tree reducedTree = reduction.reduceTree(unrolledTree, max_k);
 //		
 //		Tree tseitinTree = q.prepare(reducedTree);
 //		List<Input> tseitinInputList = tseitinTree.lastTseitinInputList;
@@ -1386,32 +1415,32 @@ public class TestTree {
 //			System.out.println("No valid input found which could be universally quantified!");
 //		}
 //	}
-	
-	private boolean writeToFile(String result) {
-		BufferedWriter writer = null;
-		
-		try {
-			writer = new BufferedWriter(new FileWriter(TEMP_QDIMACS_FILE));
-			writer.write(result);
-			
-			return true;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			if(writer != null) {
-				try {
-					writer.close();
-				}
-				catch (IOException e) {
-					
-				}
-			}
-		}
-		
-		return false;
-	}
+//	
+//	private boolean writeToFile(String result) {
+//		BufferedWriter writer = null;
+//		
+//		try {
+//			writer = new BufferedWriter(new FileWriter(TEMP_QDIMACS_FILE));
+//			writer.write(result);
+//			
+//			return true;
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		finally {
+//			if(writer != null) {
+//				try {
+//					writer.close();
+//				}
+//				catch (IOException e) {
+//					
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
 
 	private void unrollSanityCheckOriginalTreeSanity(Tree t) {
 		assertNotNull(t);
