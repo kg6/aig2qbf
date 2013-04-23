@@ -37,6 +37,7 @@ public class aig2qbf {
 
 		Options options = new Options();
 
+		options.addOption(getCommandlineOption("d", "debug", "Enable debug mode.", false, null));
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
@@ -55,6 +56,12 @@ public class aig2qbf {
 			String output = null;
 			Extension outputExtension = Extension.QDIMACS;
 
+			if (commandLine.hasOption('d')) {
+				Configuration.DEBUG = true;
+			}
+			else {
+				Configuration.DEBUG = false;
+			}
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
 				inputExtension = Parser.getExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
