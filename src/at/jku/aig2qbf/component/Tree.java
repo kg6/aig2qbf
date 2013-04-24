@@ -582,8 +582,7 @@ public class Tree implements Cloneable {
 		int componentIndex = this.latchOutputs.indexOf(c1);
 
 		if (componentIndex >= 0) {
-			this.latchOutputs.remove(componentIndex);
-			this.latchOutputs.add(componentIndex, c2);
+			this.latchOutputs.set(componentIndex, c2);
 		}
 	}
 

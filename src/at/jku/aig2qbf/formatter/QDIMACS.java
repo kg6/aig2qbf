@@ -1,6 +1,7 @@
 package at.jku.aig2qbf.formatter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
@@ -41,7 +42,7 @@ public class QDIMACS extends Formatter {
 		StringBuilder qdimacsBuilder = new StringBuilder();
 
 		if (rootNode != null) {
-			final int numberOfVariables = getNumberOfVariables(rootNode.inputs);
+			final int numberOfVariables = getNumberOfVariables(rootNode);
 			final int numberOfClauses = getNumberOfClauses(rootNode.inputs);
 
 			// define problem line
@@ -173,25 +174,30 @@ public class QDIMACS extends Formatter {
 		tree.replaceComponent(tree.cTrue, or);
 	}
 
-	private int getNumberOfVariables(List<Component> componentList) {
-		Hashtable<Component, Boolean> visitedHash = new Hashtable<Component, Boolean>();
+	private int getNumberOfVariables(Component root) {
+		HashMap<Component, Component> inputs = new HashMap<>();
+		HashMap<Component, Component> seen = new HashMap<>();
+		Stack<Component> stack = new Stack<>();
+		
+		stack.add(root);
+		seen.put(root, null);
 
-		List<Component> inputList = new ArrayList<Component>();
-		rekGetNumberOfVariables(componentList, inputList, visitedHash);
+		while (!stack.isEmpty()) {
+			Component n = stack.pop();
 
-		return inputList.size();
-	}
-
-	private void rekGetNumberOfVariables(List<Component> componentList, List<Component> inputList, Hashtable<Component, Boolean> visitedHash) {
-		for (Component component : componentList) {
-			if (component instanceof Input && ! inputList.contains(component)) {
-				inputList.add(component);
+			if (n instanceof Input && ! inputs.containsKey(n)) {
+				inputs.put(n, null);
 			}
-			else if (! visitedHash.containsKey(component)) {
-				visitedHash.put(component, true);
-				rekGetNumberOfVariables(component.inputs, inputList, visitedHash);
+
+			for (Component i : n.inputs) {
+				if (! seen.containsKey(i)) {
+					stack.add(i);
+					seen.put(i, null);
+				}
 			}
 		}
+
+		return inputs.size();
 	}
 
 	private int getNumberOfClauses(List<Component> componentList) {

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import at.jku.aig2qbf.Configuration;
+
 public abstract class Component implements Cloneable {
 	public static int ComponentId = 1;
 	public static Hashtable<Integer, Component> componentHash = new Hashtable<Integer, Component>();
@@ -46,11 +48,16 @@ public abstract class Component implements Cloneable {
 	}
 
 	public void addInput(Component c) {
-		if (! this.inputs.contains(c)) {
-			this.inputs.add(c);
+		if (Configuration.SANTIY) {
+			if (! this.inputs.contains(c)) {
+				this.inputs.add(c);
+			}
+			if (! c.outputs.contains(this)) {
+				c.outputs.add(this);
+			}
 		}
-
-		if (! c.outputs.contains(this)) {
+		else {
+			this.inputs.add(c);
 			c.outputs.add(this);
 		}
 
