@@ -15,6 +15,7 @@ my $options = Getopt::Compact->new(
 	struct => [
 		[ 'k', 'Max unnrolling steps k', ':i' ],
 		[ 'l', 'Generate large circuits' ],
+		[ 'no-dd', 'Do not delta debug any errors' ],
 		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
 	]
@@ -109,12 +110,14 @@ while (1) {
 			if ($check_out =~ m/error on K=(\d+)/) {
 				print "$check_out\n";
 
-				print "Reduce $base_file.aig to $base_file-reduced.aig with k=$k\n";
+				if (not $opts->{'no-dd'}) {
+					print "Reduce $base_file.aig to $base_file-reduced.aig with k=$k\n";
 
-				print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k`;
-				print "Done\n";
-				
-				exit 1;
+					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k`;
+					print "Done\n";
+					
+					exit 1;
+				}
 			}
 			else {
 				print "Error in check\n";
