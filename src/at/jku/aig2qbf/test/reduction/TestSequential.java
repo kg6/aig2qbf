@@ -86,8 +86,13 @@ public class TestSequential {
 		
 		tree = tree.unroll(k);
 		tree.mergeToOneOutput();
+		
+		Tree unrolledTree = tree.unroll(k);
+		unrolledTree.mergeToOneOutput();
+		
+		Tree tseitinTree = unrolledTree.toTseitinCNF();
 
-		Tree reducedTree = reductionMethod.reduceTree(tree, k);
+		Tree reducedTree = reductionMethod.reduceTree(tseitinTree, k);
 
 		final boolean currentSat = TestUtil.CheckSatisfiablity(reducedTree, OUTPUT_FILE);
 		final boolean originalSat = TestUtil.CheckOriginalSat(inputFile, k);

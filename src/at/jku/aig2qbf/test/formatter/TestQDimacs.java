@@ -102,7 +102,7 @@ public class TestQDimacs {
 		notB.addInput(b);
 
 		Component notNotB = new Not();
-		notB.addInput(notB);
+		notNotB.addInput(notB);
 
 		Output outB = new Output("out");
 		outB.addInput(notNotB);
@@ -110,7 +110,7 @@ public class TestQDimacs {
 		Tree treeB = new Tree();
 		treeB.outputs.add(outB);
 
-		assertFalse(checkSatisfiablity(treeB));
+		assertTrue(checkSatisfiablity(treeB));
 	}
 
 	@Test
@@ -173,8 +173,8 @@ public class TestQDimacs {
 		int currentClauseCount = 0;
 		Hashtable<Integer, Boolean> currentVariableHash = new Hashtable<Integer, Boolean>();
 
-		List<Integer> existentialQuantorList = new ArrayList<Integer>();
-		List<Integer> universalQuantorList = new ArrayList<Integer>();
+		List<Integer> existentialQuantifierList = new ArrayList<Integer>();
+		List<Integer> universalQuantifierList = new ArrayList<Integer>();
 
 		boolean programLinePassed = false;
 
@@ -202,12 +202,12 @@ public class TestQDimacs {
 			else if (line.startsWith("e ")) {
 				assertTrue(programLinePassed);
 
-				parseQuantifierLine(line, existentialQuantorList);
+				parseQuantifierLine(line, existentialQuantifierList);
 			}
 			else if (line.startsWith("a ")) {
 				assertTrue(programLinePassed);
 
-				parseQuantifierLine(line, universalQuantorList);
+				parseQuantifierLine(line, universalQuantifierList);
 			}
 			else {
 				assertTrue(programLinePassed);

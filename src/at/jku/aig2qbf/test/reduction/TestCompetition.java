@@ -82,7 +82,13 @@ public class TestCompetition {
 		Parser parser = TestUtil.GetInputFileParser(aigerFile);
 		
 		Tree tree = parser.parse(aigerFile.getAbsolutePath());
-		Tree reducedTree = reductionMethod.reduceTree(tree, k);
+		
+		Tree unrolledTree = tree.unroll(k);
+		unrolledTree.mergeToOneOutput();
+		
+		Tree tseitinTree = unrolledTree.toTseitinCNF();
+		
+		Tree reducedTree = reductionMethod.reduceTree(tseitinTree, k);
 
 		final boolean currentSat = TestUtil.CheckSatisfiablity(reducedTree, OUTPUT_FILE);
 		final boolean originalSat = TestUtil.CheckOriginalSat(aigerFile, k);

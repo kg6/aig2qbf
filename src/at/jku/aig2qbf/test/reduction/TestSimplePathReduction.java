@@ -45,6 +45,9 @@ public class TestSimplePathReduction {
 			Not not = new Not();
 			o.addInput(not);
 			not.addInput(t.cFalse);
+			
+			t = t.toTseitinCNF();
+			
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 
@@ -55,6 +58,9 @@ public class TestSimplePathReduction {
 			Not not = new Not();
 			o.addInput(not);
 			not.addInput(t.cTrue);
+			
+			t = t.toTseitinCNF();
+			
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 
@@ -70,6 +76,9 @@ public class TestSimplePathReduction {
 			o.addInput(or);
 			or.addInput(t.cFalse);
 			or.addInput(t.cFalse);
+			
+			t = t.toTseitinCNF();
+			
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 10
@@ -80,6 +89,9 @@ public class TestSimplePathReduction {
 			o.addInput(or);
 			or.addInput(t.cTrue);
 			or.addInput(t.cFalse);
+			
+			t = t.toTseitinCNF();
+			
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 01
@@ -90,6 +102,9 @@ public class TestSimplePathReduction {
 			o.addInput(or);
 			or.addInput(t.cFalse);
 			or.addInput(t.cTrue);
+			
+			t = t.toTseitinCNF();
+			
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 11
@@ -100,6 +115,9 @@ public class TestSimplePathReduction {
 			o.addInput(or);
 			or.addInput(t.cTrue);
 			or.addInput(t.cTrue);
+			
+			t = t.toTseitinCNF();
+			
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 	}
@@ -114,6 +132,9 @@ public class TestSimplePathReduction {
 			o.addInput(and);
 			and.addInput(t.cFalse);
 			and.addInput(t.cFalse);
+			
+			t = t.toTseitinCNF();
+			
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 10
@@ -124,6 +145,9 @@ public class TestSimplePathReduction {
 			o.addInput(and);
 			and.addInput(t.cTrue);
 			and.addInput(t.cFalse);
+			
+			t = t.toTseitinCNF();
+			
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 01
@@ -134,6 +158,9 @@ public class TestSimplePathReduction {
 			o.addInput(and);
 			and.addInput(t.cFalse);
 			and.addInput(t.cTrue);
+			
+			t = t.toTseitinCNF();
+			
 			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 		{ // 11
@@ -144,6 +171,9 @@ public class TestSimplePathReduction {
 			o.addInput(and);
 			and.addInput(t.cTrue);
 			and.addInput(t.cTrue);
+			
+			t = t.toTseitinCNF();
+			
 			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
 		}
 	}
@@ -153,7 +183,7 @@ public class TestSimplePathReduction {
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add("input/basic/meetingsample1.aag");
 
-		final int max_k = 5;
+		final int max_k = 10;
 
 		for (String inputFilePath : inputFiles) {
 			Tree tree = new AAG().parse(inputFilePath);
@@ -164,10 +194,10 @@ public class TestSimplePathReduction {
 				final long startTime = System.currentTimeMillis();
 				
 				Tree unrolledTree = tree.unroll(k);
-				
 				unrolledTree.mergeToOneOutput();
 				
-				Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+				Tree tseitinTree = unrolledTree.toTseitinCNF();
+				Tree reducedTree = reduction.reduceTree(tseitinTree, k);
 				
 				final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
 
@@ -219,12 +249,13 @@ public class TestSimplePathReduction {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
 			
-			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-
+			Tree tseitinTree = unrolledTree.toTseitinCNF();
+			Tree reducedTree = reduction.reduceTree(tseitinTree, k);
+			
 			final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
-
+			
 			if (k < max_k + 1) {
 				assertFalse(sat);
 			}

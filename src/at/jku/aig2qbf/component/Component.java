@@ -63,6 +63,8 @@ public abstract class Component implements Cloneable {
 
 		if (this instanceof Input) {
 			throw new RuntimeException("Unable to add input to component: Input must not get an additional input!");
+		} else if(this.equals(c) && !(c instanceof Latch)) {
+			throw new RuntimeException("Unable to add input to component: Self loops are only valid for latches!");
 		}
 	}
 

@@ -14,14 +14,14 @@ public class Tree implements Cloneable {
 	public List<Output> outputs;
 	public List<QuantifierSet> quantifier;
 
-	public List<Component> latchOutputs;
+	public List<LatchOutput> latchOutputs;
 	
 	public False cFalse;
 	public True cTrue;
 
 	public Tree() {
 		this.outputs = new ArrayList<Output>();
-		this.latchOutputs = new ArrayList<Component>();
+		this.latchOutputs = new ArrayList<LatchOutput>();
 		this.quantifier = new ArrayList<QuantifierSet>();
 		
 		this.cFalse = new False();
@@ -171,8 +171,8 @@ public class Tree implements Cloneable {
 		}
 
 		// clone latch outputs
-		for (Component o : this.latchOutputs) {
-			nTree.latchOutputs.add(components.get(o));
+		for (LatchOutput o : this.latchOutputs) {
+			nTree.latchOutputs.add(new LatchOutput(components.get(o.component), o.branch));
 		}
 
 		if (Configuration.SANTIY) {
@@ -339,8 +339,12 @@ public class Tree implements Cloneable {
 		if (o.inputs.size() != 1) {
 			throw new RuntimeException("OUTPUT must have exactly one input");
 		}
+		
+		// replace true and false components with logic that is equal to true and false
+		// this is necessary because QDIMACS does not have a symbol for true/false
 
-		int tseitinInputCounter = 0;
+		replaceFalseAig(tree);
+		replaceTrueAig(tree);
 
 		// if input is directly mapped to output, just return the tree
 		if (o.inputs.get(0) instanceof Input) {
@@ -358,6 +362,8 @@ public class Tree implements Cloneable {
 
 		// build a global and to connect the pieces of the tree
 		Component globalAnd = new And();
+		
+		int tseitinInputCounter = 0;
 
 		while (!stack.isEmpty()) {
 			Component node = stack.pop();
@@ -479,6 +485,13 @@ public class Tree implements Cloneable {
 
 				// replace node with xi in the tree
 				replaceComponent(node, xi);
+				
+				int latchOutputIndex = tree.latchOutputs.indexOf(node);
+				
+				if(latchOutputIndex >= 0) {
+					LatchOutput latchOutput = tree.latchOutputs.remove(latchOutputIndex);
+					tree.latchOutputs.add(latchOutputIndex, new LatchOutput(xi, latchOutput.branch));
+				}
 			}
 		}
 
@@ -511,15 +524,46 @@ public class Tree implements Cloneable {
 //			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
 //		}
 
-		// a Tseitin tree must not contain any latch output
-		tree.latchOutputs.clear();
-
 		// verify the structure of the tree
 		if (Configuration.SANTIY) {
 			tree.verifyTreeStructure();
 		}
 
 		return tree;
+	}
+	
+	public void replaceTrueAndFalseAig() {
+		replaceTrueAig(this);
+		replaceFalseAig(this);
+	}
+	
+	private void replaceTrueAig(Tree tree) {
+		Input input = new Input("true");
+
+		Component not = new Not();
+		not.addInput(input);
+
+		Component or = new Or();
+		or.addInput(input);
+		or.addInput(not);
+
+		// replace all true components
+		tree.replaceComponent(tree.cTrue, or);
+	}
+	
+	private void replaceFalseAig(Tree tree) {
+		Input input = new Input("false");
+
+		Component and = new And();
+		and.addInput(input);
+
+		Component notInput = new Not();
+		notInput.addInput(input);
+
+		and.addInput(notInput);
+
+		// replace all false components
+		tree.replaceComponent(tree.cFalse, and);
 	}
 
 	public void addQuantifier(Tree tree, Input input, Quantifier quantifier) {
@@ -582,7 +626,7 @@ public class Tree implements Cloneable {
 		int componentIndex = this.latchOutputs.indexOf(c1);
 
 		if (componentIndex >= 0) {
-			this.latchOutputs.set(componentIndex, c2);
+			this.latchOutputs.get(componentIndex).component = c2;
 		}
 	}
 
@@ -641,11 +685,11 @@ public class Tree implements Cloneable {
 							;
 
 						o.addInput(in);
-						appendLatchOutput(tree, in, -1);
 					}
+					
+					appendLatchOutput(tree, in, ts.size() - 1 - i);
 
-					// remove the input of the current latch -> remove the latch
-					// completely
+					// remove the input of the current latch -> remove the latch completely
 					in = c.inputs.remove(0);
 					while (in.outputs.remove(c))
 						;
@@ -707,8 +751,9 @@ public class Tree implements Cloneable {
 					;
 
 				o.addInput(tree.cFalse);
-				appendLatchOutput(tree, tree.cFalse, 0);
 			}
+			
+			replaceLatchOutput(tree, tree.cFalse, in, 0);
 
 			verify(l.inputs.isEmpty(), l);
 			verify(l.outputs.isEmpty(), l);
@@ -725,22 +770,22 @@ public class Tree implements Cloneable {
 
 		// we need to use the right True and False components in the latchOutput
 		for (int i = 0; i < tree.latchOutputs.size(); i++) {
-			Component c = tree.latchOutputs.get(i);
+			LatchOutput latchOutput = tree.latchOutputs.get(i);
 
-			if (c instanceof False) {
-				tree.latchOutputs.set(i, tree.cFalse);
+			if (latchOutput.component instanceof False) {
+				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch);
 			}
-			else if (c instanceof True) {
-				tree.latchOutputs.set(i, tree.cTrue);
+			else if (latchOutput.component instanceof True) {
+				replaceLatchOutput(tree, tree.cTrue, latchOutput.component, latchOutput.branch);
 			}
 		}
 
 		// remove empty latch outputs
 		for (int i = tree.latchOutputs.size() - 1; i >= 0; i--) {
-			Component c = tree.latchOutputs.get(i);
+			LatchOutput latchOutput = tree.latchOutputs.get(i);
 
-			if (c.outputs.size() == 0) {
-				tree.latchOutputs.remove(c);
+			if (latchOutput.component.outputs.size() == 0) {
+				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch);
 			}
 		}
 
@@ -748,21 +793,38 @@ public class Tree implements Cloneable {
 		if (Configuration.SANTIY) {
 			tree.verifyTreeStructure();
 		}
-
+		
 		return tree;
 	}
 
-	private void appendLatchOutput(Tree tree, Component c, int index) {
-		if (tree.latchOutputs.contains(c)) {
-			return;
+	private void appendLatchOutput(Tree tree, Component c, int branch) {
+		for(LatchOutput latchOutput : tree.latchOutputs) {
+			if(latchOutput.branch == branch && latchOutput.equals(c)) {
+				return;
+			}
 		}
-
-		if (index < 0 || index >= tree.latchOutputs.size()) {
-			tree.latchOutputs.add(c);
+		
+		tree.latchOutputs.add(new LatchOutput(c, branch));
+	}
+	
+	private void replaceLatchOutput(Tree tree, Component c, Component p, int branch) {
+		for(LatchOutput latchOutput : tree.latchOutputs) {
+			if(latchOutput.branch == branch && latchOutput.equals(p)) {
+				latchOutput.component = c;
+			}
 		}
-		else {
-			tree.latchOutputs.add(index, c);
+	}
+	
+	public List<LatchOutput> getLatchOutputsOfBranch(int branch) {
+		List<LatchOutput> latchOutputList = new ArrayList<LatchOutput>();
+		
+		for(LatchOutput latchOutput : this.latchOutputs) {
+			if(latchOutput.branch == branch) {
+				latchOutputList.add(latchOutput);
+			}
 		}
+		
+		return latchOutputList;
 	}
 
 	public void removeComplete(Component c) {

@@ -1,8 +1,6 @@
 package at.jku.aig2qbf.formatter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
@@ -20,40 +18,26 @@ import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 public class QDIMACS extends Formatter {
 	
 	@Override
-	public String format(Tree tree) {
-		tree = Configuration.FAST ? tree : (Tree) tree.clone();
-
-		// replace true and false components with logic that is equal to true and false
-		// this is necessary because QDIMACS does not have a symbol for true/false
-
-		replaceFalseAig(tree);
-		replaceTrueAig(tree);
-
-		// convert the tree to CNF using the Tseitin conversion
-		tree = tree.toTseitinCNF();
+	public String format(Tree cnfTree) {
+		cnfTree = Configuration.FAST ? cnfTree : (Tree) cnfTree.clone();
 
 		Output rootNode = null;
 
-		if (tree.outputs.size() > 0 && tree.outputs.get(0).inputs.size() > 0) {
-			rootNode = tree.outputs.get(0);
+		if (cnfTree.outputs.size() > 0 && cnfTree.outputs.get(0).inputs.size() > 0) {
+			rootNode = cnfTree.outputs.get(0);
 		}
 
-		// create the QDIMCAS output file
-		StringBuilder qdimacsBuilder = new StringBuilder();
-
 		if (rootNode != null) {
+			StringBuilder qdimacsBuilder = new StringBuilder();
+			
+			// determine the number of variables
 			final int numberOfVariables = getNumberOfVariables(rootNode);
-			final int numberOfClauses = getNumberOfClauses(rootNode.inputs);
 
 			// define problem line
-			qdimacsBuilder.append("p cnf ");
-			qdimacsBuilder.append(numberOfVariables);
-			qdimacsBuilder.append(" ");
-			qdimacsBuilder.append(numberOfClauses);
-			qdimacsBuilder.append("\n");
+			qdimacsBuilder.append("p cnf %s %s\n");
 
 			// define all quantifiers
-			for (QuantifierSet quantifier : tree.quantifier) {
+			for (QuantifierSet quantifier : cnfTree.quantifier) {
 				qdimacsBuilder.append(quantifier.quantifier == Quantifier.EXISTENTIAL ? "e" : "a");
 				qdimacsBuilder.append(" ");
 
@@ -66,16 +50,15 @@ public class QDIMACS extends Formatter {
 			}
 
 			// define CNF clauses
-			defineCNFClauses(rootNode.inputs, qdimacsBuilder, numberOfClauses);
-		}
-		else {
-			qdimacsBuilder.append("p cnf 0 0\n");
+			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder);
+			
+			return String.format(qdimacsBuilder.toString(), numberOfVariables, numberOfClauses);
 		}
 
-		return qdimacsBuilder.toString();
+		return "p cnf 0 0\n";
 	}
 
-	private void defineCNFClauses(List<Component> componentList, StringBuilder builder, int numberOfClauses) {
+	private int defineCNFClauses(List<Component> componentList, StringBuilder builder) {
 		Stack<Component> componentStack = new Stack<Component>();
 
 		for (int i = componentList.size() - 1; i >= 0; i--) {
@@ -117,18 +100,17 @@ public class QDIMACS extends Formatter {
 			else {
 				throw new RuntimeException("Unable to convert tree to QDIMACS format: The  node type '" + c.getClass().getName() + "' is unknown!");
 			}
-		}
-
-		// make plausibility checks to make sure that the problem line
-		// represents the QDIMACS file correctly
-
-		if (clauseCounter != numberOfClauses) {
-			throw new RuntimeException("Unable to convert tree to QDIMACS format: The expected number of clauses was different to the current number of clauses!");
+			
+			if(componentStack.isEmpty() && !(c instanceof NL)) {
+				clauseCounter++;
+			}
 		}
 
 		if (builder.charAt(builder.length() - 1) == ' ') {
 			appendNL(builder);
 		}
+		
+		return clauseCounter;
 	}
 
 	private void appendClause(StringBuilder builder, int id, boolean negated) {
@@ -143,35 +125,6 @@ public class QDIMACS extends Formatter {
 	private void appendNL(StringBuilder builder) {
 		builder.append("0");
 		builder.append("\n");
-	}
-
-	private void replaceFalseAig(Tree tree) {
-		Input input = new Input("false");
-
-		Component and = new And();
-		and.addInput(input);
-
-		Component notInput = new Not();
-		notInput.addInput(input);
-
-		and.addInput(notInput);
-
-		// replace all false components
-		tree.replaceComponent(tree.cFalse, and);
-	}
-
-	private void replaceTrueAig(Tree tree) {
-		Input input = new Input("true");
-
-		Component not = new Not();
-		not.addInput(input);
-
-		Component or = new Or();
-		or.addInput(input);
-		or.addInput(not);
-
-		// replace all true components
-		tree.replaceComponent(tree.cTrue, or);
 	}
 
 	private int getNumberOfVariables(Component root) {
@@ -198,15 +151,6 @@ public class QDIMACS extends Formatter {
 		}
 
 		return inputs.size();
-	}
-
-	private int getNumberOfClauses(List<Component> componentList) {
-		if (componentList.size() == 1 && componentList.get(0) instanceof And) {
-			return componentList.get(0).inputs.size();
-		}
-		else {
-			return componentList.size();
-		}
 	}
 
 	public class NL extends Component {
