@@ -687,7 +687,7 @@ public class Tree implements Cloneable {
 						o.addInput(in);
 					}
 					
-					appendLatchOutput(tree, in, ts.size() - 1 - i);
+					appendLatchOutput(tree, in, i);
 
 					// remove the input of the current latch -> remove the latch completely
 					in = c.inputs.remove(0);
@@ -909,6 +909,11 @@ public class Tree implements Cloneable {
 
 					if (c instanceof Latch) {
 						verify(c.inputs.size() == 1, c);
+					}
+					
+					if (c instanceof Not) {
+						verify(c.inputs.size() > 0, c);
+						verify(c.outputs.size() > 0, c);
 					}
 
 					for (Component i : c.inputs) {

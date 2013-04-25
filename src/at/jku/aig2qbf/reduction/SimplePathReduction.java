@@ -1,7 +1,8 @@
 package at.jku.aig2qbf.reduction;
 
-import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
@@ -60,8 +61,8 @@ public class SimplePathReduction implements TreeReduction {
 		
 		// iterate over all branches of the tree and add the transition relation as well as the simple path constraint
 		
-		List<Relation> transitionRelations = new ArrayList<Relation>();
-		List<Relation> simplepathRelations = new ArrayList<Relation>();
+		Hashtable<Relation, Boolean> transitionRelationHash = new Hashtable<Relation, Boolean>();
+		Hashtable<Relation, Boolean> simplepathRelationHash = new Hashtable<Relation, Boolean>();
 		
 		for(int k = 1; k < max_k - 1; k++) {
 			List<LatchOutput> K = tree.getLatchOutputsOfBranch(k);
@@ -77,18 +78,20 @@ public class SimplePathReduction implements TreeReduction {
 					Component cK = K.get(i).component;
 					Component cL = L.get(i).component;
 					
-					//Transition relation: L <-> K
-					transitionRelations.add(new Relation(cK, cL));
+					// transition relation: L <-> K
+					transitionRelationHash.put(new Relation(cK, cL), true);
 					
-					//Add simple path constraint: L.outputs != K
+					// add simple path constraint: L.outputs != K
 					for(Component cLOutput : cL.outputs) {
-						simplepathRelations.add(new Relation(cLOutput, cK));
+						simplepathRelationHash.put(new Relation(cLOutput, cK), true);
 					}
 				}
 			}
 		}
 		
 		// add all transition relations
+		
+		Set<Relation> transitionRelations = transitionRelationHash.keySet();
 		
 		for(Relation relation : transitionRelations) {
 			Component notA = new Not();
@@ -111,12 +114,14 @@ public class SimplePathReduction implements TreeReduction {
 		
 		// add all simple path relations
 		
-		for(Relation relation : simplepathRelations) {
+		Set<Relation> simplepathRelationSet = simplepathRelationHash.keySet();
+		
+		for(Relation relation : simplepathRelationSet) {
 			Component notA = new Not();
 			notA.addInput(relation.a);
 			
-			Component notB = new Not();
-			notA.addInput(relation.b);
+			Component notB = new Not();			
+			notB.addInput(relation.b);
 			
 			Component or0 = new Or();
 			or0.addInput(relation.a);
@@ -152,6 +157,22 @@ public class SimplePathReduction implements TreeReduction {
 		public Relation(Component a, Component b) {
 			this.a = a;
 			this.b = b;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof Relation)) {
+				return false;
+			}
+			
+			Relation relation = (Relation)obj;
+			
+			return a.equals(relation.a) && b.equals(relation.b);
+		}
+
+		@Override
+		public int hashCode() {
+			return (Integer.toString(a.getId()) + Integer.toString(b.getId())).hashCode();
 		}
 	}
 }
