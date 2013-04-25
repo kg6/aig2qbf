@@ -72,7 +72,7 @@ public class QDIMACS extends Formatter {
 
 			if (c instanceof And || c instanceof Or) {
 				for (int i = c.inputs.size() - 1; i >= 0; i--) {
-					if (c instanceof And) {
+					if (c instanceof And && componentHasNonAndChildren(c)) {
 						componentStack.push(new NL());
 					}
 
@@ -111,6 +111,16 @@ public class QDIMACS extends Formatter {
 		}
 		
 		return clauseCounter;
+	}
+	
+	private boolean componentHasNonAndChildren(Component component) {
+		for(Component c : component.inputs) {
+			if(!(c instanceof And)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private void appendClause(StringBuilder builder, int id, boolean negated) {
