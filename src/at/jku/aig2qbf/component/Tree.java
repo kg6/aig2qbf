@@ -142,7 +142,7 @@ public class Tree implements Cloneable {
 			for (Component i : o.inputs) {
 				if (! components.containsKey(i)) {
 					Component n = (Component) i.clone();
-
+					
 					components.put(i, n);
 
 					q.push(i);
@@ -342,10 +342,15 @@ public class Tree implements Cloneable {
 		
 		// replace true and false components with logic that is equal to true and false
 		// this is necessary because QDIMACS does not have a symbol for true/false
-
-		replaceFalseAig(tree);
-		replaceTrueAig(tree);
-
+		Component trueComponentReplacement = replaceTrueAig(tree);
+		Component falseComponentReplacement = replaceFalseAig(tree);
+		
+		// replace false latch outputs with the true/false replacement
+		
+		//TODO: This replacement leads to further node replacements in the loop below. Check whether it is correct to replace a true/false component with an artificial xi
+		replaceLatchOutput(tree, trueComponentReplacement, tree.cTrue, -1, false);
+		replaceLatchOutput(tree, falseComponentReplacement, tree.cFalse, -1, false);
+		
 		// if input is directly mapped to output, just return the tree
 		if (o.inputs.get(0) instanceof Input) {
 			return tree;
@@ -356,10 +361,6 @@ public class Tree implements Cloneable {
 		Stack<Component> stack = new Stack<Component>();
 		stack.push(o.inputs.get(0));
 
-		// create a list for all universal and existential variables
-		List<Input> univeralComponentList = new ArrayList<Input>();
-		List<Input> existentialComponentList = new ArrayList<Input>();
-
 		// build a global and to connect the pieces of the tree
 		Component globalAnd = new And();
 		
@@ -367,7 +368,7 @@ public class Tree implements Cloneable {
 
 		while (!stack.isEmpty()) {
 			Component node = stack.pop();
-
+			
 			if (!seen.containsKey(node)) {
 				// mark this node as seen for the backward path
 				seen.put(node, null);
@@ -387,19 +388,17 @@ public class Tree implements Cloneable {
 						throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be True/False in the tree. Please replace these components first!");
 					}
 
-					// add every component to the stack that should get a
-					// Tseitin node
-					if (c instanceof Input) {
-						if(!existentialComponentList.contains(c) && !univeralComponentList.contains(c)) {
-							univeralComponentList.add((Input) c);
-						}
-					}
-					else {
+					// add every component to the stack that should get a Tseitin node
+					if(!(c instanceof Input) && !stack.contains(c)){
 						stack.push(c);
 					}
 				}
 			}
 			else {
+				if(node.inputs.isEmpty()) {
+					throw new RuntimeException("Unable to convert the tree to Tseitin form: The node of type " + node.getClass().getName() + " must have inputs!");
+				}
+				
 				// transform to structure of Tseitin
 				Input xi = new Input("x" + tseitinInputCounter);
 				tseitinInputCounter++;
@@ -479,19 +478,11 @@ public class Tree implements Cloneable {
 					throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node.getClass().toString() + " is unknown!");
 				}
 
-				if(!existentialComponentList.contains(xi)) {
-					existentialComponentList.add(xi);
-				}
-
 				// replace node with xi in the tree
 				replaceComponent(node, xi);
 				
-				int latchOutputIndex = tree.latchOutputs.indexOf(node);
-				
-				if(latchOutputIndex >= 0) {
-					LatchOutput latchOutput = tree.latchOutputs.remove(latchOutputIndex);
-					tree.latchOutputs.add(latchOutputIndex, new LatchOutput(xi, latchOutput.branch));
-				}
+				// replace the latch output
+				replaceLatchOutput(tree, xi, node, -1, false);
 			}
 		}
 
@@ -514,15 +505,6 @@ public class Tree implements Cloneable {
 		}
 
 		o.addInput(globalAnd);
-		
-		// add quantifiers
-//		for (Input input : univeralComponentList) {
-//			addQuantifier(tree, input, Quantifier.UNIVERSAL);
-//		}
-//
-//		for (Input input : existentialComponentList) {
-//			addQuantifier(tree, input, Quantifier.EXISTENTIAL);
-//		}
 
 		// verify the structure of the tree
 		if (Configuration.SANTIY) {
@@ -532,12 +514,7 @@ public class Tree implements Cloneable {
 		return tree;
 	}
 	
-	public void replaceTrueAndFalseAig() {
-		replaceTrueAig(this);
-		replaceFalseAig(this);
-	}
-	
-	private void replaceTrueAig(Tree tree) {
+	private Component replaceTrueAig(Tree tree) {
 		Input input = new Input("true");
 
 		Component not = new Not();
@@ -549,9 +526,11 @@ public class Tree implements Cloneable {
 
 		// replace all true components
 		tree.replaceComponent(tree.cTrue, or);
+		
+		return or;
 	}
 	
-	private void replaceFalseAig(Tree tree) {
+	private Component replaceFalseAig(Tree tree) {
 		Input input = new Input("false");
 
 		Component and = new And();
@@ -564,6 +543,8 @@ public class Tree implements Cloneable {
 
 		// replace all false components
 		tree.replaceComponent(tree.cFalse, and);
+		
+		return and;
 	}
 
 	public void addQuantifier(Tree tree, Input input, Quantifier quantifier) {
@@ -676,28 +657,40 @@ public class Tree implements Cloneable {
 						throw new RuntimeException("p should be a latch!");
 					}
 
-					Component in = p.inputs.get(0);
-
+					Component pIn = p.inputs.get(0);
+					
 					// connect latch.outputs to latch-1.input
 					while (! c.outputs.isEmpty()) {
 						Component o = c.outputs.remove(0);
 						while (o.inputs.remove(c))
 							;
-
-						o.addInput(in);
+						
+						o.addInput(pIn);
 					}
 					
-					appendLatchOutput(tree, in, i);
-
+					// add the component to the latch output list
+					appendLatchOutput(tree, pIn, i);
+					
+					// propagate the latch output information
+					for(int j = i + 1; j < ts.size(); j++) {
+						replaceLatchOutput(tree, pIn, c, j, false);
+					}
+					
 					// remove the input of the current latch -> remove the latch completely
-					in = c.inputs.remove(0);
-					while (in.outputs.remove(c))
+					Component cIn = c.inputs.remove(0);
+					while (cIn.outputs.remove(c))
 						;
-
+					
+					if(cIn.outputs.size() == 0) {
+						for(int j = i; j < ts.size(); j++) {
+							replaceLatchOutput(tree, pIn, cIn, j, false);
+						}
+					}
+					
 					verify(c.inputs.isEmpty(), c);
 					verify(c.outputs.isEmpty(), c);
 
-					tempLatchInputs.add(in);
+					tempLatchInputs.add(cIn);
 				}
 
 				// if the input of the latch has no purpose, remove it
@@ -732,7 +725,35 @@ public class Tree implements Cloneable {
 				}
 			}
 		}
+		
+		// check that there are no empty latch outputs in the list
+		// we need to use the right True and False components in the latchOutput
+		
+		for (int i = tree.latchOutputs.size() - 1; i >= 0; i--) {
+			LatchOutput latchOutput = tree.latchOutputs.get(i);
+			
+			if(latchOutput.component instanceof Latch) {
+				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch, false);
+			} 
+			else if (latchOutput.component instanceof False) {
+				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch, false);
+			}
+			else if (latchOutput.component instanceof True) {
+				replaceLatchOutput(tree, tree.cTrue, latchOutput.component, latchOutput.branch, false);
+			}
+			
+			//Remove one propagation step because latches are false initially
+			if(latchOutput.branch == 0) {
+				for(int j = k - 1; j >= 0; j--) {
+					replaceLatchOutput(tree, tree.cFalse, latchOutput.component, j, true);
+				}
+			}
 
+			if (latchOutput.component.outputs.size() == 0 && !(latchOutput.component instanceof False)) {
+				throw new RuntimeException("There must not be any empty latch output in the list!");
+			}
+		}
+		
 		tempLatchInputs = new ArrayList<>(latches.size());
 
 		// set all latch outputs from first T to false and remove input chain
@@ -752,8 +773,6 @@ public class Tree implements Cloneable {
 
 				o.addInput(tree.cFalse);
 			}
-			
-			replaceLatchOutput(tree, tree.cFalse, in, 0);
 
 			verify(l.inputs.isEmpty(), l);
 			verify(l.outputs.isEmpty(), l);
@@ -765,27 +784,6 @@ public class Tree implements Cloneable {
 		for (Component in : tempLatchInputs) {
 			if (in.outputs.size() == 0) {
 				removeComplete(in);
-			}
-		}
-
-		// we need to use the right True and False components in the latchOutput
-		for (int i = 0; i < tree.latchOutputs.size(); i++) {
-			LatchOutput latchOutput = tree.latchOutputs.get(i);
-
-			if (latchOutput.component instanceof False) {
-				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch);
-			}
-			else if (latchOutput.component instanceof True) {
-				replaceLatchOutput(tree, tree.cTrue, latchOutput.component, latchOutput.branch);
-			}
-		}
-
-		// remove empty latch outputs
-		for (int i = tree.latchOutputs.size() - 1; i >= 0; i--) {
-			LatchOutput latchOutput = tree.latchOutputs.get(i);
-
-			if (latchOutput.component.outputs.size() == 0) {
-				replaceLatchOutput(tree, tree.cFalse, latchOutput.component, latchOutput.branch);
 			}
 		}
 
@@ -807,10 +805,18 @@ public class Tree implements Cloneable {
 		tree.latchOutputs.add(new LatchOutput(c, branch));
 	}
 	
-	private void replaceLatchOutput(Tree tree, Component c, Component p, int branch) {
+	private void replaceLatchOutput(Tree tree, Component c, Component p, int branch, boolean replaceFirstOnly) {
 		for(LatchOutput latchOutput : tree.latchOutputs) {
-			if(latchOutput.branch == branch && latchOutput.equals(p)) {
+			if(branch >= 0 && latchOutput.branch != branch) {
+				continue;
+			}
+			
+			if(latchOutput.equals(p)) {
 				latchOutput.component = c;
+				
+				if(replaceFirstOnly) {
+					break;
+				}
 			}
 		}
 	}

@@ -20,7 +20,7 @@ public class QDIMACS extends Formatter {
 	@Override
 	public String format(Tree cnfTree) {
 		cnfTree = Configuration.FAST ? cnfTree : (Tree) cnfTree.clone();
-
+		
 		Output rootNode = null;
 
 		if (cnfTree.outputs.size() > 0 && cnfTree.outputs.get(0).inputs.size() > 0) {
@@ -72,7 +72,7 @@ public class QDIMACS extends Formatter {
 
 			if (c instanceof And || c instanceof Or) {
 				for (int i = c.inputs.size() - 1; i >= 0; i--) {
-					if (c instanceof And && componentHasNonAndChildren(c)) {
+					if (c instanceof And && (componentStack.isEmpty() || !(componentStack.peek() instanceof NL))) {
 						componentStack.push(new NL());
 					}
 
@@ -111,16 +111,6 @@ public class QDIMACS extends Formatter {
 		}
 		
 		return clauseCounter;
-	}
-	
-	private boolean componentHasNonAndChildren(Component component) {
-		for(Component c : component.inputs) {
-			if(!(c instanceof And)) {
-				return true;
-			}
-		}
-		
-		return false;
 	}
 
 	private void appendClause(StringBuilder builder, int id, boolean negated) {

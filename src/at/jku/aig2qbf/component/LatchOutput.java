@@ -21,4 +21,9 @@ public class LatchOutput {
 		
 		return this.component.getId() == peerId;
 	}
+
+	@Override
+	public String toString() {
+		return component.getClass().getName();
+	}
 }

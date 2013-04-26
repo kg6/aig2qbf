@@ -7,6 +7,7 @@ import java.util.Set;
 import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
+import at.jku.aig2qbf.component.Input;
 import at.jku.aig2qbf.component.LatchOutput;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
@@ -45,8 +46,6 @@ public class SimplePathReduction implements TreeReduction {
 			if (o.inputs.size() > 1) {
 				throw new RuntimeException("Unable to reduce the tree: Inputs of the output component must be merged into one component!");
 			}
-			
-			localTree.replaceTrueAndFalseAig();
 		}
 		
 		if (Configuration.SANTIY) {
@@ -60,7 +59,6 @@ public class SimplePathReduction implements TreeReduction {
 		And globalAnd = new And();
 		
 		// iterate over all branches of the tree and add the transition relation as well as the simple path constraint
-		
 		Hashtable<Relation, Boolean> transitionRelationHash = new Hashtable<Relation, Boolean>();
 		Hashtable<Relation, Boolean> simplepathRelationHash = new Hashtable<Relation, Boolean>();
 		
@@ -90,7 +88,6 @@ public class SimplePathReduction implements TreeReduction {
 		}
 		
 		// add all transition relations
-		
 		Set<Relation> transitionRelations = transitionRelationHash.keySet();
 		
 		for(Relation relation : transitionRelations) {
@@ -113,7 +110,6 @@ public class SimplePathReduction implements TreeReduction {
 		}
 		
 		// add all simple path relations
-		
 		Set<Relation> simplepathRelationSet = simplepathRelationHash.keySet();
 		
 		for(Relation relation : simplepathRelationSet) {
@@ -136,10 +132,18 @@ public class SimplePathReduction implements TreeReduction {
 		}
 
 		// make sure that the component has at least 2 inputs
-		
 		while (globalAnd.inputs.size() < 2) {
-			globalAnd.inputs.add(tree.cTrue);
-			tree.cTrue.outputs.add(globalAnd);
+			Input input = new Input("true");
+
+			Component not = new Not();
+			not.addInput(input);
+
+			Component or = new Or();
+			or.addInput(input);
+			or.addInput(not);
+
+			globalAnd.inputs.add(or);
+			or.outputs.add(globalAnd);
 		}
 
 		return globalAnd;

@@ -256,7 +256,7 @@ public class TestSimplePathReduction {
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 			
-			if (k < max_k + 1) {
+			if (k <= max_k + 1) {
 				assertFalse(sat);
 			}
 			else {
