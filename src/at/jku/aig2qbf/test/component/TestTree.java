@@ -1590,8 +1590,35 @@ public class TestTree extends BaseTest {
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
 			reducedTree.mergeToOneOutput();
 			
-			Tree tseitinTree = reducedTree.toTseitinCNF();		
+			Tree tseitinTree = reducedTree.toTseitinCNF();
 	
+			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+			
+			if(k <= 2) {
+				assertTrue(sat);
+			} else {
+				assertFalse(sat);
+			}
+		}
+	}
+	
+	@Test
+	public void regression7() {
+		final int max_k = 10;
+		
+		SimplePathReduction reduction = new SimplePathReduction();
+		
+		Tree tree = new AIG().parse("input/basic/regression7.aig");
+		
+		for(int k = 1; k <= max_k; k++) {
+			Tree unrolledTree = tree.unroll(k);
+			unrolledTree.mergeToOneOutput();
+			
+			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+			reducedTree.mergeToOneOutput();
+			
+			Tree tseitinTree = reducedTree.toTseitinCNF();
+			
 			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 			
 			if(k <= 2) {
@@ -1622,7 +1649,8 @@ public class TestTree extends BaseTest {
 			"regression3",
 			"regression4",
 			"regression5",
-			"regression6"
+			"regression6",
+			"regression7",
 		}) {
 			Tree tB = new AIG().parse("input/basic/" + file + ".aig");
 			
