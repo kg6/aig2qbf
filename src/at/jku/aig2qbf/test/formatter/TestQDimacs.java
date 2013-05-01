@@ -22,7 +22,6 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.AAG;
-import at.jku.aig2qbf.reduction.SAT;
 import at.jku.aig2qbf.test.TestUtil;
 
 public class TestQDimacs {
@@ -159,7 +158,7 @@ public class TestQDimacs {
 
 		checkQDIMACSFileStructure();
 
-		return SAT.Solve(TEMP_QDIMACS_FILE);
+		return TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE);
 	}
 
 	private void checkQDIMACSFileStructure() {

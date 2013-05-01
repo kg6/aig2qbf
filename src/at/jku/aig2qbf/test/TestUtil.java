@@ -14,9 +14,9 @@ import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.parser.Parser;
-import at.jku.aig2qbf.reduction.SAT;
 
 public class TestUtil {
+	private static final String SAT_SOLVER_PATH = "./tools/depqbf";
 
 	public static boolean CheckSatisfiablity(Tree tree, String outputFilePath) {
 		QDIMACS q = new QDIMACS();
@@ -26,7 +26,48 @@ public class TestUtil {
 			return false;
 		}
 
-		return SAT.Solve(outputFilePath);
+		return CheckSatisfiablity(outputFilePath);
+	}
+	
+	public static boolean CheckSatisfiablity(String filepath) {
+		Process process = null;
+		BufferedReader inputStream = null;
+		File tempFile = null;
+
+		try {
+			process = Runtime.getRuntime().exec(SAT_SOLVER_PATH + " " + filepath);
+			inputStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+			String result = inputStream.readLine().toUpperCase();
+
+			if (result.compareTo("SAT") == 0) {
+				return true;
+			}
+			else if (result.compareTo("UNSAT") == 0) {
+				return false;
+			}
+
+			throw new RuntimeException(String.format("SAT solver has returned an unexpected result: %s", result));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (tempFile != null) {
+				tempFile.delete();
+			}
+		}
+
+		return false;
 	}
 
 	public static String ReadQDIMACSFile(String inputFilePath) {
