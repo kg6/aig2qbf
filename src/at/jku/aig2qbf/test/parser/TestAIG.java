@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -359,8 +362,16 @@ public class TestAIG extends BaseTest {
 
 	@Test
 	public void loadRegressions() {
-		for (int i = 1; i <= 3; i++) {
-			this.loadTreeFromFile(String.format("input/basic/regression%s.aig", i));
+		File[] inputFiles = this.getBenchmarkInputFiles("input/basic", new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("regression");
+			}
+		});
+		
+		for(File file : inputFiles) {
+			this.loadTreeFromFile(file.getAbsolutePath());
 		}
 	}
 }
