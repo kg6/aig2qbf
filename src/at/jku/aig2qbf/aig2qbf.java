@@ -45,6 +45,7 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("it", "input-type", "The input type", true, "TYPE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
 		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not do any sanity checks.", false, null));
+		options.addOption(getCommandlineOption("nt", "no-tseitin", "Do not convert the tree with tseitin.", false, null));
 		options.addOption(getCommandlineOption("nu", "no-unrolling", "Do not unroll the tree.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
 		options.addOption(getCommandlineOption("ot", "output-type", "The output type", true, "TYPE"));
@@ -116,13 +117,15 @@ public class aig2qbf {
 				if (! commandLine.hasOption("nu")) {
 					t = t.unroll(k);
 					t.mergeToOneOutput();
-				}
-
-				if (! commandLine.hasOption("nr")) {
-					SimplePathReduction reduction = new SimplePathReduction();
-					t = reduction.reduceTree(t, k);
 					
-					t = t.toTseitinCNF();
+					if (! commandLine.hasOption("nr")) {
+						SimplePathReduction reduction = new SimplePathReduction();
+						t = reduction.reduceTree(t, k);
+
+						if (! commandLine.hasOption("nt")) {
+							t = t.toTseitinCNF();
+						}
+					}
 				}
 
 				if (commandLine.hasOption("vis")) {
@@ -132,7 +135,7 @@ public class aig2qbf {
 					Formatter f = BaseTest.GetOutputFileFormatter(outputExtension);
 
 					if (output != null) {
-						if(!FileIO.WriteFile(output, f.format(t))) {
+						if(! FileIO.WriteFile(output, f.format(t))) {
 							System.out.println("Unable to write output file.");
 						}
 					}
