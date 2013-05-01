@@ -91,11 +91,11 @@ public class TestSequential {
 		Tree unrolledTree = tree.unroll(k);
 		unrolledTree.mergeToOneOutput();
 		
-		Tree tseitinTree = unrolledTree.toTseitinCNF();
+		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
+		
+		Tree tseitinTree = reducedTree.toTseitinCNF();
 
-		Tree reducedTree = reductionMethod.reduceTree(tseitinTree, k);
-
-		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, reducedTree);
+		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, tseitinTree);
 		final boolean originalSat = TestUtil.CheckOriginalSat(inputFile, k);
 
 		return currentSat == originalSat;

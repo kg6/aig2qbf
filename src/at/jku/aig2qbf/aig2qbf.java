@@ -119,10 +119,10 @@ public class aig2qbf {
 				}
 
 				if (! commandLine.hasOption("nr")) {
-					t = t.toTseitinCNF();
-					
 					SimplePathReduction reduction = new SimplePathReduction();
 					t = reduction.reduceTree(t, k);
+					
+					t = t.toTseitinCNF();
 				}
 
 				if (commandLine.hasOption("vis")) {

@@ -87,11 +87,10 @@ public class TestCompetition {
 		Tree unrolledTree = tree.unroll(k);
 		unrolledTree.mergeToOneOutput();
 		
-		Tree tseitinTree = unrolledTree.toTseitinCNF();
-		
-		Tree reducedTree = reductionMethod.reduceTree(tseitinTree, k);
+		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
+		Tree tseitinTree = reducedTree.toTseitinCNF();
 
-		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, reducedTree);
+		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, tseitinTree);
 		final boolean originalSat = TestUtil.CheckOriginalSat(aigerFile, k);
 		
 		return currentSat == originalSat;

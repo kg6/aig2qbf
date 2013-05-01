@@ -1,12 +1,8 @@
 package at.jku.aig2qbf.reduction;
 
-import java.util.Hashtable;
-import java.util.Set;
-
 import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
-import at.jku.aig2qbf.component.Input;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
@@ -56,117 +52,55 @@ public class SimplePathReduction implements TreeReduction {
 	private Component getSimpleStateConstraints(Tree tree, int max_k) {
 		And globalAnd = new And();
 		
-		// iterate over all branches of the tree and add the transition relation as well as the simple path constraint
-		Hashtable<Relation, Boolean> transitionRelationHash = new Hashtable<Relation, Boolean>();
-		Hashtable<Relation, Boolean> simplepathRelationHash = new Hashtable<Relation, Boolean>();
-		
-		for(int k = 1; k < max_k; k++) {
-			for(int l = 0; l < k; l++) {
-				for(int i = 0; i < tree.latchOutputs[0].length; i++) {
-					Component cK = tree.latchOutputs[k][i];
+		// iterate over all branches of the tree and add the simple path constraint
+
+	    for(int l = 0; l < max_k - 1; l++) {
+	    	for(int k = l + 1; k < max_k; k++) {
+	    		Component or = new Or();
+	    		globalAnd.addInput(or);
+	    		
+	    		for(int i = 0; i < tree.latchOutputs[0].length; i++) {
+		    		Component cK = tree.latchOutputs[k][i];
 					Component cL = tree.latchOutputs[l][i];
 					
-					// transition relation: L <-> K
-					transitionRelationHash.put(new Relation(cK, cL), true);
-					
-					// add simple path constraint: L.outputs != K
-					for(Component cLOutput : cL.outputs) {
-						simplepathRelationHash.put(new Relation(cLOutput, cK), true);
-					}
-				}
-			}
-		}
+					or.addInput(getNotEqState(cK, cL));
+	    		}
+	    	}
+	    }
 		
-		// add all transition relations
-		Set<Relation> transitionRelations = transitionRelationHash.keySet();
-		
-		for(Relation relation : transitionRelations) {
-			Component notA = new Not();
-			notA.addInput(relation.a);
-			
-			Component notB = new Not();
-			notB.addInput(relation.b);
-			
-			Component or0 = new Or();
-			or0.addInput(notA);
-			or0.addInput(relation.b);
-			
-			Component or1 = new Or();
-			or1.addInput(relation.a);
-			or1.addInput(notB);
-			
-			globalAnd.addInput(or0);
-			globalAnd.addInput(or1);
-		}
-		
-		// add all simple path relations
-		Set<Relation> simplepathRelationSet = simplepathRelationHash.keySet();
-		
-		for(Relation relation : simplepathRelationSet) {
-			Component notA = new Not();
-			notA.addInput(relation.a);
-			
-			Component notB = new Not();			
-			notB.addInput(relation.b);
-			
-			Component or0 = new Or();
-			or0.addInput(relation.a);
-			or0.addInput(relation.b);
-			
-			Component or1 = new Or();
-			or1.addInput(notA);
-			or1.addInput(notB);
-			
-			globalAnd.addInput(or0);
-			globalAnd.addInput(or1);
-		}
-
 		// make sure that the component has at least 2 inputs
+	    
 		while (globalAnd.inputs.size() < 2) {
-			Input input = new Input("true");
-
-			Component not = new Not();
-			not.addInput(input);
-
-			Component or = new Or();
-			or.addInput(input);
-			or.addInput(not);
-
-			globalAnd.inputs.add(or);
-			or.outputs.add(globalAnd);
+			globalAnd.addInput(tree.cTrue);
 		}
 
 		return globalAnd;
+	}
+	
+	private Component getNotEqState(Component c1, Component c2) {
+		Component notC1 = new Not();
+		notC1.addInput(c1);
+		
+		Component notC2 = new Not();
+		notC2.addInput(c2);
+		
+		Component and0 = new And();
+		and0.addInput(notC1);
+		and0.addInput(c2);
+		
+		Component and1 = new And();
+		and1.addInput(c1);
+		and1.addInput(notC2);
+		
+		Component or = new Or();
+		or.addInput(and0);
+		or.addInput(and1);
+		
+		return or;
 	}
 
 	@Override
 	public String toString() {
 		return "Simplepath reduction";
-	}
-
-	class Relation {
-		private Component a;
-		private Component b;
-		
-		public Relation(Component a, Component b) {
-			this.a = a;
-			this.b = b;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if(!(obj instanceof Relation)) {
-				return false;
-			}
-			
-			Relation relation = (Relation)obj;
-			
-			return a.equals(relation.a) && b.equals(relation.b);
-		}
-
-		@Override
-		public int hashCode() {
-			return (Integer.toString(a.getId()) + Integer.toString(b.getId())).hashCode();
-		}
 	}
 }

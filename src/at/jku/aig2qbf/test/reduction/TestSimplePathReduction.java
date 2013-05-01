@@ -197,10 +197,11 @@ public class TestSimplePathReduction {
 				Tree unrolledTree = tree.unroll(k);
 				unrolledTree.mergeToOneOutput();
 				
-				Tree tseitinTree = unrolledTree.toTseitinCNF();
-				Tree reducedTree = reduction.reduceTree(tseitinTree, k);
+				Tree reducedTree = reduction.reduceTree(unrolledTree, k);
 				
-				final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, reducedTree);
+				Tree tseitinTree = reducedTree.toTseitinCNF();
+				
+				final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
 				
@@ -250,10 +251,11 @@ public class TestSimplePathReduction {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
 			
-			Tree tseitinTree = unrolledTree.toTseitinCNF();
-			Tree reducedTree = reduction.reduceTree(tseitinTree, k);
+			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
 			
-			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, reducedTree);
+			Tree tseitinTree = reducedTree.toTseitinCNF();
+			
+			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 			
