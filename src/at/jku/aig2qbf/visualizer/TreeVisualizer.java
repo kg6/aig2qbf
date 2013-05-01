@@ -16,9 +16,12 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
 
 public class TreeVisualizer {
+	public static boolean CLOSE_ON_EXIT = false;
+	
 	public static void DisplayTree(Tree tree) {
 		DisplayTree(tree, "Visualize!");
 	}
+	
 	public static void DisplayTree(Tree tree, String title) {
 		if (tree == null) {
 			throw new RuntimeException("Tree must not be null");
@@ -34,7 +37,12 @@ public class TreeVisualizer {
 
 		TreeFrame frame = new TreeFrame(tree, title, screenSize.width, screenSize.height);
 
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		if(CLOSE_ON_EXIT) {
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		} else {
+			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		}
+		
 		frame.setBounds(0, 0, screenSize.width, screenSize.height);
 		frame.setVisible(true);
 
@@ -42,7 +50,9 @@ public class TreeVisualizer {
 
 			@Override
 			public void windowOpened(WindowEvent arg0) {
-
+				if(CLOSE_ON_EXIT) {
+					waitForSignal.countDown();
+				}
 			}
 
 			@Override

@@ -20,6 +20,7 @@ import at.jku.aig2qbf.test.reduction.TestSimplePathReduction;
 	TestAAG.class,
 	TestAIG.class,
 	TestSimplePathReduction.class,
+	TestMain.class,
 })
 public class OnlyFastTests {
 

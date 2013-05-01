@@ -24,6 +24,7 @@ import at.jku.aig2qbf.test.reduction.TestSimplePathReduction;
 	TestSequential.class,
 	TestCompetition.class,
 	TestSimplePathReduction.class,
+	TestMain.class,
 })
 public class AllTests {
 
