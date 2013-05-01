@@ -1,5 +1,7 @@
 package at.jku.aig2qbf;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -39,7 +41,7 @@ public class aig2qbf {
 
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
 		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
-		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE"));
+		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE/AAG STRING"));
 		options.addOption(getCommandlineOption("it", "input-type", "The input type", true, "TYPE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
 		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not do any sanity checks.", false, null));
@@ -53,6 +55,7 @@ public class aig2qbf {
 			CommandLine commandLine = argParser.parse(options, args);
 
 			String input = null;
+			File inputFile = null;
 			Extension inputExtension = null;
 			String output = null;
 			Extension outputExtension = Extension.QDIMACS;
@@ -64,6 +67,12 @@ public class aig2qbf {
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
 				inputExtension = Parser.getExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
+				
+				inputFile = new File(input);
+				
+				if(!inputFile.exists()) {
+					inputExtension = Extension.AAG;
+				}
 
 				if (inputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", inputExtension));
@@ -104,8 +113,14 @@ public class aig2qbf {
 					default:
 						throw new RuntimeException(String.format("Parser for input file \"%s\" not implemented", input));
 				}
-
-				Tree t = p.parse(input);
+				
+				Tree t = null;
+				
+				if(inputFile.exists()) {
+					t = p.parse(input);
+				} else {
+					t = p.parse(input.getBytes());
+				}
 				
 				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
 

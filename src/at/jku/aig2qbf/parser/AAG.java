@@ -17,11 +17,18 @@ public class AAG extends Parser {
 	private final int HEADER_A_INDEX = 4;
 
 	@Override
-	public Tree parse(String filename) {
-		File inputFile = this.checkInputFile(filename, EXPECTED_EXTENSION);
+	public Tree parse(String inputFilePath) {
+		File inputFile = this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
 		String[] lines = this.readFile(inputFile);
-
+		
+		return this.parse(lines);
+	}
+	
+	@Override
+	public Tree parse(byte[] input) {
+		String[] lines = new String(input).split("\n");
+		
 		return this.parse(lines);
 	}
 

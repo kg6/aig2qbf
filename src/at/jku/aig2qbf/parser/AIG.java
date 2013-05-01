@@ -18,12 +18,17 @@ public class AIG extends Parser {
 	private final int HEADER_O_INDEX = 3;
 	private final int HEADER_A_INDEX = 4;
 
-	public Tree parse(String filename) {
-		File inputFile = this.checkInputFile(filename, EXPECTED_EXTENSION);
+	public Tree parse(String inputFilePath) {
+		File inputFile = this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
 		List<byte[]> lines = this.readBinaryFile(inputFile);
 
 		return this.parse(lines);
+	}
+	
+	@Override
+	public Tree parse(byte[] input) {
+		throw new RuntimeException("Binary input parsing is not supported.");
 	}
 
 	private Tree parse(List<byte[]> lines) {

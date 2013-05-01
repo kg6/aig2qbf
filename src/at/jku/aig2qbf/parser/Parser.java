@@ -46,12 +46,13 @@ public abstract class Parser {
 		}
 	}
 
-	protected File checkInputFile(String path, String expectedExtension) {
-		if (path == null) {
+	protected File checkInputFile(String inputFilePath, String expectedExtension) {
+		if (inputFilePath == null) {
 			throw new IllegalArgumentException("Input file path must not be null.");
 		}
+		
+		File inputFile = new File(inputFilePath);
 
-		File inputFile = new File(path);
 		if (! inputFile.exists()) {
 			throw new IllegalArgumentException("Input file does not exist.");
 		}
@@ -255,5 +256,6 @@ public abstract class Parser {
 		return o;
 	}
 
-	abstract public Tree parse(String filename);
+	abstract public Tree parse(String inputFilePath);
+	abstract public Tree parse(byte[] input);
 }
