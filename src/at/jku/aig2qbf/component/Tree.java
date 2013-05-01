@@ -648,6 +648,24 @@ public class Tree implements Cloneable {
 			for (int i = 2; i <= k; i++) {
 				ts.add((Tree) tree.clone());
 			}
+			
+			// convert true and false before using them (this is saver)
+			for (Tree t : ts) {
+				// convert True and False inputs to new tree
+				while (! t.cFalse.outputs.isEmpty()) {
+					Component c = t.cFalse.outputs.remove(0);
+					c.inputs.remove(t.cFalse);
+
+					c.addInput(tree.cFalse);
+				}
+
+				while (! t.cTrue.outputs.isEmpty()) {
+					Component c = t.cTrue.outputs.remove(0);
+					c.inputs.remove(t.cTrue);
+
+					c.addInput(tree.cTrue);
+				}
+			}
 
 			int tOffset = ts.get(0).outputs.get(0).getId() - tree.outputs.get(0).getId();
 
@@ -717,21 +735,6 @@ public class Tree implements Cloneable {
 
 					tree.outputs.add(i);
 				}
-
-				// convert True and False inputs to new tree
-				while (! t.cFalse.outputs.isEmpty()) {
-					Component c = t.cFalse.outputs.remove(0);
-					c.inputs.remove(t.cFalse);
-
-					c.addInput(tree.cFalse);
-				}
-
-				while (! t.cTrue.outputs.isEmpty()) {
-					Component c = t.cTrue.outputs.remove(0);
-					c.inputs.remove(t.cTrue);
-
-					c.addInput(tree.cTrue);
-				}
 			}
 		}
 		
@@ -788,6 +791,17 @@ public class Tree implements Cloneable {
 		
 		// verify the structure of the tree
 		if (Configuration.SANTIY) {
+			for (int x = 0; x < k; x++) {
+				for (int y = 0; y < latches.size(); y++) {
+					if (tree.latchOutputs[x][y] instanceof False) {
+						verify(tree.latchOutputs[x][y] == tree.cFalse, tree.latchOutputs[x][y]);
+					}
+					else if (tree.latchOutputs[x][y] instanceof True) {
+						verify(tree.latchOutputs[x][y] == tree.cTrue, tree.latchOutputs[x][y]);
+					}
+				}
+			}
+
 			tree.verifyTreeStructure();
 		}
 		
@@ -867,6 +881,13 @@ public class Tree implements Cloneable {
 				}
 				else if (c instanceof True || c instanceof False) {
 					verify(c.inputs.size() == 0, c);
+
+					if (c instanceof True) {
+						verify(c == tree.cTrue, c);
+					}
+					else {
+						verify(c == tree.cFalse, c);
+					}
 				}
 				else {
 					if (c instanceof And || c instanceof Or) {
