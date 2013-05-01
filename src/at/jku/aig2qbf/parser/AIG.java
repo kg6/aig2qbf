@@ -1,9 +1,9 @@
 package at.jku.aig2qbf.parser;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Tree;
 
 public class AIG extends Parser {
@@ -19,9 +19,9 @@ public class AIG extends Parser {
 	private final int HEADER_A_INDEX = 4;
 
 	public Tree parse(String inputFilePath) {
-		File inputFile = this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
+		this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
-		List<byte[]> lines = this.readBinaryFile(inputFile);
+		List<byte[]> lines = FileIO.ReadBinaryFile(inputFilePath);
 
 		return this.parse(lines);
 	}

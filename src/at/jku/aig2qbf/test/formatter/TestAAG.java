@@ -5,8 +5,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Tree;
+import at.jku.aig2qbf.formatter.AAG;
+import at.jku.aig2qbf.formatter.Formatter;
 
 public class TestAAG {
 
@@ -20,7 +23,9 @@ public class TestAAG {
 	}
 
 	protected boolean saveFile(Tree tree, String filename) {
-		return new at.jku.aig2qbf.formatter.AAG().writeToFile(tree, "output/" + filename + ".aag");
+		Formatter formatter = new AAG();
+		
+		return FileIO.WriteFile("output/" + filename + ".aag", formatter.format(tree));
 	}
 
 	protected Tree loadOutputFile(String filename) {

@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
@@ -36,8 +37,8 @@ public class TestCompetition {
 
 	@After
 	public void tearDown() throws Exception {
-		TestUtil.RemoveOutputFile(OUTPUT_FILE);
-		TestUtil.RemoveOutputFile(AIGER_FILE);
+		FileIO.RemoveFile(OUTPUT_FILE);
+		FileIO.RemoveFile(AIGER_FILE);
 	}
 
 	@Test
@@ -90,7 +91,7 @@ public class TestCompetition {
 		
 		Tree reducedTree = reductionMethod.reduceTree(tseitinTree, k);
 
-		final boolean currentSat = TestUtil.CheckSatisfiablity(reducedTree, OUTPUT_FILE);
+		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, reducedTree);
 		final boolean originalSat = TestUtil.CheckOriginalSat(aigerFile, k);
 		
 		return currentSat == originalSat;

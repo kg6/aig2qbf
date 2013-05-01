@@ -14,7 +14,7 @@ import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.component.True;
 
-public class AAG extends Formatter {
+public class AAG implements Formatter {
 	@Override
 	public String format(Tree tree) {
 		StringBuilder s = new StringBuilder();

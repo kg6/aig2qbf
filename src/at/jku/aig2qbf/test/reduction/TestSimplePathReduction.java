@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
@@ -33,7 +34,7 @@ public class TestSimplePathReduction {
 
 	@After
 	public void tearDown() {
-		TestUtil.RemoveOutputFile(TEMP_QDIMACS_FILE);
+		FileIO.RemoveFile(TEMP_QDIMACS_FILE);
 	}
 
 	@Test
@@ -48,7 +49,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 
 		{ // 1
@@ -61,7 +62,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 
 	}
@@ -79,7 +80,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 10
 			Tree t = new Tree();
@@ -92,7 +93,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 01
 			Tree t = new Tree();
@@ -105,7 +106,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 11
 			Tree t = new Tree();
@@ -118,7 +119,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 	}
 
@@ -135,7 +136,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 10
 			Tree t = new Tree();
@@ -148,7 +149,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 01
 			Tree t = new Tree();
@@ -161,7 +162,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 11
 			Tree t = new Tree();
@@ -174,7 +175,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(t, TEMP_QDIMACS_FILE));
+			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 	}
 
@@ -199,7 +200,7 @@ public class TestSimplePathReduction {
 				Tree tseitinTree = unrolledTree.toTseitinCNF();
 				Tree reducedTree = reduction.reduceTree(tseitinTree, k);
 				
-				final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
+				final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, reducedTree);
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
 				
@@ -252,7 +253,7 @@ public class TestSimplePathReduction {
 			Tree tseitinTree = unrolledTree.toTseitinCNF();
 			Tree reducedTree = reduction.reduceTree(tseitinTree, k);
 			
-			final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
+			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, reducedTree);
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 			

@@ -10,11 +10,10 @@ import java.util.concurrent.CountDownLatch;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.FileIO.FileExtension;
 import at.jku.aig2qbf.component.Tree;
-import at.jku.aig2qbf.parser.AAG;
-import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.parser.Parser;
-import at.jku.aig2qbf.parser.Parser.Extension;
 
 public class TreeVisualizer {
 	public static void DisplayTree(Tree tree) {
@@ -94,26 +93,12 @@ public class TreeVisualizer {
 
 		if (option == JFileChooser.APPROVE_OPTION) {
 			String filename = chooser.getSelectedFile().getAbsolutePath();
+			
+			FileExtension extension = FileIO.GetFileExtension(filename);
+			
+			Parser parser = FileIO.GetParserForFileExtension(extension);
 
-			Extension extension = Parser.getExtension(filename);
-
-			Tree tree = null;
-
-			if (extension == null) {
-				throw new RuntimeException(String.format("Unknown extension for filename \"%s\"", filename));
-			}
-			else {
-				switch (extension) {
-					case AAG:
-						tree = new AAG().parse(filename);
-					break;
-					case AIG:
-						tree = new AIG().parse(filename);
-					break;
-					default:
-					break;
-				}
-			}
+			Tree tree = parser.parse(filename);
 
 			TreeVisualizer.DisplayTree(tree, filename);
 		}

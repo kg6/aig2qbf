@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
@@ -34,7 +35,7 @@ public class TestQDimacs {
 
 	@After
 	public void tearDown() throws Exception {
-		TestUtil.RemoveOutputFile(TEMP_QDIMACS_FILE);
+		FileIO.RemoveFile(TEMP_QDIMACS_FILE);
 	}
 
 	@Test
@@ -149,20 +150,15 @@ public class TestQDimacs {
 	}
 
 	private boolean checkSatisfiablity(Tree tree) {
-		QDIMACS q = new QDIMACS();
-
-		if (! q.writeToFile(tree, TEMP_QDIMACS_FILE)) {
-			fail("Unable to write SAT temporary file");
-			return false;
-		}
+		final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tree);
 
 		checkQDIMACSFileStructure();
 
-		return TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE);
+		return sat;
 	}
 
 	private void checkQDIMACSFileStructure() {
-		String fileContent = TestUtil.ReadQDIMACSFile(TEMP_QDIMACS_FILE);
+		String fileContent = FileIO.ReadFile(TEMP_QDIMACS_FILE);
 
 		assertTrue(fileContent == null || fileContent.length() > 0);
 

@@ -10,11 +10,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import at.jku.aig2qbf.FileIO.FileExtension;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.Formatter;
 import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.Parser;
-import at.jku.aig2qbf.parser.Parser.Extension;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
@@ -56,9 +56,9 @@ public class aig2qbf {
 
 			String input = null;
 			File inputFile = null;
-			Extension inputExtension = null;
+			FileExtension inputExtension = null;
 			String output = null;
-			Extension outputExtension = Extension.QDIMACS;
+			FileExtension outputExtension = FileExtension.QDIMACS;
 
 			Configuration.FAST = true;
 			Configuration.SANTIY = ! commandLine.hasOption("ns");
@@ -66,12 +66,12 @@ public class aig2qbf {
 			
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
-				inputExtension = Parser.getExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
+				inputExtension = FileIO.GetFileExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
 				
 				inputFile = new File(input);
 				
 				if(!inputFile.exists()) {
-					inputExtension = Extension.AAG;
+					inputExtension = FileExtension.AAG;
 				}
 
 				if (inputExtension == null) {
@@ -80,7 +80,7 @@ public class aig2qbf {
 			}
 			if (commandLine.hasOption('o')) {
 				output = commandLine.getOptionValue('o');
-				outputExtension = Parser.getExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
+				outputExtension = FileIO.GetFileExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
 
 				if (outputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", output));
@@ -88,7 +88,7 @@ public class aig2qbf {
 			}
 			else {
 				if (commandLine.hasOption("ot")) {
-					outputExtension = Parser.getExtension("." + commandLine.getOptionValue("ot"));
+					outputExtension = FileIO.GetFileExtension("." + commandLine.getOptionValue("ot"));
 				}
 			}
 			if (commandLine.hasOption('k')) {
@@ -101,18 +101,7 @@ public class aig2qbf {
 			}
 
 			if (commandLine.hasOption('i')) {
-				Parser p = null;
-
-				switch (inputExtension) {
-					case AAG:
-						p = new at.jku.aig2qbf.parser.AAG();
-					break;
-					case AIG:
-						p = new at.jku.aig2qbf.parser.AIG();
-					break;
-					default:
-						throw new RuntimeException(String.format("Parser for input file \"%s\" not implemented", input));
-				}
+				Parser p = FileIO.GetParserForFileExtension(inputExtension);
 				
 				Tree t = null;
 				
@@ -154,7 +143,9 @@ public class aig2qbf {
 					}
 
 					if (output != null) {
-						f.writeToFile(t, output);
+						if(!FileIO.WriteFile(output, f.format(t))) {
+							System.out.println("Unable to write output file.");
+						}
 					}
 					else {
 						System.out.println(f.format(t));

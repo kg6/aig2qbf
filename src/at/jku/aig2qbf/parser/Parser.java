@@ -1,13 +1,7 @@
 package at.jku.aig2qbf.parser;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Stack;
 
 import at.jku.aig2qbf.component.And;
@@ -19,34 +13,7 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 
 public abstract class Parser {
-	public enum Extension {
-		AIG, AAG, QDIMACS
-	}
-
-	public static Extension getExtension(String filename) {
-		int i = filename.lastIndexOf('.');
-
-		if (i == -1) {
-			return null;
-		}
-
-		String extension = filename.substring(i + 1).toLowerCase();
-
-		if (extension.compareTo("aag") == 0) {
-			return Extension.AAG;
-		}
-		else if (extension.compareTo("aig") == 0) {
-			return Extension.AIG;
-		}
-		else if (extension.compareTo("qdimacs") == 0 || extension.compareTo("qbf") == 0) {
-			return Extension.QDIMACS;
-		}
-		else {
-			return null;
-		}
-	}
-
-	protected File checkInputFile(String inputFilePath, String expectedExtension) {
+	protected void checkInputFile(String inputFilePath, String expectedExtension) {
 		if (inputFilePath == null) {
 			throw new IllegalArgumentException("Input file path must not be null.");
 		}
@@ -60,81 +27,16 @@ public abstract class Parser {
 		String fileName = inputFile.getName();
 
 		int extensionPos = fileName.lastIndexOf('.');
+		
 		if (extensionPos >= 0) {
 			String extension = fileName.substring(extensionPos + 1).toLowerCase();
 
 			if (extension.compareTo(expectedExtension) == 0) {
-				return inputFile;
+				return;
 			}
 		}
 
 		throw new IllegalArgumentException("Input file does not have the expected file extension of '" + expectedExtension + "'.");
-	}
-
-	protected String[] readFile(File inputFile) {
-		DataInputStream inputStream = null;
-
-		try {
-			byte[] fileData = new byte[(int) inputFile.length()];
-
-			inputStream = new DataInputStream(new FileInputStream(inputFile));
-			inputStream.readFully(fileData);
-
-			return new String(fileData).split("\n");
-		}
-		catch (Exception e) {
-			throw new RuntimeException("Unable to read the input file. Please check the file rights and try it again.");
-		}
-		finally {
-			try {
-				if (inputStream != null) {
-					inputStream.close();
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	protected List<byte[]> readBinaryFile(File inputFile) {
-		DataInputStream inputStream = null;
-
-		try {
-			byte[] fileData = new byte[(int) inputFile.length()];
-
-			inputStream = new DataInputStream(new FileInputStream(inputFile));
-			inputStream.readFully(fileData);
-
-			List<byte[]> resultList = new ArrayList<byte[]>();
-
-			int startIndex = 0;
-			for (int i = 0; i < fileData.length; i++) {
-				if (fileData[i] == (int) '\n') {
-					resultList.add(Arrays.copyOfRange(fileData, startIndex, i));
-					startIndex = i + 1;
-				}
-			}
-
-			if (startIndex < fileData.length) {
-				resultList.add(Arrays.copyOfRange(fileData, startIndex, fileData.length));
-			}
-
-			return resultList;
-		}
-		catch (Exception e) {
-			throw new RuntimeException("Unable to read the input file. Please check the file rights and try it again.");
-		}
-		finally {
-			try {
-				if (inputStream != null) {
-					inputStream.close();
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	protected Tree createTree(final int numberOfInputs, final int maximumVariableIndex, final int multipliedMaximumVariableIndex, final int[][] fileLatches, final int[] fileOutputs, final int[][] fileAnds) {

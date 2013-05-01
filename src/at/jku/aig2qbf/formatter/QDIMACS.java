@@ -15,7 +15,7 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 
-public class QDIMACS extends Formatter {
+public class QDIMACS implements Formatter {
 	
 	@Override
 	public String format(Tree cnfTree) {

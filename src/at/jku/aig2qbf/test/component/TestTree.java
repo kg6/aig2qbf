@@ -502,7 +502,7 @@ public class TestTree {
 			tree.outputs.add(o);
 
 			// Check the satisfiability of the tree
-			boolean sat = TestUtil.CheckSatisfiablity(tree, TEMP_QDIMACS_FILE);
+			boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tree);
 
 			assertTrue(prevSat != sat);
 
