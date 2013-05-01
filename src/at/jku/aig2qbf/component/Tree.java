@@ -837,6 +837,18 @@ public class Tree implements Cloneable {
 			}
 		}
 	}
+	
+	protected boolean containsLatchOutputs(Component c) {
+		for (int x = 0; x < this.latchOutputs.length; x++) {
+			for (int y = 0; y < this.latchOutputs[0].length; y++) {
+				if (this.latchOutputs[x][y] == c) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	public void testInTreeFor(TestTreeChecker checker) {
 		HashMap<Component, Component> seen = new HashMap<>();
@@ -885,6 +897,10 @@ public class Tree implements Cloneable {
 			public void check(Tree tree, Component c) {
 				if (c instanceof Input) {
 					verify(c.inputs.size() == 0, c);
+					
+					if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+						verify(c.outputs.size() != 0, c);
+					}
 				}
 				else if (c instanceof Output) {
 					verify(c.outputs.size() == 0, c);
@@ -902,7 +918,10 @@ public class Tree implements Cloneable {
 				else {
 					if (c instanceof And || c instanceof Or) {
 						verify(c.inputs.size() >= 1, c);
-						verify(c.outputs.size() >= 1, c);
+						
+						if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+							verify(c.outputs.size() != 0, c);
+						}
 					}
 
 					if (c instanceof Latch) {
@@ -911,7 +930,10 @@ public class Tree implements Cloneable {
 
 					if (c instanceof Not) {
 						verify(c.inputs.size() > 0, c);
-						verify(c.outputs.size() > 0, c);
+						
+						if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+							verify(c.outputs.size() != 0, c);
+						}
 					}
 
 					for (Component i : c.inputs) {

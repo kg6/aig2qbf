@@ -1621,7 +1621,8 @@ public class TestTree extends BaseTest {
 			"regression2",
 			"regression3",
 			"regression4",
-			"regression5"
+			"regression5",
+			"regression6"
 		}) {
 			Tree tB = new AIG().parse("input/basic/" + file + ".aig");
 			
