@@ -947,7 +947,7 @@ public class TestTree extends BaseTest {
 		l2.addInput(l2);
 		l2.addInput(i);
 
-		t.removeComplete(l1);
+		t.removeCompletely(l1);
 
 		Component c = o.inputs.remove(0);
 		c.outputs.remove(o);

@@ -12,7 +12,7 @@ public class SimplePathReduction implements TreeReduction {
 
 	@Override
 	public Tree reduceTree(Tree tree, int k) {
-		Tree localTree = (Tree) tree.clone();
+		Tree localTree = tree;
 		
 		if(localTree.outputs.size() == 0 || localTree.outputs.get(0).inputs.size() == 0) {
 			return localTree;
