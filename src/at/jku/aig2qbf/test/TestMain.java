@@ -73,10 +73,7 @@ public class TestMain {
 		
 		for(int i = 0; i < parameters.length; i++) {
 			System.out.print(parameters[i]);
-			
-			if(i < parameters.length - 1) {
-				System.out.print(", ");
-			}
+			System.out.print(" ");
 		}
 		
 		System.out.println();
