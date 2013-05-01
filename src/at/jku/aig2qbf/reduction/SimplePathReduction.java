@@ -60,7 +60,7 @@ public class SimplePathReduction implements TreeReduction {
 		Hashtable<Relation, Boolean> transitionRelationHash = new Hashtable<Relation, Boolean>();
 		Hashtable<Relation, Boolean> simplepathRelationHash = new Hashtable<Relation, Boolean>();
 		
-		for(int k = 1; k < max_k - 1; k++) {
+		for(int k = 1; k < max_k; k++) {
 			for(int l = 0; l < k; l++) {
 				for(int i = 0; i < tree.latchOutputs[0].length; i++) {
 					Component cK = tree.latchOutputs[k][i];
