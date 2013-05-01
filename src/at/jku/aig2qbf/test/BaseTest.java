@@ -211,7 +211,7 @@ public class BaseTest {
 	public static Formatter GetOutputFileFormatter(FileExtension extension) {
 		switch(extension) {
 			case QDIMACS:
-				new at.jku.aig2qbf.formatter.QDIMACS();
+				return new at.jku.aig2qbf.formatter.QDIMACS();
 			case AAG:
 				return new at.jku.aig2qbf.formatter.AAG();
 			default:
