@@ -1604,8 +1604,26 @@ public class TestTree extends BaseTest {
 	
 	@Test
 	public void unrollAndReduceBasics() {
-		for (String file : new String[] { "input/basic/false.aig", "input/basic/true.aig" }) {
-			Tree tB = new AIG().parse(file);
+		for (String file : new String[] {
+			"empty",
+			"false",
+			"true",
+			"buffer",
+			"inverter",
+			"and",
+			"flip",
+			"with-comment",
+			"and-with-all-nots",
+			"and-with-true-and-false",
+			"toggle",
+			"toggle-re",
+			"regression1",
+			"regression2",
+			"regression3",
+			"regression4",
+			"regression5"
+		}) {
+			Tree tB = new AIG().parse("input/basic/" + file + ".aig");
 			
 			for (int k = 1; k <= 3; k++) {
 				Tree t = (Tree) tB.clone();
