@@ -1,14 +1,12 @@
 package at.jku.aig2qbf.reduction;
 
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 
 import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
-import at.jku.aig2qbf.component.LatchOutput;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
