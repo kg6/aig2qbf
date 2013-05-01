@@ -129,6 +129,8 @@ public class aig2qbf {
 				}
 
 				if (commandLine.hasOption("vis")) {
+					TreeVisualizer.CLOSE_ON_EXIT = true;
+					
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
