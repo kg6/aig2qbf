@@ -40,7 +40,7 @@ public class TestMain {
 		parameterList.add(new ParameterPair("-o", TEMP_QDIMACS_FILE));
 		parameterList.add(new ParameterPair("-ot", "qbf"));
 		parameterList.add(new ParameterPair("-v"));
-		parameterList.add(new ParameterPair("-vis"));
+		// parameterList.add(new ParameterPair("-vis"));
 		
 		final int max_iterations = 100;
 		
