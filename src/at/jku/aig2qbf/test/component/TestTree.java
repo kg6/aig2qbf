@@ -1,6 +1,7 @@
 package at.jku.aig2qbf.test.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -20,6 +21,7 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
+import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.test.TestUtil;
 
 public class TestTree {
@@ -1350,9 +1352,9 @@ public class TestTree {
 //		Tree unrolledTree = tree.unroll(max_k);
 //		unrolledTree.mergeToOneOutput();
 //		
-//		Tree tseitinTree = unrolledTree.toTseitinCNF();
+//		Tree reducedTree = reduction.reduceTree(unrolledTree, max_k);
 //		
-//		Tree reducedTree = reduction.reduceTree(tseitinTree, max_k);
+//		Tree tseitinTree = reducedTree.toTseitinCNF();
 //		List<Input> tseitinInputList = tseitinTree.lastTseitinInputList;
 //		
 //		if(tseitinInputList.size() == 0) {
@@ -1573,30 +1575,30 @@ public class TestTree {
 		}
 	}
 	
-//	@Test
-//	public void regression4() {
-//		final int k = 3;
-//		
-//		SimplePathReduction reduction = new SimplePathReduction();
-//		
-//		Tree tree = new AIG().parse("input/basic/regression4.aig");
-//		
-//		TreeVisualizer.DisplayTree(tree, "parsed");
-//		
-//		Tree unrolledTree = tree.unroll(k);
-//		unrolledTree.mergeToOneOutput();
-//		
-//		TreeVisualizer.DisplayTree(unrolledTree, "unrolled");
-//		
-//		Tree tseitinTree = unrolledTree.toTseitinCNF();
-//		
-//		Tree reducedTree = reduction.reduceTree(tseitinTree, k);
-//		reducedTree.mergeToOneOutput();
-//		
-//		TreeVisualizer.DisplayTree(reducedTree, "reduced");
-//
-//		final boolean sat = TestUtil.CheckSatisfiablity(reducedTree, TEMP_QDIMACS_FILE);
-//		
-//		System.out.println(sat);
-//	}
+	@Test
+	public void regression4() {
+		final int max_k = 10;
+		
+		SimplePathReduction reduction = new SimplePathReduction();
+		
+		Tree tree = new AIG().parse("input/basic/regression4.aig");
+		
+		for(int k = 1; k <= max_k; k++) {
+			Tree unrolledTree = tree.unroll(k);
+			unrolledTree.mergeToOneOutput();
+			
+			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+			reducedTree.mergeToOneOutput();
+			
+			Tree tseitinTree = reducedTree.toTseitinCNF();		
+	
+			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+			
+			if(k <= 2) {
+				assertTrue(sat);
+			} else {
+				assertFalse(sat);
+			}
+		}
+	}
 }
