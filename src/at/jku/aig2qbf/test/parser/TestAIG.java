@@ -18,32 +18,18 @@ import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.component.True;
-import at.jku.aig2qbf.parser.AIG;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestAIG {
+public class TestAIG extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
 		Component.Reset();
 	}
 
-	protected Tree loadFile(String filename) {
-		return new AIG().parse(filename + ".aig");
-	}
-
-	protected void testComponent(Component c, String name, int inputSize, int outputSize, Component parent) {
-		assertEquals(name, c.getName());
-		assertEquals(inputSize, c.inputs.size());
-		assertEquals(outputSize, c.outputs.size());
-
-		if (parent != null) {
-			assertEquals(parent, c.outputs.get(0));
-		}
-	}
-
 	@Test
 	public void empty() {
-		Tree tree = this.loadFile("input/basic/empty");
+		Tree tree = this.loadTreeFromFile("input/basic/empty.aig");
 
 		assertNotNull(tree);
 		assertTrue(tree.isCNF());
@@ -53,7 +39,7 @@ public class TestAIG {
 
 	@Test
 	public void onlytrue() {
-		Tree tree = this.loadFile("input/basic/true");
+		Tree tree = this.loadTreeFromFile("input/basic/true.aig");
 
 		assertNotNull(tree);
 		assertTrue(tree.isCNF());
@@ -73,7 +59,7 @@ public class TestAIG {
 
 	@Test
 	public void onlyfalse() {
-		Tree tree = this.loadFile("input/basic/false");
+		Tree tree = this.loadTreeFromFile("input/basic/false.aig");
 
 		assertNotNull(tree);
 
@@ -93,7 +79,7 @@ public class TestAIG {
 
 	@Test
 	public void buffer() {
-		Tree tree = this.loadFile("input/basic/buffer");
+		Tree tree = this.loadTreeFromFile("input/basic/buffer.aig");
 
 		assertNotNull(tree);
 		assertTrue(tree.isCNF());
@@ -113,7 +99,7 @@ public class TestAIG {
 
 	@Test
 	public void inverter() {
-		Tree tree = this.loadFile("input/basic/inverter");
+		Tree tree = this.loadTreeFromFile("input/basic/inverter.aig");
 
 		assertNotNull(tree);
 
@@ -138,7 +124,7 @@ public class TestAIG {
 
 	@Test
 	public void and() {
-		Tree tree = this.loadFile("input/basic/and");
+		Tree tree = this.loadTreeFromFile("input/basic/and.aig");
 
 		assertNotNull(tree);
 
@@ -168,7 +154,7 @@ public class TestAIG {
 
 	@Test
 	public void andWithAllNots() {
-		Tree tree = this.loadFile("input/basic/and-with-all-nots");
+		Tree tree = this.loadTreeFromFile("input/basic/and-with-all-nots.aig");
 
 		assertNotNull(tree);
 		assertFalse(tree.isCNF());
@@ -213,7 +199,7 @@ public class TestAIG {
 
 	@Test
 	public void andWithTrueAndFalse() {
-		Tree tree = this.loadFile("input/basic/and-with-true-and-false");
+		Tree tree = this.loadTreeFromFile("input/basic/and-with-true-and-false.aig");
 
 		assertNotNull(tree);
 		assertTrue(tree.isCNF());
@@ -243,7 +229,7 @@ public class TestAIG {
 
 	@Test
 	public void toggle() {
-		Tree tree = this.loadFile("input/basic/toggle");
+		Tree tree = this.loadTreeFromFile("input/basic/toggle.aig");
 
 		assertNotNull(tree);
 		assertFalse(tree.isCNF());
@@ -281,7 +267,7 @@ public class TestAIG {
 
 	@Test
 	public void toggleRE() {
-		Tree tree = this.loadFile("input/basic/toggle-re");
+		Tree tree = this.loadTreeFromFile("input/basic/toggle-re.aig");
 
 		assertNotNull(tree);
 		assertFalse(tree.isCNF());
@@ -374,7 +360,7 @@ public class TestAIG {
 	@Test
 	public void loadRegressions() {
 		for (int i = 1; i <= 3; i++) {
-			this.loadFile("input/basic/regression" + i);
+			this.loadTreeFromFile(String.format("input/basic/regression%s.aig", i));
 		}
 	}
 }

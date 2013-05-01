@@ -15,9 +15,9 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.reduction.TreeReduction;
-import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestCompetition {
+public class TestCompetition extends BaseTest {
 	private final String INPUT_EXTENSION_CNF = ".cnf";
 	private final String AIGER_FILE = "./output/aiger.aig";
 	
@@ -43,7 +43,7 @@ public class TestCompetition {
 
 	@Test
 	public void testCompetition() {
-		File[] benchmarkFiles = TestUtil.GetBenchmarkInputFiles(INPUT_COMPETITION_DIRECTORY, new FilenameFilter() {
+		File[] benchmarkFiles = this.getBenchmarkInputFiles(INPUT_COMPETITION_DIRECTORY, new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File dir, String name) {
@@ -75,12 +75,12 @@ public class TestCompetition {
 	private boolean testCompetition(File input, TreeReduction reductionMethod, int k) {
 		File aigerFile = new File(AIGER_FILE);
 		
-		if(!TestUtil.ConvertToAiger(input.getAbsolutePath(), aigerFile.getAbsolutePath()) || !aigerFile.exists()) {
+		if(!this.convertToAiger(input.getAbsolutePath(), aigerFile.getAbsolutePath()) || !aigerFile.exists()) {
 			System.out.println("			Failed to convert CNF to AIG!");
 			return false;
 		}
 		
-		Parser parser = TestUtil.GetInputFileParser(aigerFile);
+		Parser parser = BaseTest.GetInputFileParser(aigerFile);
 		
 		Tree tree = parser.parse(aigerFile.getAbsolutePath());
 		
@@ -90,8 +90,8 @@ public class TestCompetition {
 		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
 		Tree tseitinTree = reducedTree.toTseitinCNF();
 
-		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, tseitinTree);
-		final boolean originalSat = TestUtil.CheckOriginalSat(aigerFile, k);
+		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, tseitinTree);
+		final boolean originalSat = this.checkOriginalSat(aigerFile, k);
 		
 		return currentSat == originalSat;
 	}

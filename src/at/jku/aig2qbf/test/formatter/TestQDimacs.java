@@ -23,9 +23,9 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.AAG;
-import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestQDimacs {
+public class TestQDimacs extends BaseTest {
 	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
 
 	@Before
@@ -150,7 +150,7 @@ public class TestQDimacs {
 	}
 
 	private boolean checkSatisfiablity(Tree tree) {
-		final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tree);
+		final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tree);
 
 		checkQDIMACSFileStructure();
 

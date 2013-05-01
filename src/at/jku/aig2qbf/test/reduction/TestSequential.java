@@ -17,9 +17,9 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.reduction.TreeReduction;
-import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestSequential {
+public class TestSequential extends BaseTest {
 	private final String INPUT_EXTENSION_AIG = ".aig";
 	private final String INPUT_EXTENSION_AAG = ".aag";
 
@@ -44,7 +44,7 @@ public class TestSequential {
 
 	@Test
 	public void test() {
-		File[] benchmarkFiles = TestUtil.GetBenchmarkInputFiles(INPUT_SEQUENTIAL_DIRECTORY, new FilenameFilter() {
+		File[] benchmarkFiles = this.getBenchmarkInputFiles(INPUT_SEQUENTIAL_DIRECTORY, new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File dir, String name) {
@@ -81,7 +81,7 @@ public class TestSequential {
 	}
 
 	private boolean testBenchmark(File inputFile, TreeReduction reductionMethod, int k) {
-		Parser parser = TestUtil.GetInputFileParser(inputFile);
+		Parser parser = BaseTest.GetInputFileParser(inputFile);
 
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
 		
@@ -95,8 +95,8 @@ public class TestSequential {
 		
 		Tree tseitinTree = reducedTree.toTseitinCNF();
 
-		final boolean currentSat = TestUtil.CheckSatisfiablity(OUTPUT_FILE, tseitinTree);
-		final boolean originalSat = TestUtil.CheckOriginalSat(inputFile, k);
+		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, tseitinTree);
+		final boolean originalSat = this.checkOriginalSat(inputFile, k);
 
 		return currentSat == originalSat;
 	}

@@ -22,9 +22,9 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
-import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestTree {
+public class TestTree extends BaseTest {
 	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
 
 	@Before
@@ -504,7 +504,7 @@ public class TestTree {
 			tree.outputs.add(o);
 
 			// Check the satisfiability of the tree
-			boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tree);
+			boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tree);
 
 			assertTrue(prevSat != sat);
 
@@ -1592,7 +1592,7 @@ public class TestTree {
 			
 			Tree tseitinTree = reducedTree.toTseitinCNF();		
 	
-			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 			
 			if(k <= 2) {
 				assertTrue(sat);

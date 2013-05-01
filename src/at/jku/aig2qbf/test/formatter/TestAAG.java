@@ -5,31 +5,15 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Tree;
-import at.jku.aig2qbf.formatter.AAG;
-import at.jku.aig2qbf.formatter.Formatter;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestAAG {
+public class TestAAG extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
 		Component.Reset();
-	}
-
-	protected Tree loadFile(String filename) {
-		return new at.jku.aig2qbf.parser.AAG().parse("input/basic/" + filename + ".aag");
-	}
-
-	protected boolean saveFile(Tree tree, String filename) {
-		Formatter formatter = new AAG();
-		
-		return FileIO.WriteFile("output/" + filename + ".aag", formatter.format(tree));
-	}
-
-	protected Tree loadOutputFile(String filename) {
-		return new at.jku.aig2qbf.parser.AAG().parse("output/" + filename + ".aag");
 	}
 
 	@Test
@@ -48,12 +32,12 @@ public class TestAAG {
 			"toggle",
 			"toggle-re"
 		}) {
-			Tree t1 = loadFile(filename);
+			Tree t1 = this.loadTreeFromFile("input/basic/" + filename + ".aag");
 			assertTrue("load " + filename, t1 != null);
 
-			assertTrue("save " + filename, saveFile(t1, filename));
+			assertTrue("save " + filename, this.saveTreeTofile("output/" + filename + ".aag", t1));
 
-			Tree t2 = loadOutputFile(filename);
+			Tree t2 = this.loadTreeFromFile("output/" + filename + ".aag");
 			assertTrue("load saved " + filename, t2 != null);
 		}
 	}

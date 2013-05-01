@@ -13,9 +13,9 @@ import org.apache.commons.cli.PosixParser;
 import at.jku.aig2qbf.FileIO.FileExtension;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.Formatter;
-import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
+import at.jku.aig2qbf.test.BaseTest;
 import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
 public class aig2qbf {
@@ -129,18 +129,7 @@ public class aig2qbf {
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
-					Formatter f = new QDIMACS();
-
-					switch (outputExtension) {
-						case AAG:
-							f = new at.jku.aig2qbf.formatter.AAG();
-						break;
-						case QDIMACS:
-							f = new at.jku.aig2qbf.formatter.QDIMACS();
-						break;
-						default:
-							throw new RuntimeException(String.format("Formatter for output type \"%s\" not implemented", outputExtension));
-					}
+					Formatter f = BaseTest.GetOutputFileFormatter(outputExtension);
 
 					if (output != null) {
 						if(!FileIO.WriteFile(output, f.format(t))) {

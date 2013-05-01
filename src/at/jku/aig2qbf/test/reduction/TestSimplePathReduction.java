@@ -22,9 +22,9 @@ import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
-import at.jku.aig2qbf.test.TestUtil;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestSimplePathReduction {
+public class TestSimplePathReduction extends BaseTest {
 	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
 
 	@Before
@@ -49,7 +49,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 
 		{ // 1
@@ -62,7 +62,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertFalse(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 
 	}
@@ -80,7 +80,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertFalse(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 10
 			Tree t = new Tree();
@@ -93,7 +93,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 01
 			Tree t = new Tree();
@@ -106,7 +106,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 11
 			Tree t = new Tree();
@@ -119,7 +119,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 	}
 
@@ -136,7 +136,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertFalse(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 10
 			Tree t = new Tree();
@@ -149,7 +149,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertFalse(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 01
 			Tree t = new Tree();
@@ -162,7 +162,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertFalse(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertFalse(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 		{ // 11
 			Tree t = new Tree();
@@ -175,7 +175,7 @@ public class TestSimplePathReduction {
 			
 			t = t.toTseitinCNF();
 			
-			assertTrue(TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, t));
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, t));
 		}
 	}
 
@@ -201,7 +201,7 @@ public class TestSimplePathReduction {
 				
 				Tree tseitinTree = reducedTree.toTseitinCNF();
 				
-				final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+				final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
 				
@@ -255,7 +255,7 @@ public class TestSimplePathReduction {
 			
 			Tree tseitinTree = reducedTree.toTseitinCNF();
 			
-			final boolean sat = TestUtil.CheckSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 			

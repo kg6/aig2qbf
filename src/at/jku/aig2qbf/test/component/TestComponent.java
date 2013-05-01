@@ -14,8 +14,9 @@ import at.jku.aig2qbf.component.Input;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestComponent {
+public class TestComponent extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {

@@ -16,24 +16,18 @@ import at.jku.aig2qbf.component.Latch;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
-import at.jku.aig2qbf.parser.AAG;
+import at.jku.aig2qbf.test.BaseTest;
 
-public class TestAAG extends TestAIG {
+public class TestAAG extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
 		Component.Reset();
 	}
 
-	@Override
-	protected Tree loadFile(String filename) {
-		return new AAG().parse(filename + ".aag");
-	}
-
-	@Override
 	@Test
 	public void toggleRE() {
-		Tree tree = loadFile("input/basic/toggle-re");
+		Tree tree = this.loadTreeFromFile("input/basic/toggle-re.aag");
 
 		assertNotNull(tree);
 		assertFalse(tree.isCNF());
@@ -125,7 +119,7 @@ public class TestAAG extends TestAIG {
 
 	@Test
 	public void slicing() {
-		Tree tree = loadFile("input/basic/slicing");
+		Tree tree = this.loadTreeFromFile("input/basic/slicing.aag");
 
 		assertNotNull(tree);
 
