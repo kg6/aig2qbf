@@ -100,6 +100,9 @@ while (1) {
 				print_elapsed_time();
 			}
 		}
+		elsif ($? == 8) {
+			print "IGNORE mcaiger = 2 output\n";
+		}
 		else {
 			if (not $opts->{verbose}) {
 				print "\n";
@@ -107,7 +110,7 @@ while (1) {
 		
 			print "CHECK NOT OK\n";
 
-			if ($check_out =~ m/error on K=(\d+)/) {
+			if ($check_out =~ m/error on k=(\d+)/) {
 				print "$check_out\n";
 
 				if (not $opts->{'no-dd'}) {

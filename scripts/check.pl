@@ -89,7 +89,7 @@ for my $k (@ks) {
 	print_elapsed_time('aig2qbf');
 
 	if ($out =~ m/Exception in thread/) {
-		print "aig2qbf load error on K=$k\n";
+		print "aig2qbf load error on k=$k\n";
 		print "\n$out\n";
 
 		exit 1;
@@ -111,7 +111,7 @@ for my $k (@ks) {
 		$debqbf_sat = 0;
 	}
 	else {
-		print "depqbf solve error on K=$k\n";
+		print "depqbf solve error on k=$k\n";
 		print "\n$debqbf_out\n";
 	
 		exit 2;
@@ -136,8 +136,13 @@ for my $k (@ks) {
 	elsif ($mcaiger_out eq '0') {
 		$mcaiger_sat = 0;
 	}
+	elsif ($mcaiger_out eq '2') {
+		print "mcaiger's output is 2\n";
+	
+		exit 8;
+	}
 	else {
-		print "mcaiger solve error on K=$k\n";
+		print "mcaiger solve error on k=$k\n";
 		print "\n$mcaiger_out\n";
 	
 		exit 3;
@@ -148,7 +153,7 @@ for my $k (@ks) {
 	}
 
 	if ($debqbf_sat != $mcaiger_sat) {
-		print "debqbf and mcaiger are divided over the satisfiability, error on K=$k\n";
+		print "debqbf and mcaiger are divided over the satisfiability, error on k=$k\n";
 		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 
