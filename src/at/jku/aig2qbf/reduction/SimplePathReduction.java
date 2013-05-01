@@ -33,7 +33,9 @@ public class SimplePathReduction implements TreeReduction {
 				a.addInput(c);
 			}
 
-			a.addInput(simplePathAnd);
+			if (simplePathAnd.inputs.size() != 0) {
+				a.addInput(simplePathAnd);
+			}
 
 			o.addInput(a);
 
@@ -57,20 +59,26 @@ public class SimplePathReduction implements TreeReduction {
 	    for(int l = 0; l < max_k - 1; l++) {
 	    	for(int k = l + 1; k < max_k; k++) {
 	    		Component or = new Or();
-	    		globalAnd.addInput(or);
-	    		
-	    		for(int i = 0; i < tree.latchOutputs[0].length; i++) {
-		    		Component cK = tree.latchOutputs[k][i];
+
+				for(int i = 0; i < tree.latchOutputs[0].length; i++) {
+					Component cK = tree.latchOutputs[k][i];
 					Component cL = tree.latchOutputs[l][i];
 					
 					or.addInput(getNotEqState(cK, cL));
-	    		}
+				}
+
+				if (or.inputs.size() != 0) {
+					if (or.inputs.size() == 1) {
+						or.addInput(tree.cFalse);
+					}
+
+					globalAnd.addInput(or);
+				}
 	    	}
 	    }
 		
 		// make sure that the component has at least 2 inputs
-	    
-		while (globalAnd.inputs.size() < 2) {
+		if (globalAnd.inputs.size() == 1) {
 			globalAnd.addInput(tree.cTrue);
 		}
 

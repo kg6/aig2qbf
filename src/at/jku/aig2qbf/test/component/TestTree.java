@@ -1601,4 +1601,23 @@ public class TestTree {
 			}
 		}
 	}
+	
+	@Test
+	public void unrollAndReduceBasics() {
+		for (String file : new String[] { "input/basic/false.aig", "input/basic/true.aig" }) {
+			Tree tB = new AIG().parse(file);
+			
+			for (int k = 1; k <= 3; k++) {
+				Tree t = (Tree) tB.clone();
+
+				t = t.unroll(k);
+				t.mergeToOneOutput();
+
+				SimplePathReduction reduction = new SimplePathReduction();
+				t = reduction.reduceTree(t, k);
+
+				t = t.toTseitinCNF();
+			}
+		}
+	}
 }
