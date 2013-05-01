@@ -63,18 +63,10 @@ public class SimplePathReduction implements TreeReduction {
 		Hashtable<Relation, Boolean> simplepathRelationHash = new Hashtable<Relation, Boolean>();
 		
 		for(int k = 1; k < max_k - 1; k++) {
-			List<LatchOutput> K = tree.getLatchOutputsOfBranch(k);
-			
 			for(int l = 0; l < k; l++) {
-				List<LatchOutput> L = tree.getLatchOutputsOfBranch(l);
-				
-				if(K.size() != L.size()) {
-					throw new RuntimeException("Unable to apply simple state constraints: Unexpected latch output size");
-				}
-				
-				for(int i = 0; i < K.size(); i++) {
-					Component cK = K.get(i).component;
-					Component cL = L.get(i).component;
+				for(int i = 0; i < tree.latchOutputs[0].length; i++) {
+					Component cK = tree.latchOutputs[k][i];
+					Component cL = tree.latchOutputs[l][i];
 					
 					// transition relation: L <-> K
 					transitionRelationHash.put(new Relation(cK, cL), true);
