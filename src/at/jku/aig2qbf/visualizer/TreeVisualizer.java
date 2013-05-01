@@ -17,6 +17,9 @@ import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.parser.Parser.Extension;
 
 public class TreeVisualizer {
+	public static void DisplayTree(Tree tree) {
+		DisplayTree(tree, "Visualize!");
+	}
 	public static void DisplayTree(Tree tree, String title) {
 		if (tree == null) {
 			throw new RuntimeException("Tree must not be null");
