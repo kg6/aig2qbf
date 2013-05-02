@@ -366,7 +366,7 @@ public class TestAIG extends BaseTest {
 			
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.startsWith("regression");
+				return name.startsWith("regression") && name.endsWith(".aig");
 			}
 		});
 		
