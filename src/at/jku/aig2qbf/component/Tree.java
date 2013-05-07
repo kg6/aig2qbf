@@ -376,7 +376,11 @@ public class Tree implements Cloneable {
 		HashMap<Component, Component> seen = new HashMap<>();
 		Stack<Component> stack = new Stack<Component>();
 		stack.push(o.inputs.get(0));
-
+		
+		// remember all universal/existential quantified variables
+		List<Input> universalQuantifiersList = new ArrayList<Input>();
+		List<Input> existentialQuantifiersList = new ArrayList<Input>();
+		
 		// build a global and to connect the pieces of the tree
 		Component globalAnd = new And();
 
@@ -405,7 +409,11 @@ public class Tree implements Cloneable {
 					}
 
 					// add every component to the stack that should get a Tseitin node
-					if (! (c instanceof Input) && !stack.contains(c)) {
+					if(c instanceof Input) {
+						existentialQuantifiersList.add((Input)c);
+						
+						universalQuantifiersList.remove(c);
+					} else if(!stack.contains(c)) {
 						stack.push(c);
 					}
 				}
@@ -493,10 +501,28 @@ public class Tree implements Cloneable {
 				else {
 					throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node + " is unknown!");
 				}
+				
+				// remember inputs for quantifiers
+				if(tree.containsLatchOutputs(node)) {
+					universalQuantifiersList.add(xi);
+					existentialQuantifiersList.remove(xi);
+				} else {
+					existentialQuantifiersList.add(xi);
+					universalQuantifiersList.remove(xi);
+				}
 
 				// replace node with xi in the tree
 				tree.replaceComponent(node, xi);
 			}
+		}
+		
+		// manage quantifiers
+		for(Input input : universalQuantifiersList) {
+			tree.addQuantifier(input, Quantifier.EXISTENTIAL); //TODO
+		}
+		
+		for(Input input : existentialQuantifiersList) {
+			tree.addQuantifier(input, Quantifier.EXISTENTIAL);
 		}
 
 		// manage the tree output
@@ -560,10 +586,10 @@ public class Tree implements Cloneable {
 		return and;
 	}
 
-	public void addQuantifier(Tree tree, Input input, Quantifier quantifier) {
+	private void addQuantifier(Input input, Quantifier quantifier) {
 		boolean componentFound = false;
 
-		for (QuantifierSet q : tree.quantifier) {
+		for (QuantifierSet q : this.quantifier) {
 			if (q.literals.contains(input)) {
 				componentFound = true;
 				break;
@@ -571,13 +597,13 @@ public class Tree implements Cloneable {
 		}
 
 		if (! componentFound) {
-			QuantifierSet q = getLastTreeQuantifierOfType(tree, quantifier);
+			QuantifierSet q = getLastTreeQuantifierOfType(quantifier);
 
 			// merge literals with the same quantifier type if possible
 
 			if (q == null) {
 				q = new QuantifierSet(quantifier, input);
-				tree.quantifier.add(q);
+				this.quantifier.add(q);
 			}
 			else {
 				q.literals.add(input);
@@ -585,11 +611,11 @@ public class Tree implements Cloneable {
 		}
 	}
 
-	private QuantifierSet getLastTreeQuantifierOfType(Tree tree, Quantifier quantifier) {
-		final int quantifierSize = tree.quantifier.size();
+	private QuantifierSet getLastTreeQuantifierOfType(Quantifier quantifier) {
+		final int quantifierSize = this.quantifier.size();
 
 		if (quantifierSize > 0) {
-			QuantifierSet q = tree.quantifier.get(quantifierSize - 1);
+			QuantifierSet q = this.quantifier.get(quantifierSize - 1);
 
 			if (q.quantifier == quantifier) {
 				return q;
