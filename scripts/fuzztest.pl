@@ -15,6 +15,7 @@ my $options = Getopt::Compact->new(
 	struct => [
 		[ 'k', 'Max unnrolling steps k', ':i' ],
 		[ 'l', 'Generate large circuits' ],
+		[ 'no-reduction', 'Do not apply any reduction' ],
 		[ 'no-dd', 'Do not delta debug any errors' ],
 		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
@@ -56,8 +57,11 @@ my $checker_options = '';
 if ($opts->{'no-sanity'}) {
 	$checker_options .= ' --no-sanity';
 }
-if ($opts->{verbose}) {
+if ($opts->{'verbose'}) {
 	$checker_options .= ' --verbose';
+}
+if ($opts->{'no-reduction'}) {
+	$checker_options .= ' --no-reduction';
 }
 
 my $fuzzer_options = '-m -1';
@@ -116,7 +120,7 @@ while (1) {
 				if (not $opts->{'no-dd'}) {
 					print "Reduce $base_file.aig to $base_file-reduced.aig with k=$k\n";
 
-					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k`;
+					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k$checker_options`;
 					print "Done\n";
 					
 					exit 1;

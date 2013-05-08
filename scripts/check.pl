@@ -15,6 +15,7 @@ my $options = Getopt::Compact->new(
 	struct => [
 		[ 'input', 'Input aig file to check', '=s' ],
 		[ 'k', 'Unrolling step k', ':i' ],
+		[ 'no-reduction', 'Do not apply any reduction' ],
 		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
 	]
@@ -74,8 +75,17 @@ my $aig2qbf_options = '';
 if ($opts->{'no-sanity'}) {
 	$aig2qbf_options .= ' --no-sanity';
 }
-if ($opts->{verbose}) {
+if ($opts->{'verbose'}) {
 	$aig2qbf_options .= ' --verbose';
+}
+if ($opts->{'no-reduction'}) {
+	$aig2qbf_options .= ' --no-reduction';
+}
+
+my $mcaiger_options = '-r';
+
+if ($opts->{'no-reduction'}) {
+	$mcaiger_options = '-i';
 }
 
 for my $k (@ks) {
@@ -122,7 +132,7 @@ for my $k (@ks) {
 	}
 	
 	time_start();
-	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" -r $k "$file" 2>&1`);
+	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" $mcaiger_options $k "$file" 2>&1`);
 	time_end();
 	print_elapsed_time('mcaiger');
 
