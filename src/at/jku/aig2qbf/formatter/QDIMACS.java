@@ -31,7 +31,7 @@ public class QDIMACS implements Formatter {
 			StringBuilder qdimacsBuilder = new StringBuilder();
 			
 			// determine the number of variables
-			final int numberOfVariables = getNumberOfVariables(rootNode);
+			final int maximumVariableIndex = getMaximumVariableIndex(rootNode);
 
 			// define problem line
 			qdimacsBuilder.append("p cnf %s %s\n");
@@ -52,7 +52,7 @@ public class QDIMACS implements Formatter {
 			// define CNF clauses
 			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder);
 			
-			return String.format(qdimacsBuilder.toString(), numberOfVariables, numberOfClauses);
+			return String.format(qdimacsBuilder.toString(), maximumVariableIndex, numberOfClauses);
 		}
 
 		return "p cnf 0 0\n";
@@ -127,8 +127,9 @@ public class QDIMACS implements Formatter {
 		builder.append("\n");
 	}
 
-	private int getNumberOfVariables(Component root) {
-		HashMap<Component, Component> inputs = new HashMap<>();
+	private int getMaximumVariableIndex(Component root) {
+		int maxVariableIndex = 0;
+		
 		HashMap<Component, Component> seen = new HashMap<>();
 		Stack<Component> stack = new Stack<>();
 		
@@ -137,9 +138,9 @@ public class QDIMACS implements Formatter {
 
 		while (!stack.isEmpty()) {
 			Component n = stack.pop();
-
-			if (n instanceof Input && ! inputs.containsKey(n)) {
-				inputs.put(n, null);
+			
+			if(n.getId() > maxVariableIndex && n instanceof Input) {
+				maxVariableIndex = n.getId();
 			}
 
 			for (Component i : n.inputs) {
@@ -149,8 +150,8 @@ public class QDIMACS implements Formatter {
 				}
 			}
 		}
-
-		return inputs.size();
+		
+		return maxVariableIndex;
 	}
 
 	public class NL extends Component {

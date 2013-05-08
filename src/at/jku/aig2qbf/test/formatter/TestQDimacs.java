@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -162,7 +163,7 @@ public class TestQDimacs extends BaseTest {
 
 		assertTrue(fileContent == null || fileContent.length() > 0);
 
-		int expectedVariableCount = 0;
+		int expectedVariableIndex = 0;
 		int expectedClauseCount = 0;
 
 		int currentClauseCount = 0;
@@ -185,10 +186,10 @@ public class TestQDimacs extends BaseTest {
 				assertEquals("p", programLine[0]);
 				assertEquals("cnf", programLine[1]);
 
-				expectedVariableCount = Integer.parseInt(programLine[2]);
+				expectedVariableIndex = Integer.parseInt(programLine[2]);
 				expectedClauseCount = Integer.parseInt(programLine[3]);
 
-				assertTrue(expectedVariableCount >= 0);
+				assertTrue(expectedVariableIndex >= 0);
 				assertTrue(expectedClauseCount >= 0);
 			}
 			else if (line.startsWith("c ") && programLinePassed) {
@@ -212,8 +213,18 @@ public class TestQDimacs extends BaseTest {
 				currentClauseCount++;
 			}
 		}
+		
+		int maxVariableIndex = 0;
+		
+		Set<Integer> variableIndizes = currentVariableHash.keySet();
+		
+		for(int variableIndex : variableIndizes) {
+			if(variableIndex > maxVariableIndex) {
+				maxVariableIndex = variableIndex;
+			}
+		}
 
-		assertEquals(expectedVariableCount, currentVariableHash.size());
+		assertEquals(expectedVariableIndex, maxVariableIndex);
 		assertEquals(expectedClauseCount, currentClauseCount);
 	}
 
