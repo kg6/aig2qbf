@@ -85,7 +85,7 @@ if ($opts->{'no-reduction'}) {
 my $mcaiger_options = '-r';
 
 if ($opts->{'no-reduction'}) {
-	$mcaiger_options = '-i';
+	$mcaiger_options = '-b';
 }
 
 for my $k (@ks) {
@@ -145,9 +145,11 @@ for my $k (@ks) {
 		$mcaiger_sat = 0;
 	}
 	elsif ($mcaiger_out eq '2') {
-		print "mcaiger's output is 2\n";
+		$mcaiger_sat = 0;
+		
+		#print "mcaiger's output is 2\n";
 	
-		exit 8;
+		#exit 8;
 	}
 	else {
 		print "mcaiger solve error on k=$k\n";
