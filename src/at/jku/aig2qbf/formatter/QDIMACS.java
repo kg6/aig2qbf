@@ -31,7 +31,7 @@ public class QDIMACS implements Formatter {
 			StringBuilder qdimacsBuilder = new StringBuilder();
 			
 			// determine the number of variables
-			final int maximumVariableIndex = getMaximumVariableIndex(rootNode);
+			final int[] minMaxVariableIndex = getMinMaxVariableIndex(rootNode);
 
 			// define problem line
 			qdimacsBuilder.append("p cnf %s %s\n");
@@ -50,15 +50,17 @@ public class QDIMACS implements Formatter {
 			}
 
 			// define CNF clauses
-			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder);
+			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, minMaxVariableIndex[0]);
 			
-			return String.format(qdimacsBuilder.toString(), maximumVariableIndex, numberOfClauses);
+			return String.format(qdimacsBuilder.toString(), minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses);
 		}
 
 		return "p cnf 0 0\n";
 	}
 
-	private int defineCNFClauses(List<Component> componentList, StringBuilder builder) {
+	private int defineCNFClauses(List<Component> componentList, StringBuilder builder, int minVariableIndex) {
+		final int variableOffset = minVariableIndex - 1;
+		
 		Stack<Component> componentStack = new Stack<Component>();
 
 		for (int i = componentList.size() - 1; i >= 0; i--) {
@@ -88,10 +90,10 @@ public class QDIMACS implements Formatter {
 					negated = ! negated;
 				}
 
-				appendClause(builder, child.getId(), negated);
+				appendClause(builder, child.getId() - variableOffset, negated);
 			}
 			else if (c instanceof Input) {
-				appendClause(builder, c.getId(), false);
+				appendClause(builder, c.getId() - variableOffset, false);
 			}
 			else if (c instanceof NL) {
 				appendNL(builder);
@@ -127,7 +129,8 @@ public class QDIMACS implements Formatter {
 		builder.append("\n");
 	}
 
-	private int getMaximumVariableIndex(Component root) {
+	private int[] getMinMaxVariableIndex(Component root) {
+		int minVariableIndex = Integer.MAX_VALUE;
 		int maxVariableIndex = 0;
 		
 		HashMap<Component, Component> seen = new HashMap<>();
@@ -138,6 +141,10 @@ public class QDIMACS implements Formatter {
 
 		while (!stack.isEmpty()) {
 			Component n = stack.pop();
+			
+			if(n.getId() < minVariableIndex && n instanceof Input) {
+				minVariableIndex = n.getId();
+			}
 			
 			if(n.getId() > maxVariableIndex && n instanceof Input) {
 				maxVariableIndex = n.getId();
@@ -151,7 +158,7 @@ public class QDIMACS implements Formatter {
 			}
 		}
 		
-		return maxVariableIndex;
+		return new int[] { minVariableIndex, maxVariableIndex };
 	}
 
 	public class NL extends Component {
