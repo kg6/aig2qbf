@@ -68,13 +68,14 @@ public class QDIMACS implements Formatter {
 		}
 
 		int clauseCounter = 0;
+		boolean lineHasLiterals = false;
 
 		while (! componentStack.isEmpty()) {
 			Component c = componentStack.pop();
 
 			if (c instanceof And || c instanceof Or) {
 				for (int i = c.inputs.size() - 1; i >= 0; i--) {
-					if (c instanceof And && (componentStack.isEmpty() || !(componentStack.peek() instanceof NL))) {
+					if (c instanceof And) {
 						componentStack.push(new NL());
 					}
 
@@ -91,13 +92,21 @@ public class QDIMACS implements Formatter {
 				}
 
 				appendClause(builder, child.getId() - variableOffset, negated);
+				
+				lineHasLiterals = true;
 			}
 			else if (c instanceof Input) {
 				appendClause(builder, c.getId() - variableOffset, false);
+				
+				lineHasLiterals = true;
 			}
 			else if (c instanceof NL) {
-				appendNL(builder);
-				clauseCounter++;
+				if(lineHasLiterals) {
+					appendNL(builder);
+					clauseCounter++;
+					
+					lineHasLiterals = false;
+				}
 			}
 			else {
 				throw new RuntimeException("Unable to convert tree to QDIMACS format: The  node type '" + c.getClass().getName() + "' is unknown!");
@@ -116,6 +125,10 @@ public class QDIMACS implements Formatter {
 	}
 
 	private void appendClause(StringBuilder builder, int id, boolean negated) {
+		if(id == 0) {
+			throw new RuntimeException("Unable to convert tree to QDIMACS format: The not id 0 is invalid!");
+		}
+		
 		if (negated) {
 			id = -id;
 		}
