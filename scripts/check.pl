@@ -121,10 +121,8 @@ for my $k (@ks) {
 		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 	
-	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`;
-
 	time_start();
-	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" -r $k "$file-or.aig" 2>&1`);
+	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" -r $k "$file" 2>&1`);
 	time_end();
 	print_elapsed_time('mcaiger');
 

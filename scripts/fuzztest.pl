@@ -60,7 +60,7 @@ if ($opts->{verbose}) {
 	$checker_options .= ' --verbose';
 }
 
-my $fuzzer_options = '';
+my $fuzzer_options = '-m -1';
 
 if ($opts->{l}) {
 	$fuzzer_options .= ' -l';
