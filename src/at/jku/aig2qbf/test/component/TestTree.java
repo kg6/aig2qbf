@@ -1588,7 +1588,6 @@ public class TestTree extends BaseTest {
 			unrolledTree.mergeToOneOutput();
 			
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-			reducedTree.mergeToOneOutput();
 			
 			Tree tseitinTree = reducedTree.toTseitinCNF();
 	
@@ -1615,7 +1614,6 @@ public class TestTree extends BaseTest {
 			unrolledTree.mergeToOneOutput();
 			
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-			reducedTree.mergeToOneOutput();
 			
 			Tree tseitinTree = reducedTree.toTseitinCNF();
 			
