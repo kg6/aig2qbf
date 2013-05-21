@@ -13,7 +13,7 @@ my $script_path = dirname(__FILE__);
 my $options = Getopt::Compact->new(
 	name => 'checker if the output of aig2qbf is ok',
 	struct => [
-		[ 'input', 'Input aig file to check', '=s' ],
+		[ 'input', 'Input aig/cnf file to check', '=s' ],
 		[ 'k', 'Unrolling step k', ':i' ],
 		[ 'no-reduction', 'Do not apply any reduction' ],
 		[ 'no-sanity', 'Do not do any sanity checks' ],
@@ -42,6 +42,17 @@ if (not $options->status() or not options_validate()) {
 }
 
 my $file = $opts->{input};
+
+if ($file =~ m/\.cnf$/) {
+	my $cnf2aig_out = `"$script_path/../tools/cnf2aig" "$file" "$file-aig.aig"`;
+	
+	if ($opts->{verbose}) {
+		say $cnf2aig_out;
+	}
+	
+	$file = "$file-aig.aig";
+}
+
 my @ks = ($opts->{k}) ? ($opts->{k}) : (1..10);
 
 if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
