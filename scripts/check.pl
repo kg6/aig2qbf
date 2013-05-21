@@ -120,7 +120,7 @@ for my $k (@ks) {
 	time_start();
 	my $depqbf_out = trim(`"$script_path/../tools/depqbf" "$file-$k.qbf" 2>&1`);
 	time_end();
-	print_elapsed_time('debqbf');
+	print_elapsed_time('depqbf');
 	
 	my $depqbf_sat;
 
@@ -138,7 +138,7 @@ for my $k (@ks) {
 	}
 	
 	if ($opts->{verbose}) {
-		print "debqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
+		print "depqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 
 	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`; 
@@ -175,8 +175,8 @@ for my $k (@ks) {
 	}
 
 	if ($depqbf_sat != $mcaiger_sat) {
-		print "debqbf and mcaiger are divided over the satisfiability, error on k=$k\n";
-		print "debqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
+		print "depqbf and mcaiger are divided over the satisfiability, error on k=$k\n";
+		print "depqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 
 		exit 4;
