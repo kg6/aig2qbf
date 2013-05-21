@@ -119,27 +119,27 @@ for my $k (@ks) {
 	write_file("$file-$k.qbf", $out);
 
 	time_start();
-	my $debqbf_out = trim(`"$script_path/../tools/depqbf" "$file-$k.qbf" 2>&1`);
+	my $depqbf_out = trim(`"$script_path/../tools/depqbf" "$file-$k.qbf" 2>&1`);
 	time_end();
 	print_elapsed_time('debqbf');
 	
-	my $debqbf_sat;
+	my $depqbf_sat;
 
-	if ($debqbf_out and $debqbf_out eq 'SAT') {
-		$debqbf_sat = 1;
+	if ($depqbf_out and $depqbf_out eq 'SAT') {
+		$depqbf_sat = 1;
 	}
-	elsif ($debqbf_out and $debqbf_out eq 'UNSAT') {
-		$debqbf_sat = 0;
+	elsif ($depqbf_out and $depqbf_out eq 'UNSAT') {
+		$depqbf_sat = 0;
 	}
 	else {
 		print "depqbf solve error on k=$k\n";
-		print "\n$debqbf_out\n";
+		print "\n$depqbf_out\n";
 	
 		exit 2;
 	}
 	
 	if ($opts->{verbose}) {
-		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
+		print "debqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 
 	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`; 
@@ -175,9 +175,9 @@ for my $k (@ks) {
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 
-	if ($debqbf_sat != $mcaiger_sat) {
+	if ($depqbf_sat != $mcaiger_sat) {
 		print "debqbf and mcaiger are divided over the satisfiability, error on k=$k\n";
-		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
+		print "debqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 
 		exit 4;
