@@ -191,7 +191,7 @@ public class TestSimplePathReduction extends BaseTest {
 
 			SimplePathReduction reduction = new SimplePathReduction();
 
-			for (int k = 1; k <= max_k; k++) {
+			for (int k = 0; k <= max_k; k++) {
 				final long startTime = System.currentTimeMillis();
 				
 				Tree unrolledTree = tree.unroll(k);
@@ -205,7 +205,7 @@ public class TestSimplePathReduction extends BaseTest {
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
 				
-				if (k <= 2) {
+				if (k < 2) {
 					assertEquals(true, sat);
 				}
 				else {
@@ -245,7 +245,7 @@ public class TestSimplePathReduction extends BaseTest {
 
 		final int max_check = max_k * 2;
 
-		for (int k = 1; k <= max_check; k++) {
+		for (int k = 0; k < max_check; k++) {
 			final long startTime = System.currentTimeMillis();
 			
 			Tree unrolledTree = tree.unroll(k);
@@ -259,7 +259,7 @@ public class TestSimplePathReduction extends BaseTest {
 
 			System.out.println(String.format("testSat1: Test simple path constraint k=%s (%s%%, %sms)", k, k * 100 / max_check, System.currentTimeMillis() - startTime));
 			
-			if (k < max_k + 1) {
+			if (k < max_k) {
 				assertFalse(sat);
 			}
 			else {

@@ -18,6 +18,9 @@ public class SimplePathReduction implements TreeReduction {
 			return localTree;
 		}
 		
+		// because of k=0
+		k++;
+		
 		if (k > 1) {
 			Component simplePathAnd = getSimpleStateConstraints(localTree, k);
 

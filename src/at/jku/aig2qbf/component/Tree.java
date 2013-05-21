@@ -653,6 +653,9 @@ public class Tree implements Cloneable {
 	}
 
 	public Tree unroll(int k) {
+		// because of k=0
+		k++;
+		
 		if (k < 1) {
 			throw new RuntimeException("k must be a positive number");
 		}

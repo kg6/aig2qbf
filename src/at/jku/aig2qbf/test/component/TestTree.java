@@ -541,7 +541,7 @@ public class TestTree extends BaseTest {
 		Tree tree = new Tree();
 		tree.outputs.add(y);
 
-		final int k = 4;
+		final int k = 3;
 		Tree unrolledTree = tree.unroll(k);
 		unrolledTree.mergeToOneOutput();
 
@@ -550,7 +550,7 @@ public class TestTree extends BaseTest {
 		assertTrue(unrolledOutput instanceof Output);
 
 		Component unrolledGlobalOr = unrolledOutput.inputs.get(0);
-		assertEquals(k, unrolledGlobalOr.inputs.size());
+		assertEquals(k + 1, unrolledGlobalOr.inputs.size());
 		assertTrue(unrolledGlobalOr instanceof Or);
 
 		// Check different branches (unroll step i)
@@ -582,7 +582,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleK1() {
 		Tree t = new AIG().parse("input/basic/toggle.aig");
 
-		Tree uT = t.unroll(1);
+		Tree uT = t.unroll(0);
 
 		assertEquals(2, uT.outputs.size());
 		Component o1 = uT.outputs.get(0);
@@ -607,7 +607,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleK2() {
 		Tree t = new AIG().parse("input/basic/toggle.aig");
 
-		Tree uT = t.unroll(2);
+		Tree uT = t.unroll(1);
 
 		assertEquals(4, uT.outputs.size());
 		Component o1 = uT.outputs.get(0);
@@ -650,7 +650,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleK3() {
 		Tree t = new AIG().parse("input/basic/toggle.aig");
 
-		Tree uT = t.unroll(3);
+		Tree uT = t.unroll(2);
 
 		assertEquals(6, uT.outputs.size());
 		Component o1 = uT.outputs.get(0);
@@ -711,7 +711,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleK4() {
 		Tree t = new AIG().parse("input/basic/toggle.aig");
 
-		Tree uT = t.unroll(4);
+		Tree uT = t.unroll(3);
 
 		assertEquals(8, uT.outputs.size());
 
@@ -723,7 +723,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleReK1() {
 		Tree t = new AIG().parse("input/basic/toggle-re.aig");
 
-		Tree uT = t.unroll(1);
+		Tree uT = t.unroll(0);
 
 		assertEquals(2, uT.outputs.size());
 		Component o1 = uT.outputs.get(0);
@@ -748,7 +748,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleReK2() {
 		Tree t = new AIG().parse("input/basic/toggle-re.aig");
 
-		Tree uT = t.unroll(2);
+		Tree uT = t.unroll(1);
 
 		assertEquals(4, uT.outputs.size());
 		Component o1 = uT.outputs.get(0);
@@ -858,7 +858,7 @@ public class TestTree extends BaseTest {
 	public void testNewUnrollToggleReK3() {
 		Tree t = new AIG().parse("input/basic/toggle-re.aig");
 
-		Tree uT = t.unroll(3);
+		Tree uT = t.unroll(2);
 
 		assertEquals(6, uT.outputs.size());
 	}
@@ -880,11 +880,11 @@ public class TestTree extends BaseTest {
 		Tree tree = new Tree();
 		tree.outputs.add(output);
 
-		for (int k = 1; k < 10; k++) {
+		for (int k = 0; k < 10; k++) {
 			Tree unrolledTree = tree.unroll(k);
 
 			assertEquals(0, unrolledTree.cFalse.inputs.size());
-			assertEquals(k, unrolledTree.cFalse.outputs.size());
+			assertEquals(k + 1, unrolledTree.cFalse.outputs.size());
 
 			assertEquals(0, unrolledTree.cTrue.inputs.size());
 			assertEquals(0, unrolledTree.cTrue.outputs.size());
@@ -992,7 +992,7 @@ public class TestTree extends BaseTest {
 
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
-		Tree k1 = t.unroll(1);
+		Tree k1 = t.unroll(0);
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
 		{
@@ -1025,7 +1025,7 @@ public class TestTree extends BaseTest {
 			assertSame(k1a, k1f.outputs.get(0));
 		}
 
-		Tree k2 = t.unroll(2);
+		Tree k2 = t.unroll(1);
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
 		{
@@ -1083,7 +1083,7 @@ public class TestTree extends BaseTest {
 			assertSame(k2a, k1f.outputs.get(1));
 		}
 
-		Tree k3 = t.unroll(3);
+		Tree k3 = t.unroll(2);
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
 		{
@@ -1164,7 +1164,7 @@ public class TestTree extends BaseTest {
 			assertSame(k3a, k1f.outputs.get(2));
 		}
 		
-		Tree k4 = t.unroll(4);
+		Tree k4 = t.unroll(3);
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
 		{
@@ -1491,7 +1491,7 @@ public class TestTree extends BaseTest {
 	public void regression3LatchPath() {
 		Tree t = new AAG().parse("input/basic/regression3.aag");
 		
-		Tree k1 = ((Tree) t.clone()).unroll(1);
+		Tree k1 = ((Tree) t.clone()).unroll(0);
 		
 		{
 			assertEquals(1, k1.outputs.size());
@@ -1509,7 +1509,7 @@ public class TestTree extends BaseTest {
 			assertSame(o, f.outputs.get(0));
 		}
 		
-		Tree k2 = ((Tree) t.clone()).unroll(2);
+		Tree k2 = ((Tree) t.clone()).unroll(1);
 		
 		{
 			assertEquals(2, k2.outputs.size());
@@ -1536,7 +1536,7 @@ public class TestTree extends BaseTest {
 			assertSame(o2, f1.outputs.get(1));
 		}
 		
-		Tree k3 = ((Tree) t.clone()).unroll(3);
+		Tree k3 = ((Tree) t.clone()).unroll(2);
 		
 		{
 			assertEquals(3, k3.outputs.size());
@@ -1583,7 +1583,7 @@ public class TestTree extends BaseTest {
 		
 		Tree tree = new AIG().parse("input/basic/regression4.aig");
 		
-		for(int k = 1; k <= max_k; k++) {
+		for(int k = 0; k <= max_k; k++) {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
 			
@@ -1593,7 +1593,7 @@ public class TestTree extends BaseTest {
 	
 			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 			
-			if(k <= 2) {
+			if(k < 2) {
 				assertTrue(sat);
 			} else {
 				assertFalse(sat);
@@ -1609,7 +1609,7 @@ public class TestTree extends BaseTest {
 		
 		Tree tree = new AIG().parse("input/basic/regression7.aig");
 		
-		for(int k = 1; k <= max_k; k++) {
+		for(int k = 0; k <= max_k; k++) {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
 			
@@ -1619,7 +1619,7 @@ public class TestTree extends BaseTest {
 			
 			final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 			
-			if(k <= 2) {
+			if(k < 2) {
 				assertTrue(sat);
 			} else {
 				assertFalse(sat);
@@ -1630,25 +1630,7 @@ public class TestTree extends BaseTest {
 	@Test
 	public void unrollAndReduceBasics() {
 		for (String file : new String[] {
-			"empty",
-			"false",
-			"true",
-			"buffer",
-			"inverter",
-			"and",
-			"flip",
-			"with-comment",
-			"and-with-all-nots",
-			"and-with-true-and-false",
-			"toggle",
-			"toggle-re",
-			"regression1",
-			"regression2",
 			"regression3",
-			"regression4",
-			"regression5",
-			"regression6",
-			"regression7",
 		}) {
 			Tree tB = new AIG().parse("input/basic/" + file + ".aig");
 			
@@ -1657,7 +1639,9 @@ public class TestTree extends BaseTest {
 
 				t = t.unroll(k);
 				t.mergeToOneOutput();
-
+				
+				System.out.println(file + " - " + k);
+				
 				SimplePathReduction reduction = new SimplePathReduction();
 				t = reduction.reduceTree(t, k);
 
