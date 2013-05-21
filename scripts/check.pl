@@ -67,7 +67,6 @@ if ($opts->{verbose}) {
 
 my %ignore_files = (
 	'd392065d0606079baa34d135fd01953e' => 'empty aig',
-	'4ffb2c687db357e81e8646cd7ed3c6c4' => 'positive latch',
 );
 
 my $file_md5_sum = trim(`md5sum "$file" 2>&1`);
