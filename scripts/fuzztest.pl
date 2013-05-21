@@ -120,7 +120,7 @@ while (1) {
 				if (not $opts->{'no-dd'}) {
 					print "Reduce $base_file.aig to $base_file-reduced.aig with k=$k\n";
 
-					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k$checker_options`;
+					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k $checker_options`;
 					print "Done\n";
 					
 					exit 1;

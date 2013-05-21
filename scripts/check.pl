@@ -75,7 +75,7 @@ my $aig2qbf_options = '';
 if ($opts->{'no-sanity'}) {
 	$aig2qbf_options .= ' --no-sanity';
 }
-if ($opts->{'verbose'}) {
+if ($opts->{verbose}) {
 	$aig2qbf_options .= ' --verbose';
 }
 if ($opts->{'no-reduction'}) {
@@ -130,9 +130,11 @@ for my $k (@ks) {
 	if ($opts->{verbose}) {
 		print "debqbf says " . ($debqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
-	
+
+	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`; 
+
 	time_start();
-	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" $mcaiger_options $k "$file" 2>&1`);
+	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" $mcaiger_options $k "$file-or.aig" 2>&1`);
 	time_end();
 	print_elapsed_time('mcaiger');
 
