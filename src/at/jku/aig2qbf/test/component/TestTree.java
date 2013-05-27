@@ -23,6 +23,7 @@ import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.parser.AIG;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
 import at.jku.aig2qbf.test.BaseTest;
+import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
 public class TestTree extends BaseTest {
 	private final String TEMP_QDIMACS_FILE = "./output/temp.qbf";
@@ -1624,6 +1625,28 @@ public class TestTree extends BaseTest {
 			} else {
 				assertFalse(sat);
 			}
+		}
+	}
+	
+	@Test
+	public void regression8() {
+		final int max_k = 10;
+		
+		SimplePathReduction reduction = new SimplePathReduction();
+		
+		Tree tree = new AIG().parse("input/basic/regression8.aig");
+		
+		TreeVisualizer.DisplayTree(tree);
+		
+		for(int k = 0; k <= max_k; k++) {
+			Tree unrolledTree = tree.unroll(k);
+			unrolledTree.mergeToOneOutput();
+			
+			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
+			
+			Tree tseitinTree = reducedTree.toTseitinCNF();
+			
+			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree));
 		}
 	}
 	

@@ -410,9 +410,9 @@ public class Tree implements Cloneable {
 
 					// add every component to the stack that should get a Tseitin node
 					if(c instanceof Input) {
-						existentialQuantifiersList.add((Input)c);
-						
-						universalQuantifiersList.remove(c);
+						if(!existentialQuantifiersList.contains(c)) {
+							universalQuantifiersList.add((Input)c);
+						}
 					} else if(!stack.contains(c)) {
 						stack.push(c);
 					}
@@ -503,13 +503,8 @@ public class Tree implements Cloneable {
 				}
 				
 				// remember inputs for quantifiers
-				if(tree.containsLatchOutputs(node)) {
-					universalQuantifiersList.add(xi);
-					existentialQuantifiersList.remove(xi);
-				} else {
-					existentialQuantifiersList.add(xi);
-					universalQuantifiersList.remove(xi);
-				}
+				existentialQuantifiersList.add(xi);
+				universalQuantifiersList.remove(xi);
 
 				// replace node with xi in the tree
 				tree.replaceComponent(node, xi);
@@ -517,8 +512,14 @@ public class Tree implements Cloneable {
 		}
 		
 		// manage quantifiers
+		boolean hasLatchOutputs = tree.latchOutputs.length > 0;
+		
 		for(Input input : universalQuantifiersList) {
-			tree.addQuantifier(input, Quantifier.EXISTENTIAL); //TODO
+			if(hasLatchOutputs) {
+				tree.addQuantifier(input, Quantifier.UNIVERSAL);
+			} else {
+				tree.addQuantifier(input, Quantifier.EXISTENTIAL);
+			}
 		}
 		
 		for(Input input : existentialQuantifiersList) {
