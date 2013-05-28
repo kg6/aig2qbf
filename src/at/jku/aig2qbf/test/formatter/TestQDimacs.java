@@ -22,6 +22,7 @@ import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
+import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.formatter.QDIMACS;
 import at.jku.aig2qbf.parser.AAG;
 import at.jku.aig2qbf.test.BaseTest;
@@ -149,6 +150,30 @@ public class TestQDimacs extends BaseTest {
 
 		assertTrue(checkSatisfiablity(treeA));
 	}
+	
+	@Test
+	public void testQuantifiers() {
+		Component dummy = new Not();
+		dummy.remove();
+		
+		Input a = new Input("a");
+		Input b = new Input("b");
+
+		Component orAB = new Or();
+		orAB.addInput(a);
+		orAB.addInput(b);
+
+		Output outA = new Output("out");
+		outA.addInput(orAB);
+
+		Tree treeA = new Tree();
+		treeA.outputs.add(outA);
+		
+		treeA.addQuantifier(a, Quantifier.EXISTENTIAL);
+		treeA.addQuantifier(b, Quantifier.UNIVERSAL);
+		
+		checkSatisfiablity(treeA);
+	}
 
 	private boolean checkSatisfiablity(Tree tree) {
 		final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tree);
@@ -216,9 +241,15 @@ public class TestQDimacs extends BaseTest {
 		
 		int maxVariableIndex = 0;
 		
+		final boolean hasQuantifiers = existentialQuantifierList.size() > 0 || universalQuantifierList.size() > 0;
+		
 		Set<Integer> variableIndizes = currentVariableHash.keySet();
 		
 		for(int variableIndex : variableIndizes) {
+			if(hasQuantifiers) {
+				assertTrue(existentialQuantifierList.contains(variableIndex) || universalQuantifierList.contains(variableIndex));
+			}
+			
 			if(variableIndex > maxVariableIndex) {
 				maxVariableIndex = variableIndex;
 			}
@@ -236,8 +267,10 @@ public class TestQDimacs extends BaseTest {
 		for (int i = 1; i < tmp.length; i++) {
 			int val = Integer.parseInt(tmp[i]);
 
-			quantifierCollection.add(val);
-
+			if(val != 0) {
+				quantifierCollection.add(val);
+			}
+			
 			if (i == tmp.length - 1) {
 				assertEquals(0, val);
 			}

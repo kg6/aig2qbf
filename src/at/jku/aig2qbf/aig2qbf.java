@@ -61,9 +61,9 @@ public class aig2qbf {
 			String output = null;
 			FileExtension outputExtension = FileExtension.QDIMACS;
 
-			Configuration.FAST = true;
+			Configuration.FAST = false; //TODO temporary deactivated
 			Configuration.SANTIY = ! commandLine.hasOption("ns");
-			Configuration.VERBOSE = commandLine.hasOption('v');
+			Configuration.VERBOSE = commandLine.hasOption('v');			
 			
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
@@ -115,7 +115,7 @@ public class aig2qbf {
 				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
 
 				if (! commandLine.hasOption("nu")) {
-					t = t.unroll(k);
+					t = t.unroll(k);					
 					t.mergeToOneOutput();
 					
 					if (! commandLine.hasOption("nr")) {
@@ -123,7 +123,7 @@ public class aig2qbf {
 						t = reduction.reduceTree(t, k);
 					}
 				}
-				
+				 
 				if (! commandLine.hasOption("nt")) {
 					t = t.toTseitinCNF();
 				}

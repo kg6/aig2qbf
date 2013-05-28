@@ -32,6 +32,7 @@ public class QDIMACS implements Formatter {
 			
 			// determine the number of variables
 			final int[] minMaxVariableIndex = getMinMaxVariableIndex(rootNode);
+			final int variableOffset = minMaxVariableIndex[0] - 1;
 
 			// define problem line
 			qdimacsBuilder.append("p cnf %s %s\n");
@@ -42,7 +43,7 @@ public class QDIMACS implements Formatter {
 				qdimacsBuilder.append(" ");
 
 				for (Input input : quantifier.literals) {
-					qdimacsBuilder.append(input.getId());
+					qdimacsBuilder.append(input.getId() - variableOffset);
 					qdimacsBuilder.append(" ");
 				}
 
@@ -50,7 +51,7 @@ public class QDIMACS implements Formatter {
 			}
 
 			// define CNF clauses
-			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, minMaxVariableIndex[0]);
+			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, variableOffset);
 			
 			return String.format(qdimacsBuilder.toString(), minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses);
 		}
@@ -58,9 +59,7 @@ public class QDIMACS implements Formatter {
 		return "p cnf 0 0\n";
 	}
 
-	private int defineCNFClauses(List<Component> componentList, StringBuilder builder, int minVariableIndex) {
-		final int variableOffset = minVariableIndex - 1;
-		
+	private int defineCNFClauses(List<Component> componentList, StringBuilder builder, int variableOffset) {
 		Stack<Component> componentStack = new Stack<Component>();
 
 		for (int i = componentList.size() - 1; i >= 0; i--) {

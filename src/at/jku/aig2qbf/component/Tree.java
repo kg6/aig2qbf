@@ -587,7 +587,7 @@ public class Tree implements Cloneable {
 		return and;
 	}
 
-	private void addQuantifier(Input input, Quantifier quantifier) {
+	public void addQuantifier(Input input, Quantifier quantifier) {
 		boolean componentFound = false;
 
 		for (QuantifierSet q : this.quantifier) {
