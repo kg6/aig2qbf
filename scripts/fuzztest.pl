@@ -42,10 +42,16 @@ $opts->{k} ||= 10;
 
 my $max_k = $opts->{k};
 
-if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
-	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+my $build_file = "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class";
 
-	exit 2;
+if (not -f $build_file) {
+	print `make -C "$script_path/../" 2>&1`;
+	
+	if (not -f $build_file) {
+		print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+
+		exit 2;
+	}
 }
 
 if ($opts->{verbose}) {

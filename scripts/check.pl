@@ -55,10 +55,16 @@ if ($file =~ m/\.cnf$/) {
 
 my @ks = ($opts->{k}) ? ($opts->{k}) : (1..10);
 
-if (not -f "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class") {
-	print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+my $build_file = "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class";
 
-	exit 5;
+if (not -f $build_file) {
+	print `make -C "$script_path/../" 2>&1`;
+	
+	if (not -f $build_file) {
+		print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
+
+		exit 5;
+	}
 }
 
 if ($opts->{verbose}) {
