@@ -22,7 +22,11 @@ public class SimplePathReduction implements TreeReduction {
 		k++;
 		
 		if (k > 1) {
-			Component simplePathAnd = getSimpleStateConstraints(localTree, k);
+			Component simplePathAnd = null;
+			
+			if(localTree.latchOutputs.length > 0) {
+				simplePathAnd = getSimpleStateConstraints(localTree, k);
+			}
 
 			Output o = localTree.outputs.get(0);
 
@@ -36,7 +40,7 @@ public class SimplePathReduction implements TreeReduction {
 				a.addInput(c);
 			}
 
-			if (simplePathAnd.inputs.size() != 0) {
+			if (simplePathAnd != null && simplePathAnd.inputs.size() != 0) {
 				a.addInput(simplePathAnd);
 			}
 

@@ -676,7 +676,7 @@ public class Tree implements Cloneable {
 		List<Latch> latches = tree.findLatches();
 
 		HashMap<Component, Component> usedLatchOutputs = new HashMap<>();
-		tree.latchOutputs = new Component[k][latches.size()];
+		tree.latchOutputs = new Component[latches.size() > 0 ? k : 0][latches.size()];
 
 		if (k > 1) {
 			ArrayList<Tree> ts = new ArrayList<>(k - 1);
@@ -777,46 +777,48 @@ public class Tree implements Cloneable {
 			}
 		}
 
-		tempLatchInputs = new ArrayList<>(latches.size());
-
-		// set all latch outputs from first T to false
-		int iL = 0;
-		for (Latch l : latches) {
-			// remove the input of the current latch
-			Component in = l.inputs.remove(0);
-			while (in.outputs.remove(l))
-				;
-
-			tempLatchInputs.add(in);
-
-			// replace all latch outputs of the current T with false
-			// Other Ts component inputs depend on the current T input
-			while (! l.outputs.isEmpty()) {
-				Component o = l.outputs.remove(0);
-				while (o.inputs.remove(l))
+		if(latches.size() > 0) {
+			tempLatchInputs = new ArrayList<>(latches.size());
+	
+			// set all latch outputs from first T to false
+			int iL = 0;
+			for (Latch l : latches) {
+				// remove the input of the current latch
+				Component in = l.inputs.remove(0);
+				while (in.outputs.remove(l))
 					;
-
-				o.addInput(tree.cFalse);
-			}
-
-			// set current latch output
-			tree.latchOutputs[0][iL] = tree.cFalse;
-
-			for (int x = 1; x < k; x++) {
-				for (int y = 0; y < latches.size(); y++) {
-					if (tree.latchOutputs[x][y] == l) {
-						tree.latchOutputs[x][y] = tree.cFalse;
+	
+				tempLatchInputs.add(in);
+	
+				// replace all latch outputs of the current T with false
+				// Other Ts component inputs depend on the current T input
+				while (! l.outputs.isEmpty()) {
+					Component o = l.outputs.remove(0);
+					while (o.inputs.remove(l))
+						;
+	
+					o.addInput(tree.cFalse);
+				}
+	
+				// set current latch output
+				tree.latchOutputs[0][iL] = tree.cFalse;
+	
+				for (int x = 1; x < k; x++) {
+					for (int y = 0; y < latches.size(); y++) {
+						if (tree.latchOutputs[x][y] == l) {
+							tree.latchOutputs[x][y] = tree.cFalse;
+						}
 					}
 				}
+	
+				iL++;
 			}
-
-			iL++;
-		}
-
-		// if the input of the latch has no purpose, remove it
-		for (Component in : tempLatchInputs) {
-			if (in.outputs.size() == 0 && ! usedLatchOutputs.containsKey(in)) {
-				removeCompletely(in);
+	
+			// if the input of the latch has no purpose, remove it
+			for (Component in : tempLatchInputs) {
+				if (in.outputs.size() == 0 && ! usedLatchOutputs.containsKey(in)) {
+					removeCompletely(in);
+				}
 			}
 		}
 
