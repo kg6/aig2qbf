@@ -7,17 +7,18 @@ import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Tree;
 
 public class AIG extends Parser {
-	private final String EXPECTED_EXTENSION = "aig";
+	protected final String EXPECTED_EXTENSION = "aig";
 
-	private final int EXPECTED_HEADER_LENGTH = 6;
-	private final int AIG_HEADER_INDEX = 0;
+	protected final int EXPECTED_HEADER_LENGTH = 6;
+	protected final int AIG_HEADER_INDEX = 0;
 
-	private final int HEADER_M_INDEX = 0;
-	private final int HEADER_I_INDEX = 1;
-	private final int HEADER_L_INDEX = 2;
-	private final int HEADER_O_INDEX = 3;
-	private final int HEADER_A_INDEX = 4;
+	protected final int HEADER_M_INDEX = 0;
+	protected final int HEADER_I_INDEX = 1;
+	protected final int HEADER_L_INDEX = 2;
+	protected final int HEADER_O_INDEX = 3;
+	protected final int HEADER_A_INDEX = 4;
 
+	@Override
 	public Tree parse(String inputFilePath) {
 		this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 

@@ -3,17 +3,8 @@ package at.jku.aig2qbf.parser;
 import at.jku.aig2qbf.FileIO;
 import at.jku.aig2qbf.component.Tree;
 
-public class AAG extends Parser {
-	private final String EXPECTED_EXTENSION = "aag";
-
-	private final int EXPECTED_HEADER_LENGTH = 6;
-	private final int AIG_HEADER_INDEX = 0;
-
-	private final int HEADER_M_INDEX = 0;
-	private final int HEADER_I_INDEX = 1;
-	private final int HEADER_L_INDEX = 2;
-	private final int HEADER_O_INDEX = 3;
-	private final int HEADER_A_INDEX = 4;
+public class AAG extends AIG {
+	protected final String EXPECTED_EXTENSION = "aag";
 
 	@Override
 	public Tree parse(String inputFilePath) {
@@ -31,7 +22,7 @@ public class AAG extends Parser {
 		return this.parse(lines);
 	}
 
-	public Tree parse(String[] lines) {
+	private Tree parse(String[] lines) {
 		if (lines.length <= AIG_HEADER_INDEX) {
 			throw new RuntimeException("No header was found in the AAG file.");
 		}
@@ -46,28 +37,6 @@ public class AAG extends Parser {
 		final int[][] fileAnds = parseAnds(lines, header[HEADER_I_INDEX], header[HEADER_L_INDEX], header[HEADER_O_INDEX], header[HEADER_A_INDEX], multipliedMaximumVariableIndex);
 
 		return createTree(header[HEADER_I_INDEX], header[HEADER_M_INDEX], multipliedMaximumVariableIndex, fileLatches, fileOutputs, fileAnds);
-	}
-
-	protected int[] parseHeader(final String header, String expectedExtension, int expectedHeaderLength) {
-		String[] miloa = header.split("\\s");
-
-		if (miloa.length != expectedHeaderLength) {
-			throw new RuntimeException("Corrupt header found in AIG file.");
-		}
-
-		if (miloa[0].compareTo(expectedExtension) != 0) {
-			throw new RuntimeException("Corrupt header");
-		}
-
-		final int headerTagOffset = 1;
-
-		return new int[] {
-			Integer.parseInt(miloa[HEADER_M_INDEX + headerTagOffset]),
-			Integer.parseInt(miloa[HEADER_I_INDEX + headerTagOffset]),
-			Integer.parseInt(miloa[HEADER_L_INDEX + headerTagOffset]),
-			Integer.parseInt(miloa[HEADER_O_INDEX + headerTagOffset]),
-			Integer.parseInt(miloa[HEADER_A_INDEX + headerTagOffset])
-		};
 	}
 
 	private int[][] parseLatches(final String[] lines, final int numberOfLatches, final int multipliedMaximumVariableIndex, final int lineOffset) {
