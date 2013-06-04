@@ -1629,28 +1629,6 @@ public class TestTree extends BaseTest {
 	}
 	
 	@Test
-	public void regression8() {
-		final int max_k = 10;
-		
-		SimplePathReduction reduction = new SimplePathReduction();
-		
-		Tree tree = new AIG().parse("input/basic/regression8.aig");
-		
-		TreeVisualizer.DisplayTree(tree);
-		
-		for(int k = 0; k <= max_k; k++) {
-			Tree unrolledTree = tree.unroll(k);
-			unrolledTree.mergeToOneOutput();
-			
-			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-			
-			Tree tseitinTree = reducedTree.toTseitinCNF();
-			
-			assertTrue(this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree));
-		}
-	}
-	
-	@Test
 	public void unrollAndReduceBasics() {
 		for (String file : new String[] {
 			"regression3",
