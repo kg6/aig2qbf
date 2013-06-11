@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import at.jku.aig2qbf.Configuration;
@@ -377,8 +378,10 @@ public class Tree implements Cloneable {
 		Stack<Component> stack = new Stack<Component>();
 		stack.push(o.inputs.get(0));
 		
+		HashMap<Component, Component> stackVisitorHash = new HashMap<Component, Component>();
+		
 		// remember all universal/existential quantified variables
-		List<Input> existentialQuantifiersList = new ArrayList<Input>();
+		HashMap<Component, Component> quantifierHash = new HashMap<Component, Component>();
 		
 		// build a global and to connect the pieces of the tree
 		And globalAnd = new And();
@@ -409,11 +412,10 @@ public class Tree implements Cloneable {
 
 					// add every component to the stack that should get a Tseitin node
 					if(c instanceof Input) {
-						if(!existentialQuantifiersList.contains(c)) {
-							existentialQuantifiersList.add((Input)c);
-						}
-					} else if(!stack.contains(c)) {
+						quantifierHash.put(c, null);
+					} else if(!stackVisitorHash.containsKey(c)) {
 						stack.push(c);
+						stackVisitorHash.put(c, null);
 					}
 				}
 			}
@@ -429,16 +431,18 @@ public class Tree implements Cloneable {
 				addNodeInTseitinForm(node, xi, globalAnd);
 				
 				// remember inputs for quantifiers
-				existentialQuantifiersList.add(xi);
+				quantifierHash.put(xi, null);
 
 				// replace node with xi in the tree
 				tree.replaceComponent(node, xi);
 			}
 		}
 		
-		// manage quantifiers		
-		for(Input input : existentialQuantifiersList) {
-			tree.addQuantifier(input, Quantifier.EXISTENTIAL);
+		// manage quantifiers
+		Set<Component> quantifierSet = quantifierHash.keySet();
+		
+		for(Component c : quantifierSet) {
+			tree.addQuantifier((Input)c, Quantifier.EXISTENTIAL);
 		}
 
 		// manage the tree output
