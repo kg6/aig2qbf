@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -50,10 +50,10 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 
 	private final String DEFAULT_OUTPUT_FILENAME = "output";
 
-	private Hashtable<Component, Boolean> traversingHash;
-	private Hashtable<Component, Point> drawingHash;
-	private Hashtable<Integer, Integer> lineElementHash;
-	private Hashtable<Point, Boolean> usedPointCoordinatesHash;
+	private HashMap<Component, Boolean> traversingHash;
+	private HashMap<Component, Point> drawingHash;
+	private HashMap<Integer, Integer> lineElementHash;
+	private HashMap<Point, Boolean> usedPointCoordinatesHash;
 
 	private BufferedImage backgroundImage;
 
@@ -69,10 +69,10 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		NORMAL_COLOR = Color.BLACK;
 		CIRCLE_COLOR = Color.RED;
 		
-		this.traversingHash = new Hashtable<>();
-		this.drawingHash = new Hashtable<>();
-		this.lineElementHash = new Hashtable<>();
-		this.usedPointCoordinatesHash = new Hashtable<>();
+		this.traversingHash = new HashMap<>();
+		this.drawingHash = new HashMap<>();
+		this.lineElementHash = new HashMap<>();
+		this.usedPointCoordinatesHash = new HashMap<>();
 
 		this.backgroundImage = null;
 	}

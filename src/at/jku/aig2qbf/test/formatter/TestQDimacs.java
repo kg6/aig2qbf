@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -192,7 +192,7 @@ public class TestQDimacs extends BaseTest {
 		int expectedClauseCount = 0;
 
 		int currentClauseCount = 0;
-		Hashtable<Integer, Boolean> currentVariableHash = new Hashtable<Integer, Boolean>();
+		HashMap<Integer, Boolean> currentVariableHash = new HashMap<Integer, Boolean>();
 
 		List<Integer> existentialQuantifierList = new ArrayList<Integer>();
 		List<Integer> universalQuantifierList = new ArrayList<Integer>();
@@ -277,7 +277,7 @@ public class TestQDimacs extends BaseTest {
 		}
 	}
 
-	private void parseClause(String line, Hashtable<Integer, Boolean> variableHash) {
+	private void parseClause(String line, HashMap<Integer, Boolean> variableHash) {
 		String[] tmp = line.split("\\s");
 
 		assertTrue(tmp.length > 1);

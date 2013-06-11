@@ -1,7 +1,7 @@
 package at.jku.aig2qbf.component;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -10,7 +10,7 @@ import at.jku.aig2qbf.Configuration;
 
 public abstract class Component implements Cloneable {
 	public static int ComponentId = 1;
-	public static Hashtable<Integer, Component> componentHash = new Hashtable<Integer, Component>();
+	public static HashMap<Integer, Component> componentHash = new HashMap<Integer, Component>();
 
 	public static void Reset() {
 		componentHash.clear();
