@@ -110,7 +110,7 @@ for my $k (@ks) {
 	}
 
 	time_start();
-	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input "$file" $aig2qbf_options 2>&1`;
+	my $out = `java -cp "$script_path/../build/classes/:$script_path/../lib/commons-cli-1.2.jar" at.jku.aig2qbf.aig2qbf -k $k --input "$file" $aig2qbf_options`;
 	time_end();
 	print_elapsed_time('aig2qbf');
 
