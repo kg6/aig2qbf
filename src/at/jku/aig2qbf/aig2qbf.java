@@ -50,6 +50,7 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
 		options.addOption(getCommandlineOption("ot", "output-type", "The output type", true, "TYPE"));
 		options.addOption(getCommandlineOption("v", "verbose", "Enable verbose output.", false, null));
+		options.addOption(getCommandlineOption("vt", "verbose-times", "Enable verbose output.", false, null));
 		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the tree before the QBF format.", false, null));
 
 		try {
@@ -63,7 +64,8 @@ public class aig2qbf {
 
 			Configuration.FAST = false; //TODO temporary deactivated
 			Configuration.SANTIY = ! commandLine.hasOption("ns");
-			Configuration.VERBOSE = commandLine.hasOption('v');			
+			Configuration.VERBOSE = commandLine.hasOption("v");
+			Configuration.VERBOSETIMES = commandLine.hasOption("vt");
 			
 			if (commandLine.hasOption('i')) {
 				input = commandLine.getOptionValue('i');
@@ -103,38 +105,56 @@ public class aig2qbf {
 
 			if (commandLine.hasOption('i')) {
 				Parser p = FileIO.GetParserForFileExtension(inputExtension);
-				
+
 				Tree t = null;
-				
+
+				if (Configuration.VERBOSETIMES) Configuration.timerStart();
+
 				if(inputFile.exists()) {
 					t = p.parse(input);
 				} else {
 					t = p.parse(input.getBytes());
 				}
-				
+
+				if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME parse");
+
 				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
 
 				if (! commandLine.hasOption("nu")) {
+					if (Configuration.VERBOSETIMES) Configuration.timerStart();
+
 					t = t.unroll(k);					
 					t.mergeToOneOutput();
-					
+
+					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME unroll");
+
 					if (! commandLine.hasOption("nr")) {
+						if (Configuration.VERBOSETIMES) Configuration.timerStart();
+
 						SimplePathReduction reduction = new SimplePathReduction();
 						t = reduction.reduceTree(t, k);
+
+						if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME reduce tree");
 					}
 				}
-				 
+
 				if (! commandLine.hasOption("nt")) {
+					if (Configuration.VERBOSETIMES) Configuration.timerStart("TIME START tseitin");
+
 					t = t.toTseitinCNF();
+
+					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME tseitin");
 				}
 
 				if (commandLine.hasOption("vis")) {
 					TreeVisualizer.CLOSE_ON_EXIT = true;
-					
+
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
 					Formatter f = BaseTest.GetOutputFileFormatter(outputExtension);
+
+					if (Configuration.VERBOSETIMES) Configuration.timerStart();
 
 					if (output != null) {
 						if(! FileIO.WriteFile(output, f.format(t))) {
@@ -144,6 +164,8 @@ public class aig2qbf {
 					else {
 						System.out.println(f.format(t));
 					}
+
+					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME formatter");
 				}
 			}
 			else { // + h
