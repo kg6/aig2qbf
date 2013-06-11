@@ -201,16 +201,11 @@ public class TestSimplePathReduction extends BaseTest {
 				
 				Tree tseitinTree = reducedTree.toTseitinCNF();
 				
-				final boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
+				boolean sat = this.checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree);
 
 				System.out.println(String.format("testSat0: Test simple path constraint using %s and k=%s (%s%%, %sms)", inputFilePath, k, k * 100 / max_k, System.currentTimeMillis() - startTime));
 				
-				if (k < 2) {
-					assertEquals(true, sat);
-				}
-				else {
-					assertEquals(false, sat);
-				}
+				assertEquals(true, sat);
 			}
 		}
 	}

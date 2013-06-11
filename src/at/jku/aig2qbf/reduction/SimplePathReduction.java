@@ -3,10 +3,12 @@ package at.jku.aig2qbf.reduction;
 import at.jku.aig2qbf.Configuration;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
+import at.jku.aig2qbf.component.Input;
 import at.jku.aig2qbf.component.Not;
 import at.jku.aig2qbf.component.Or;
 import at.jku.aig2qbf.component.Output;
 import at.jku.aig2qbf.component.Tree;
+import at.jku.aig2qbf.component.quantifier.Quantifier;
 
 public class SimplePathReduction implements TreeReduction {
 
@@ -62,27 +64,53 @@ public class SimplePathReduction implements TreeReduction {
 		And globalAnd = new And();
 		
 		// iterate over all branches of the tree and add the simple path constraint
-
-	    for(int l = 0; l < max_k - 1; l++) {
-	    	for(int k = l + 1; k < max_k; k++) {
-	    		Component or = new Or();
-
-				for(int i = 0; i < tree.latchOutputs[0].length; i++) {
-					Component cK = tree.latchOutputs[k][i];
-					Component cL = tree.latchOutputs[l][i];
+		if(tree.latchOutputs.length > 0) {
+			final int latchOutputCount = tree.latchOutputs[0].length;
+			
+			int tseitinInputCounter = 0;
+			
+			for(int i = 0; i < latchOutputCount; i++) {
+				Input li = new Input("l" + i);
+				tree.addQuantifier(li, Quantifier.UNIVERSAL);
+				
+				Component notLi = new Not();
+				notLi.addInput(li);
+				
+				Input notLiTseitin = new Input("t" + tseitinInputCounter++);
+				tree.addQuantifier(notLiTseitin, Quantifier.EXISTENTIAL);
+				
+				tree.addNodeInTseitinForm(notLi, notLiTseitin, globalAnd);
+				
+				for(int k = 0; k < max_k - 1; k++) {
+					Component si = tree.latchOutputs[k][i];
 					
-					or.addInput(getNotEqState(cK, cL));
+					Component notSi = new Not();
+					notSi.addInput(si);
+					
+					Input notSiTseitin = new Input("t" + tseitinInputCounter++);
+					tree.addQuantifier(notSiTseitin, Quantifier.EXISTENTIAL);
+					
+					tree.addNodeInTseitinForm(notSi, notSiTseitin, globalAnd);
+					
+					Component or0 = new Or();
+					or0.addInput(notLiTseitin);
+					or0.addInput(si);
+					
+					Input or0Tseitin = new Input("t" + tseitinInputCounter++);
+					tree.addQuantifier(or0Tseitin, Quantifier.EXISTENTIAL);
+					
+					Component or1 = new Or();
+					or1.addInput(notSiTseitin);
+					or1.addInput(li);
+					
+					Input or1Tseitin = new Input("t" + tseitinInputCounter++);
+					tree.addQuantifier(or1Tseitin, Quantifier.EXISTENTIAL);
+					
+					tree.addNodeInTseitinForm(or0, or0Tseitin, globalAnd);
+					tree.addNodeInTseitinForm(or1, or1Tseitin, globalAnd);
 				}
-
-				if (or.inputs.size() != 0) {
-					if (or.inputs.size() == 1) {
-						or.addInput(tree.cFalse);
-					}
-
-					globalAnd.addInput(or);
-				}
-	    	}
-	    }
+			}
+		}
 		
 		// make sure that the component has at least 2 inputs
 		if (globalAnd.inputs.size() == 1) {
@@ -90,28 +118,6 @@ public class SimplePathReduction implements TreeReduction {
 		}
 
 		return globalAnd;
-	}
-	
-	private Component getNotEqState(Component c1, Component c2) {
-		Component notC1 = new Not();
-		notC1.addInput(c1);
-		
-		Component notC2 = new Not();
-		notC2.addInput(c2);
-		
-		Component and0 = new And();
-		and0.addInput(notC1);
-		and0.addInput(c2);
-		
-		Component and1 = new And();
-		and1.addInput(c1);
-		and1.addInput(notC2);
-		
-		Component or = new Or();
-		or.addInput(and0);
-		or.addInput(and1);
-		
-		return or;
 	}
 
 	@Override

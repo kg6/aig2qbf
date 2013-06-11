@@ -378,11 +378,10 @@ public class Tree implements Cloneable {
 		stack.push(o.inputs.get(0));
 		
 		// remember all universal/existential quantified variables
-		List<Input> universalQuantifiersList = new ArrayList<Input>();
 		List<Input> existentialQuantifiersList = new ArrayList<Input>();
 		
 		// build a global and to connect the pieces of the tree
-		Component globalAnd = new And();
+		And globalAnd = new And();
 
 		int tseitinInputCounter = 0;
 
@@ -411,7 +410,7 @@ public class Tree implements Cloneable {
 					// add every component to the stack that should get a Tseitin node
 					if(c instanceof Input) {
 						if(!existentialQuantifiersList.contains(c)) {
-							universalQuantifiersList.add((Input)c);
+							existentialQuantifiersList.add((Input)c);
 						}
 					} else if(!stack.contains(c)) {
 						stack.push(c);
@@ -426,102 +425,18 @@ public class Tree implements Cloneable {
 				// transform to structure of Tseitin
 				Input xi = new Input("x" + tseitinInputCounter);
 				tseitinInputCounter++;
-
-				Component notXi = new Not();
-				notXi.addInput(xi);
-
-				if (node instanceof And) {
-					Component overallOr = new Or();
-					overallOr.addInput(xi);
-
-					while (! node.inputs.isEmpty()) {
-						Component c = node.inputs.remove(0);
-						while (c.outputs.remove(node))
-							;
-
-						Component or = new Or();
-						or.addInput(notXi);
-						or.addInput(c);
-
-						globalAnd.addInput(or);
-
-						Component notC = new Not();
-						notC.addInput(c);
-
-						overallOr.addInput(notC);
-					}
-
-					globalAnd.addInput(overallOr);
-				}
-				else if (node instanceof Not) {
-					Component or0 = new Or();
-					or0.addInput(notXi);
-
-					Component or1 = new Or();
-					or1.addInput(xi);
-
-					while (! node.inputs.isEmpty()) {
-						Component c = node.inputs.remove(0);
-						while (c.outputs.remove(node))
-							;
-
-						Component notC = new Not();
-						notC.addInput(c);
-
-						or0.addInput(notC);
-						or1.addInput(c);
-					}
-
-					globalAnd.addInput(or0);
-					globalAnd.addInput(or1);
-				}
-				else if (node instanceof Or) {
-					Component overallOr = new Or();
-					overallOr.addInput(notXi);
-
-					while (! node.inputs.isEmpty()) {
-						Component c = node.inputs.remove(0);
-						while (c.outputs.remove(node))
-							;
-
-						overallOr.addInput(c);
-
-						Component notC = new Not();
-						notC.addInput(c);
-
-						Component or = new Or();
-						or.addInput(xi);
-						or.addInput(notC);
-
-						globalAnd.addInput(or);
-					}
-
-					globalAnd.addInput(overallOr);
-				}
-				else {
-					throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node + " is unknown!");
-				}
+				
+				addNodeInTseitinForm(node, xi, globalAnd);
 				
 				// remember inputs for quantifiers
 				existentialQuantifiersList.add(xi);
-				universalQuantifiersList.remove(xi);
 
 				// replace node with xi in the tree
 				tree.replaceComponent(node, xi);
 			}
 		}
 		
-		// manage quantifiers
-		boolean hasLatchOutputs = tree.latchOutputs.length > 0;
-		
-		for(Input input : universalQuantifiersList) {
-			if(hasLatchOutputs) {
-				tree.addQuantifier(input, Quantifier.UNIVERSAL);
-			} else {
-				tree.addQuantifier(input, Quantifier.EXISTENTIAL);
-			}
-		}
-		
+		// manage quantifiers		
 		for(Input input : existentialQuantifiersList) {
 			tree.addQuantifier(input, Quantifier.EXISTENTIAL);
 		}
@@ -552,6 +467,83 @@ public class Tree implements Cloneable {
 		}
 
 		return tree;
+	}
+	
+	public void addNodeInTseitinForm(Component node, Component xi, And globalAnd) {
+		Component notXi = new Not();
+		notXi.addInput(xi);
+
+		if (node instanceof And) {
+			Component overallOr = new Or();
+			overallOr.addInput(xi);
+
+			while (! node.inputs.isEmpty()) {
+				Component c = node.inputs.remove(0);
+				while (c.outputs.remove(node))
+					;
+
+				Component or = new Or();
+				or.addInput(notXi);
+				or.addInput(c);
+
+				globalAnd.addInput(or);
+
+				Component notC = new Not();
+				notC.addInput(c);
+
+				overallOr.addInput(notC);
+			}
+
+			globalAnd.addInput(overallOr);
+		}
+		else if (node instanceof Not) {
+			Component or0 = new Or();
+			or0.addInput(notXi);
+
+			Component or1 = new Or();
+			or1.addInput(xi);
+
+			while (! node.inputs.isEmpty()) {
+				Component c = node.inputs.remove(0);
+				while (c.outputs.remove(node))
+					;
+
+				Component notC = new Not();
+				notC.addInput(c);
+
+				or0.addInput(notC);
+				or1.addInput(c);
+			}
+
+			globalAnd.addInput(or0);
+			globalAnd.addInput(or1);
+		}
+		else if (node instanceof Or) {
+			Component overallOr = new Or();
+			overallOr.addInput(notXi);
+
+			while (! node.inputs.isEmpty()) {
+				Component c = node.inputs.remove(0);
+				while (c.outputs.remove(node))
+					;
+
+				overallOr.addInput(c);
+
+				Component notC = new Not();
+				notC.addInput(c);
+
+				Component or = new Or();
+				or.addInput(xi);
+				or.addInput(notC);
+
+				globalAnd.addInput(or);
+			}
+
+			globalAnd.addInput(overallOr);
+		}
+		else {
+			throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node + " is unknown!");
+		}
 	}
 
 	private Component replaceTrueWithAig() {
