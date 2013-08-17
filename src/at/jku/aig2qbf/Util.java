@@ -12,11 +12,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import at.jku.aig2qbf.parser.Parser;
 
-public class FileIO {
+public class Util {
 	public enum FileExtension {
 		AIG, AAG, QDIMACS
 	}
@@ -53,6 +54,17 @@ public class FileIO {
 			default:
 				throw new RuntimeException(String.format("Parser for extension \"%s\" not implemented", extension));
 		}
+	}
+	
+	public static String Join(String delimiter, Object[] list) {
+		StringBuilder s = new StringBuilder((String)list[0]);
+		
+		for (int i = 1; i < list.length; i++) {
+			s.append(delimiter);
+			s.append(list[i]);
+		}
+		
+		return s.toString();
 	}
 	
 	public static String ReadFile(String inputFilePath) {

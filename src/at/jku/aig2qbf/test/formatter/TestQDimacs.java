@@ -14,7 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.Util;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
@@ -37,7 +37,7 @@ public class TestQDimacs extends BaseTest {
 
 	@After
 	public void tearDown() throws Exception {
-		FileIO.RemoveFile(TEMP_QDIMACS_FILE);
+		Util.RemoveFile(TEMP_QDIMACS_FILE);
 	}
 
 	@Test
@@ -184,7 +184,7 @@ public class TestQDimacs extends BaseTest {
 	}
 
 	private void checkQDIMACSFileStructure() {
-		String fileContent = FileIO.ReadFile(TEMP_QDIMACS_FILE);
+		String fileContent = Util.ReadFile(TEMP_QDIMACS_FILE);
 
 		assertTrue(fileContent == null || fileContent.length() > 0);
 

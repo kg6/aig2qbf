@@ -3,7 +3,7 @@ package at.jku.aig2qbf.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.Util;
 import at.jku.aig2qbf.component.Tree;
 
 public class AIG extends Parser {
@@ -22,7 +22,7 @@ public class AIG extends Parser {
 	public Tree parse(String inputFilePath) {
 		this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
-		List<byte[]> lines = FileIO.ReadBinaryFile(inputFilePath);
+		List<byte[]> lines = Util.ReadBinaryFile(inputFilePath);
 
 		return this.parse(lines);
 	}

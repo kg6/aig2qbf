@@ -1,6 +1,7 @@
 package at.jku.aig2qbf;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -10,7 +11,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import at.jku.aig2qbf.FileIO.FileExtension;
+import at.jku.aig2qbf.Util.FileExtension;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.Formatter;
 import at.jku.aig2qbf.parser.Parser;
@@ -43,6 +44,8 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("k", "unroll", "Number of unrolling steps. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE/AAG STRING"));
 		options.addOption(getCommandlineOption("it", "input-type", "Overwrite the format type of the input file.", true, "TYPE"));
+		options.addOption(getCommandlineOption("lit", "list-input-types", "List all supported input type formats.", false, null));
+		options.addOption(getCommandlineOption("lot", "list-output-types", "List all supported output type formats.", false, null));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
 		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not apply any sanity checks.", false, null));
 		options.addOption(getCommandlineOption("nt", "no-tseitin", "Do not apply Tseitin conversion. The output is not necessarily in CNF.", false, null));
@@ -69,7 +72,7 @@ public class aig2qbf {
 			
 			if (commandLine.hasOption("i")) {
 				input = commandLine.getOptionValue("i");
-				inputExtension = FileIO.GetFileExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
+				inputExtension = Util.GetFileExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
 				
 				inputFile = new File(input);
 				
@@ -83,16 +86,14 @@ public class aig2qbf {
 			}
 			if (commandLine.hasOption("o")) {
 				output = commandLine.getOptionValue("o");
-				outputExtension = FileIO.GetFileExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
+				outputExtension = Util.GetFileExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
 
 				if (outputExtension == null) {
 					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", output));
 				}
 			}
-			else {
-				if (commandLine.hasOption("ot")) {
-					outputExtension = FileIO.GetFileExtension("." + commandLine.getOptionValue("ot"));
-				}
+			else if (commandLine.hasOption("ot")) {
+				outputExtension = Util.GetFileExtension("." + commandLine.getOptionValue("ot"));
 			}
 			if (commandLine.hasOption("k")) {
 				try {
@@ -104,7 +105,7 @@ public class aig2qbf {
 			}
 
 			if (commandLine.hasOption("i")) {
-				Parser p = FileIO.GetParserForFileExtension(inputExtension);
+				Parser p = Util.GetParserForFileExtension(inputExtension);
 
 				Tree t = null;
 
@@ -157,7 +158,7 @@ public class aig2qbf {
 					if (Configuration.VERBOSETIMES) Configuration.timerStart();
 
 					if (output != null) {
-						if(! FileIO.WriteFile(output, f.format(t))) {
+						if(! Util.WriteFile(output, f.format(t))) {
 							System.out.println("Unable to write output file.");
 						}
 					}
@@ -167,6 +168,20 @@ public class aig2qbf {
 
 					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME formatter");
 				}
+			}
+			else if (commandLine.hasOption("lit")) {
+				Object[] list = BaseTest.INPUT_FORMAT_TYPES.keySet().toArray();
+				
+				Arrays.sort(list);
+				
+				System.out.printf("Supported input format types: %s\n", Util.Join(", ", list));
+			}
+			else if (commandLine.hasOption("lot")) {
+				Object[] list = BaseTest.OUTPUT_FORMAT_TYPES.keySet().toArray();
+				
+				Arrays.sort(list);
+				
+				System.out.printf("Supported output format types: %s\n", Util.Join(", ", list));
 			}
 			else { // + h
 				HelpFormatter helpFormatter = new HelpFormatter();

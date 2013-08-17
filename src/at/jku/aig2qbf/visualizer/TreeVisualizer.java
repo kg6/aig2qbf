@@ -10,8 +10,8 @@ import java.util.concurrent.CountDownLatch;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import at.jku.aig2qbf.FileIO;
-import at.jku.aig2qbf.FileIO.FileExtension;
+import at.jku.aig2qbf.Util;
+import at.jku.aig2qbf.Util.FileExtension;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
 
@@ -104,9 +104,9 @@ public class TreeVisualizer {
 		if (option == JFileChooser.APPROVE_OPTION) {
 			String filename = chooser.getSelectedFile().getAbsolutePath();
 			
-			FileExtension extension = FileIO.GetFileExtension(filename);
+			FileExtension extension = Util.GetFileExtension(filename);
 			
-			Parser parser = FileIO.GetParserForFileExtension(extension);
+			Parser parser = Util.GetParserForFileExtension(extension);
 
 			Tree tree = parser.parse(filename);
 

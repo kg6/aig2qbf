@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.Util;
 import at.jku.aig2qbf.component.And;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Input;
@@ -34,7 +34,7 @@ public class TestSimplePathReduction extends BaseTest {
 
 	@After
 	public void tearDown() {
-		FileIO.RemoveFile(TEMP_QDIMACS_FILE);
+		Util.RemoveFile(TEMP_QDIMACS_FILE);
 	}
 
 	@Test

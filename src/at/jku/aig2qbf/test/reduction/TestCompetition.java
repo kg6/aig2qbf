@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.Util;
 import at.jku.aig2qbf.component.Component;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
@@ -37,8 +37,8 @@ public class TestCompetition extends BaseTest {
 
 	@After
 	public void tearDown() throws Exception {
-		FileIO.RemoveFile(OUTPUT_FILE);
-		FileIO.RemoveFile(AIGER_FILE);
+		Util.RemoveFile(OUTPUT_FILE);
+		Util.RemoveFile(AIGER_FILE);
 	}
 
 	@Test

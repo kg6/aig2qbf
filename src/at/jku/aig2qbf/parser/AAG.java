@@ -1,6 +1,6 @@
 package at.jku.aig2qbf.parser;
 
-import at.jku.aig2qbf.FileIO;
+import at.jku.aig2qbf.Util;
 import at.jku.aig2qbf.component.Tree;
 
 public class AAG extends AIG {
@@ -10,7 +10,7 @@ public class AAG extends AIG {
 	public Tree parse(String inputFilePath) {
 		this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
-		String[] lines = FileIO.ReadFile(inputFilePath).split("\n");
+		String[] lines = Util.ReadFile(inputFilePath).split("\n");
 		
 		return this.parse(lines);
 	}
