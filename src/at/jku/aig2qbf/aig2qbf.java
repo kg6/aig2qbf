@@ -40,18 +40,18 @@ public class aig2qbf {
 		Options options = new Options();
 
 		options.addOption(getCommandlineOption("h", "help", "Print help.", false, null));
-		options.addOption(getCommandlineOption("k", "unroll", "The unroll count k. Default is 1.", true, "INTEGER"));
+		options.addOption(getCommandlineOption("k", "unroll", "Number of unrolling steps. Default is 1.", true, "INTEGER"));
 		options.addOption(getCommandlineOption("i", "input", "The input file.", true, "FILE/AAG STRING"));
-		options.addOption(getCommandlineOption("it", "input-type", "The input type", true, "TYPE"));
+		options.addOption(getCommandlineOption("it", "input-type", "Overwrite the format type of the input file.", true, "TYPE"));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
-		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not do any sanity checks.", false, null));
-		options.addOption(getCommandlineOption("nt", "no-tseitin", "Do not convert the tree with tseitin.", false, null));
-		options.addOption(getCommandlineOption("nu", "no-unrolling", "Do not unroll the tree.", false, null));
+		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not apply any sanity checks.", false, null));
+		options.addOption(getCommandlineOption("nt", "no-tseitin", "Do not apply Tseitin conversion. The output is not necessarily in CNF.", false, null));
+		options.addOption(getCommandlineOption("nu", "no-unrolling", "No unrolling will be applied. Implies --no-reduction.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
-		options.addOption(getCommandlineOption("ot", "output-type", "The output type", true, "TYPE"));
+		options.addOption(getCommandlineOption("ot", "output-type", "Overwrite the format type of the output file.", true, "TYPE"));
 		options.addOption(getCommandlineOption("v", "verbose", "Enable verbose output.", false, null));
 		options.addOption(getCommandlineOption("vt", "verbose-times", "Enable verbose output.", false, null));
-		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the tree before the QBF format.", false, null));
+		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the parsed graph data structure after all processing steps were applied.", false, null));
 
 		try {
 			CommandLine commandLine = argParser.parse(options, args);
@@ -67,8 +67,8 @@ public class aig2qbf {
 			Configuration.VERBOSE = commandLine.hasOption("v");
 			Configuration.VERBOSETIMES = commandLine.hasOption("vt");
 			
-			if (commandLine.hasOption('i')) {
-				input = commandLine.getOptionValue('i');
+			if (commandLine.hasOption("i")) {
+				input = commandLine.getOptionValue("i");
 				inputExtension = FileIO.GetFileExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
 				
 				inputFile = new File(input);
@@ -81,8 +81,8 @@ public class aig2qbf {
 					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", inputExtension));
 				}
 			}
-			if (commandLine.hasOption('o')) {
-				output = commandLine.getOptionValue('o');
+			if (commandLine.hasOption("o")) {
+				output = commandLine.getOptionValue("o");
 				outputExtension = FileIO.GetFileExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
 
 				if (outputExtension == null) {
@@ -94,16 +94,16 @@ public class aig2qbf {
 					outputExtension = FileIO.GetFileExtension("." + commandLine.getOptionValue("ot"));
 				}
 			}
-			if (commandLine.hasOption('k')) {
+			if (commandLine.hasOption("k")) {
 				try {
-					Integer.parseInt(commandLine.getOptionValue('k'));
+					Integer.parseInt(commandLine.getOptionValue("k"));
 				}
 				catch (NumberFormatException e) {
 					throw new RuntimeException("k is not a number");
 				}
 			}
 
-			if (commandLine.hasOption('i')) {
+			if (commandLine.hasOption("i")) {
 				Parser p = FileIO.GetParserForFileExtension(inputExtension);
 
 				Tree t = null;
@@ -118,7 +118,7 @@ public class aig2qbf {
 
 				if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME parse");
 
-				int k = (commandLine.hasOption('k')) ? Integer.parseInt(commandLine.getOptionValue('k')) : 1;
+				int k = (commandLine.hasOption("k")) ? Integer.parseInt(commandLine.getOptionValue("k")) : 1;
 
 				if (! commandLine.hasOption("nu")) {
 					if (Configuration.VERBOSETIMES) Configuration.timerStart();
