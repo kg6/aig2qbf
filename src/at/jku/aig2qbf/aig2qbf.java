@@ -16,7 +16,6 @@ import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.formatter.Formatter;
 import at.jku.aig2qbf.parser.Parser;
 import at.jku.aig2qbf.reduction.SimplePathReduction;
-import at.jku.aig2qbf.test.BaseTest;
 import at.jku.aig2qbf.visualizer.TreeVisualizer;
 
 public class aig2qbf {
@@ -105,7 +104,7 @@ public class aig2qbf {
 			}
 
 			if (commandLine.hasOption("i")) {
-				Parser p = Util.GetParserForFileExtension(inputExtension);
+				Parser p = Util.GetParser(inputExtension);
 
 				Tree t = null;
 
@@ -162,7 +161,7 @@ public class aig2qbf {
 					TreeVisualizer.DisplayTree(t, input);
 				}
 				else {
-					Formatter f = BaseTest.GetOutputFileFormatter(outputExtension);
+					Formatter f = Util.GetFormatter(outputExtension);
 
 					if (Configuration.VERBOSETIMES)
 						Configuration.timerStart();
@@ -181,14 +180,14 @@ public class aig2qbf {
 				}
 			}
 			else if (commandLine.hasOption("lit")) {
-				Object[] list = BaseTest.INPUT_FORMAT_TYPES.keySet().toArray();
+				Object[] list = Util.INPUT_FORMAT_TYPES.keySet().toArray();
 
 				Arrays.sort(list);
 
 				System.out.printf("Supported input format types: %s\n", Util.Join(", ", list));
 			}
 			else if (commandLine.hasOption("lot")) {
-				Object[] list = BaseTest.OUTPUT_FORMAT_TYPES.keySet().toArray();
+				Object[] list = Util.OUTPUT_FORMAT_TYPES.keySet().toArray();
 
 				Arrays.sort(list);
 

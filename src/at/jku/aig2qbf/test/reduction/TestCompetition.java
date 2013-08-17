@@ -80,7 +80,7 @@ public class TestCompetition extends BaseTest {
 			return false;
 		}
 
-		Parser parser = BaseTest.GetInputFileParser(aigerFile);
+		Parser parser = Util.GetParser(aigerFile);
 
 		Tree tree = parser.parse(aigerFile.getAbsolutePath());
 

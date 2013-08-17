@@ -12,15 +12,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
+import at.jku.aig2qbf.formatter.Formatter;
 import at.jku.aig2qbf.parser.Parser;
 
 public class Util {
 	public enum FileExtension {
 		AIG, AAG, QDIMACS
 	}
+
+	@SuppressWarnings("serial")
+	public static HashMap<String, FileExtension> INPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {
+		{
+			put(".aag", FileExtension.AAG);
+			put(".aig", FileExtension.AIG);
+		}
+	};
+	@SuppressWarnings("serial")
+	public static HashMap<String, FileExtension> OUTPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {
+		{
+			put(".aag", FileExtension.AAG);
+			put(".qbf", FileExtension.QDIMACS);
+			put(".qdimacs", FileExtension.QDIMACS);
+		}
+	};
 
 	public static FileExtension GetFileExtension(String filename) {
 		int i = filename.lastIndexOf('.');
@@ -29,30 +46,66 @@ public class Util {
 			return null;
 		}
 
-		String extension = filename.substring(i + 1).toLowerCase();
+		String extension = filename.substring(i).toLowerCase();
 
-		if (extension.compareTo("aag") == 0) {
-			return FileExtension.AAG;
+		if (INPUT_FORMAT_TYPES.containsKey(extension)) {
+			return INPUT_FORMAT_TYPES.get(extension);
 		}
-		else if (extension.compareTo("aig") == 0) {
-			return FileExtension.AIG;
-		}
-		else if (extension.compareTo("qdimacs") == 0 || extension.compareTo("qbf") == 0) {
-			return FileExtension.QDIMACS;
+		else if (OUTPUT_FORMAT_TYPES.containsKey(extension)) {
+			return OUTPUT_FORMAT_TYPES.get(extension);
 		}
 		else {
 			return null;
 		}
 	}
 
-	public static Parser GetParserForFileExtension(FileExtension extension) {
+	public static Formatter GetFormatter(File file) {
+		return GetFormatter(file.getName());
+	}
+
+	public static Formatter GetFormatter(String fileName) {
+		for (String s : OUTPUT_FORMAT_TYPES.keySet()) {
+			if (fileName.endsWith(s)) {
+				return GetFormatter(OUTPUT_FORMAT_TYPES.get(s));
+			}
+		}
+
+		throw new RuntimeException(String.format("Unable to create output file formatter: File extension '%s' is unknown!", fileName.substring(fileName.lastIndexOf("."))));
+	}
+
+	public static Formatter GetFormatter(FileExtension extension) {
+		switch (extension) {
+			case AAG:
+				return new at.jku.aig2qbf.formatter.AAG();
+			case QDIMACS:
+				return new at.jku.aig2qbf.formatter.QDIMACS();
+			default:
+				throw new RuntimeException(String.format("Unable to create output file formatter: %s formatter is not implemented", extension));
+		}
+	}
+
+	public static Parser GetParser(File file) {
+		return GetParser(file.getName());
+	}
+
+	public static Parser GetParser(String fileName) {
+		for (String s : INPUT_FORMAT_TYPES.keySet()) {
+			if (fileName.endsWith(s)) {
+				return GetParser(INPUT_FORMAT_TYPES.get(s));
+			}
+		}
+
+		throw new RuntimeException(String.format("Unable to create input file parser: File extension '%s' is unknown!", fileName.substring(fileName.lastIndexOf("."))));
+	}
+
+	public static Parser GetParser(FileExtension extension) {
 		switch (extension) {
 			case AAG:
 				return new at.jku.aig2qbf.parser.AAG();
 			case AIG:
 				return new at.jku.aig2qbf.parser.AIG();
 			default:
-				throw new RuntimeException(String.format("Parser for extension \"%s\" not implemented", extension));
+				throw new RuntimeException(String.format("Unable to create input file parser: %s parser is not implemented", extension));
 		}
 	}
 
@@ -142,6 +195,14 @@ public class Util {
 		}
 	}
 
+	public static void RemoveFile(String outputFilePath) {
+		File tempFile = new File(outputFilePath);
+
+		if (tempFile.exists()) {
+			tempFile.delete();
+		}
+	}
+
 	public static boolean WriteFile(String filepath, String content) {
 		File outputFile = new File(filepath);
 
@@ -179,13 +240,5 @@ public class Util {
 		}
 
 		return false;
-	}
-
-	public static void RemoveFile(String outputFilePath) {
-		File tempFile = new File(outputFilePath);
-
-		if (tempFile.exists()) {
-			tempFile.delete();
-		}
 	}
 }

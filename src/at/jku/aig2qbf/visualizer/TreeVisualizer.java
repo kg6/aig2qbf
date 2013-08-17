@@ -105,9 +105,7 @@ public class TreeVisualizer {
 		if (option == JFileChooser.APPROVE_OPTION) {
 			String filename = chooser.getSelectedFile().getAbsolutePath();
 
-			FileExtension extension = Util.GetFileExtension(filename);
-
-			Parser parser = Util.GetParserForFileExtension(extension);
+			Parser parser = Util.GetParser(filename);
 
 			Tree tree = parser.parse(filename);
 

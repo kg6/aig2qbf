@@ -81,7 +81,7 @@ public class TestSequential extends BaseTest {
 	}
 
 	private boolean testBenchmark(File inputFile, TreeReduction reductionMethod, int k) {
-		Parser parser = BaseTest.GetInputFileParser(inputFile);
+		Parser parser = Util.GetParser(inputFile);
 
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
 
