@@ -20,42 +20,46 @@ import at.jku.aig2qbf.parser.Parser;
 
 public class BaseTest {
 	protected final String SAT_SOLVER_PATH = "./tools/depqbf";
-	
+
 	@SuppressWarnings("serial")
-	public static HashMap<String, FileExtension> INPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {{
-		put(".aag", FileExtension.AAG);
-		put(".aig", FileExtension.AIG);
-	}};
+	public static HashMap<String, FileExtension> INPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {
+		{
+			put(".aag", FileExtension.AAG);
+			put(".aig", FileExtension.AIG);
+		}
+	};
 	@SuppressWarnings("serial")
-	public static HashMap<String, FileExtension> OUTPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {{
-		put(".aag", FileExtension.AAG);
-		put(".qbf", FileExtension.QDIMACS);
-		put(".qdimacs", FileExtension.QDIMACS);
-	}};
-	
+	public static HashMap<String, FileExtension> OUTPUT_FORMAT_TYPES = new HashMap<String, FileExtension>() {
+		{
+			put(".aag", FileExtension.AAG);
+			put(".qbf", FileExtension.QDIMACS);
+			put(".qdimacs", FileExtension.QDIMACS);
+		}
+	};
+
 	protected Tree loadTreeFromFile(String filePath) {
 		Parser parser = BaseTest.GetInputFileParser(new File(filePath));
-		
+
 		return parser.parse(filePath);
 	}
 
 	protected boolean saveTreeTofile(String filePath, Tree tree) {
 		Formatter formatter = BaseTest.GetOutputFileFormatter(new File(filePath));
-		
+
 		return Util.WriteFile(filePath, formatter.format(tree));
 	}
 
 	protected boolean checkSatisfiablity(String outputFilePath, Tree tree) {
 		Formatter formatter = new QDIMACS();
 
-		if(!Util.WriteFile(outputFilePath, formatter.format(tree))) {
+		if (!Util.WriteFile(outputFilePath, formatter.format(tree))) {
 			fail("Unable to write SAT temporary file");
 			return false;
 		}
 
 		return checkSatisfiablity(outputFilePath);
 	}
-	
+
 	protected boolean checkSatisfiablity(String filepath) {
 		Process process = null;
 		BufferedReader inputStream = null;
@@ -96,29 +100,30 @@ public class BaseTest {
 
 		return false;
 	}
-	
+
 	protected File[] getBenchmarkInputFiles(String directoryPath, FilenameFilter fileNameFilter) {
 		File sequentialDirectory = new File(directoryPath);
 
 		return sequentialDirectory.listFiles(fileNameFilter);
 	}
-	
+
 	protected boolean convertToAiger(String inputFilePath, String outputFilePath) {
 		try {
 			ProcessBuilder processBuilder = new ProcessBuilder("./tools/cnf2aig", inputFilePath, outputFilePath);
 			processBuilder.directory(new File("").getAbsoluteFile());
-			
+
 			Process process = processBuilder.start();
 			process.waitFor();
-			
+
 			return process.exitValue() == 0;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
-	
+
 	protected boolean checkOriginalSat(File inputFile, int k) {
 		BufferedReader inputReader = null;
 		BufferedReader errorReader = null;
@@ -169,7 +174,7 @@ public class BaseTest {
 
 		return false;
 	}
-	
+
 	protected void testComponent(Component c, String name, int inputSize, int outputSize, Component parent) {
 		assertEquals(name, c.getName());
 		assertEquals(inputSize, c.inputs.size());
@@ -179,11 +184,11 @@ public class BaseTest {
 			assertEquals(parent, c.outputs.get(0));
 		}
 	}
-	
+
 	public static Parser GetInputFileParser(File inputFile) {
 		String fileName = inputFile.getName();
 		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-		
+
 		for (String s : INPUT_FORMAT_TYPES.keySet()) {
 			if (fileName.endsWith(s)) {
 				return GetInputFileParser(INPUT_FORMAT_TYPES.get(s));
@@ -192,9 +197,9 @@ public class BaseTest {
 
 		throw new RuntimeException(String.format("Unable to create input file parser: File extension '%s' is unknown!", fileExtension));
 	}
-	
+
 	public static Parser GetInputFileParser(FileExtension extension) {
-		switch(extension) {
+		switch (extension) {
 			case AAG:
 				return new at.jku.aig2qbf.parser.AAG();
 			case AIG:
@@ -203,11 +208,11 @@ public class BaseTest {
 				throw new RuntimeException(String.format("Unable to create input file parser: %s parser is not implemented", extension));
 		}
 	}
-	
+
 	public static Formatter GetOutputFileFormatter(File outputFile) {
 		String fileName = outputFile.getName();
 		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-		
+
 		for (String s : OUTPUT_FORMAT_TYPES.keySet()) {
 			if (fileName.endsWith(s)) {
 				return GetOutputFileFormatter(OUTPUT_FORMAT_TYPES.get(s));
@@ -216,9 +221,9 @@ public class BaseTest {
 
 		throw new RuntimeException(String.format("Unable to create output file formatter: File extension '%s' is unknown!", fileExtension));
 	}
-	
+
 	public static Formatter GetOutputFileFormatter(FileExtension extension) {
-		switch(extension) {
+		switch (extension) {
 			case AAG:
 				return new at.jku.aig2qbf.formatter.AAG();
 			case QDIMACS:

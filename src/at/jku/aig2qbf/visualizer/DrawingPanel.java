@@ -68,7 +68,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		BACKGROUND_COLOR = Color.WHITE;
 		NORMAL_COLOR = Color.BLACK;
 		CIRCLE_COLOR = Color.RED;
-		
+
 		this.traversingHash = new HashMap<>();
 		this.drawingHash = new HashMap<>();
 		this.lineElementHash = new HashMap<>();
@@ -108,7 +108,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		g.setColor(NORMAL_COLOR);
 
 		this.usedPointCoordinatesHash.clear();
-		
+
 		rekDrawNodeChildren(TREE.outputs, (Graphics2D) g, 0, -1, -1);
 
 		Dimension dimension = this.getSize();
@@ -148,7 +148,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		if (file.isDirectory()) {
 			file = new File(file.getAbsoluteFile() + Character.toString(File.separatorChar) + DEFAULT_OUTPUT_FILENAME + ".png");
 		}
-		else if (! file.getName().endsWith(".png")) {
+		else if (!file.getName().endsWith(".png")) {
 			file = new File(file.getAbsolutePath() + ".png");
 		}
 
@@ -179,9 +179,9 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 
 			if (this.drawingHash.containsKey(component)) {
 				Point p = this.drawingHash.get(component);
-				
+
 				drawConnection(g, parentXPos, parentYPos, p.x, p.y, true);
-				
+
 				continue;
 			}
 
@@ -209,7 +209,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		}
 
 		String name = component.getName();
-		
+
 		if (name == null) {
 			if (component instanceof And) {
 				name = "AND";
@@ -254,7 +254,7 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 		if (circleClosing) {
 			final int backwardPathConnectionYPos0 = currentYPos + this.nodeHeight / 2;
 			final int backwardPathConnectionYPos1 = getNextAvailableYCoordinate(currentXPos, parentYPos + this.nodeHeight / 2);
-			
+
 			if (parentXPos < currentXPos) {
 				coordinates.add(new Coordinate(parentXPos + this.nodeWidth, parentYPos + this.nodeHeight / 2));
 				coordinates.add(new Coordinate(parentXPos + this.nodeWidth + NODE_OFFSET, backwardPathConnectionYPos1));
@@ -299,16 +299,16 @@ public class DrawingPanel extends JPanel implements ComponentListener {
 
 		drawArrow(g, coordinates, circleClosing);
 	}
-	
+
 	private int getNextAvailableYCoordinate(int xPos, int yPos) {
 		Point point = new Point(xPos, yPos);
-		
-		while(this.usedPointCoordinatesHash.containsKey(point)) {
+
+		while (this.usedPointCoordinatesHash.containsKey(point)) {
 			point.y += 10;
 		}
-		
+
 		this.usedPointCoordinatesHash.put(point, true);
-		
+
 		return point.y;
 	}
 

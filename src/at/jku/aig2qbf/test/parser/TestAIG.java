@@ -244,7 +244,7 @@ public class TestAIG extends BaseTest {
 		assertTrue(o1 instanceof Output);
 		testComponent(o1, "1", 1, 0, null);
 
-		// output 2 (!  Q)
+		// output 2 (! Q)
 		Component o2 = tree.outputs.get(1);
 		assertTrue(o2 instanceof Output);
 		testComponent(o2, "NOT(1)", 1, 0, null);
@@ -282,7 +282,7 @@ public class TestAIG extends BaseTest {
 		assertTrue(o1 instanceof Output);
 		testComponent(o1, "3", 1, 0, null);
 
-		// output 2 (!  Q)
+		// output 2 (! Q)
 		Component o2 = tree.outputs.get(1);
 		assertTrue(o2 instanceof Output);
 		testComponent(o2, "NOT(3)", 1, 0, null);
@@ -363,14 +363,14 @@ public class TestAIG extends BaseTest {
 	@Test
 	public void loadRegressions() {
 		File[] inputFiles = this.getBenchmarkInputFiles("input/basic", new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith("regression") && name.endsWith(".aig");
 			}
 		});
-		
-		for(File file : inputFiles) {
+
+		for (File file : inputFiles) {
 			this.loadTreeFromFile(file.getAbsolutePath());
 		}
 	}

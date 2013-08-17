@@ -66,17 +66,17 @@ public class aig2qbf {
 			FileExtension outputExtension = FileExtension.QDIMACS;
 
 			Configuration.FAST = true;
-			Configuration.SANTIY = ! commandLine.hasOption("ns");
+			Configuration.SANTIY = !commandLine.hasOption("ns");
 			Configuration.VERBOSE = commandLine.hasOption("v");
 			Configuration.VERBOSETIMES = commandLine.hasOption("vt");
-			
+
 			if (commandLine.hasOption("i")) {
 				input = commandLine.getOptionValue("i");
 				inputExtension = Util.GetFileExtension((commandLine.hasOption("it")) ? "." + commandLine.getOptionValue("it") : input);
-				
+
 				inputFile = new File(input);
-				
-				if(!inputFile.exists()) {
+
+				if (!inputFile.exists()) {
 					inputExtension = FileExtension.AAG;
 				}
 
@@ -109,42 +109,51 @@ public class aig2qbf {
 
 				Tree t = null;
 
-				if (Configuration.VERBOSETIMES) Configuration.timerStart();
+				if (Configuration.VERBOSETIMES)
+					Configuration.timerStart();
 
-				if(inputFile.exists()) {
+				if (inputFile.exists()) {
 					t = p.parse(input);
-				} else {
+				}
+				else {
 					t = p.parse(input.getBytes());
 				}
 
-				if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME parse");
+				if (Configuration.VERBOSETIMES)
+					Configuration.timerEnd("TIME parse");
 
 				int k = (commandLine.hasOption("k")) ? Integer.parseInt(commandLine.getOptionValue("k")) : 1;
 
-				if (! commandLine.hasOption("nu")) {
-					if (Configuration.VERBOSETIMES) Configuration.timerStart();
+				if (!commandLine.hasOption("nu")) {
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerStart();
 
-					t = t.unroll(k);					
+					t = t.unroll(k);
 					t.mergeToOneOutput();
 
-					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME unroll");
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerEnd("TIME unroll");
 
-					if (! commandLine.hasOption("nr")) {
-						if (Configuration.VERBOSETIMES) Configuration.timerStart();
+					if (!commandLine.hasOption("nr")) {
+						if (Configuration.VERBOSETIMES)
+							Configuration.timerStart();
 
 						SimplePathReduction reduction = new SimplePathReduction();
 						t = reduction.reduceTree(t, k);
 
-						if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME reduce tree");
+						if (Configuration.VERBOSETIMES)
+							Configuration.timerEnd("TIME reduce tree");
 					}
 				}
 
-				if (! commandLine.hasOption("nt")) {
-					if (Configuration.VERBOSETIMES) Configuration.timerStart("TIME START tseitin");
+				if (!commandLine.hasOption("nt")) {
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerStart("TIME START tseitin");
 
 					t = t.toTseitinCNF();
 
-					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME tseitin");
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerEnd("TIME tseitin");
 				}
 
 				if (commandLine.hasOption("vis")) {
@@ -155,10 +164,11 @@ public class aig2qbf {
 				else {
 					Formatter f = BaseTest.GetOutputFileFormatter(outputExtension);
 
-					if (Configuration.VERBOSETIMES) Configuration.timerStart();
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerStart();
 
 					if (output != null) {
-						if(! Util.WriteFile(output, f.format(t))) {
+						if (!Util.WriteFile(output, f.format(t))) {
 							System.out.println("Unable to write output file.");
 						}
 					}
@@ -166,21 +176,22 @@ public class aig2qbf {
 						System.out.println(f.format(t));
 					}
 
-					if (Configuration.VERBOSETIMES) Configuration.timerEnd("TIME formatter");
+					if (Configuration.VERBOSETIMES)
+						Configuration.timerEnd("TIME formatter");
 				}
 			}
 			else if (commandLine.hasOption("lit")) {
 				Object[] list = BaseTest.INPUT_FORMAT_TYPES.keySet().toArray();
-				
+
 				Arrays.sort(list);
-				
+
 				System.out.printf("Supported input format types: %s\n", Util.Join(", ", list));
 			}
 			else if (commandLine.hasOption("lot")) {
 				Object[] list = BaseTest.OUTPUT_FORMAT_TYPES.keySet().toArray();
-				
+
 				Arrays.sort(list);
-				
+
 				System.out.printf("Supported output format types: %s\n", Util.Join(", ", list));
 			}
 			else { // + h

@@ -16,11 +16,11 @@ import at.jku.aig2qbf.component.quantifier.Quantifier;
 import at.jku.aig2qbf.component.quantifier.QuantifierSet;
 
 public class QDIMACS implements Formatter {
-	
+
 	@Override
 	public String format(Tree cnfTree) {
 		cnfTree = Configuration.FAST ? cnfTree : (Tree) cnfTree.clone();
-		
+
 		Output rootNode = null;
 
 		if (cnfTree.outputs.size() > 0 && cnfTree.outputs.get(0).inputs.size() > 0) {
@@ -29,7 +29,7 @@ public class QDIMACS implements Formatter {
 
 		if (rootNode != null) {
 			StringBuilder qdimacsBuilder = new StringBuilder();
-			
+
 			// determine the number of variables
 			final int[] minMaxVariableIndex = getMinMaxVariableIndex(rootNode);
 			final int variableOffset = minMaxVariableIndex[0] - 1;
@@ -52,7 +52,7 @@ public class QDIMACS implements Formatter {
 
 			// define CNF clauses
 			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, variableOffset);
-			
+
 			return String.format(qdimacsBuilder.toString(), minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses);
 		}
 
@@ -69,7 +69,7 @@ public class QDIMACS implements Formatter {
 		int clauseCounter = 0;
 		boolean lineHasLiterals = false;
 
-		while (! componentStack.isEmpty()) {
+		while (!componentStack.isEmpty()) {
 			Component c = componentStack.pop();
 
 			if (c instanceof And || c instanceof Or) {
@@ -87,31 +87,31 @@ public class QDIMACS implements Formatter {
 
 				while (child instanceof Not) {
 					child = child.inputs.get(0);
-					negated = ! negated;
+					negated = !negated;
 				}
 
 				appendClause(builder, child.getId() - variableOffset, negated);
-				
+
 				lineHasLiterals = true;
 			}
 			else if (c instanceof Input) {
 				appendClause(builder, c.getId() - variableOffset, false);
-				
+
 				lineHasLiterals = true;
 			}
 			else if (c instanceof NL) {
-				if(lineHasLiterals) {
+				if (lineHasLiterals) {
 					appendNL(builder);
 					clauseCounter++;
-					
+
 					lineHasLiterals = false;
 				}
 			}
 			else {
 				throw new RuntimeException("Unable to convert tree to QDIMACS format: The  node type '" + c.getClass().getName() + "' is unknown!");
 			}
-			
-			if(componentStack.isEmpty() && !(c instanceof NL)) {
+
+			if (componentStack.isEmpty() && !(c instanceof NL)) {
 				clauseCounter++;
 			}
 		}
@@ -119,15 +119,15 @@ public class QDIMACS implements Formatter {
 		if (builder.charAt(builder.length() - 1) == ' ') {
 			appendNL(builder);
 		}
-		
+
 		return clauseCounter;
 	}
 
 	private void appendClause(StringBuilder builder, int id, boolean negated) {
-		if(id == 0) {
+		if (id == 0) {
 			throw new RuntimeException("Unable to convert tree to QDIMACS format: The not id 0 is invalid!");
 		}
-		
+
 		if (negated) {
 			id = -id;
 		}
@@ -144,33 +144,36 @@ public class QDIMACS implements Formatter {
 	private int[] getMinMaxVariableIndex(Component root) {
 		int minVariableIndex = Integer.MAX_VALUE;
 		int maxVariableIndex = 0;
-		
+
 		HashMap<Component, Component> seen = new HashMap<>();
 		Stack<Component> stack = new Stack<>();
-		
+
 		stack.add(root);
 		seen.put(root, null);
 
 		while (!stack.isEmpty()) {
 			Component n = stack.pop();
-			
-			if(n.getId() < minVariableIndex && n instanceof Input) {
+
+			if (n.getId() < minVariableIndex && n instanceof Input) {
 				minVariableIndex = n.getId();
 			}
-			
-			if(n.getId() > maxVariableIndex && n instanceof Input) {
+
+			if (n.getId() > maxVariableIndex && n instanceof Input) {
 				maxVariableIndex = n.getId();
 			}
 
 			for (Component i : n.inputs) {
-				if (! seen.containsKey(i)) {
+				if (!seen.containsKey(i)) {
 					stack.add(i);
 					seen.put(i, null);
 				}
 			}
 		}
-		
-		return new int[] { minVariableIndex, maxVariableIndex };
+
+		return new int[] {
+			minVariableIndex,
+			maxVariableIndex
+		};
 	}
 
 	public class NL extends Component {

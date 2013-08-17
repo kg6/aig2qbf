@@ -21,7 +21,7 @@ public class Util {
 	public enum FileExtension {
 		AIG, AAG, QDIMACS
 	}
-	
+
 	public static FileExtension GetFileExtension(String filename) {
 		int i = filename.lastIndexOf('.');
 
@@ -44,7 +44,7 @@ public class Util {
 			return null;
 		}
 	}
-	
+
 	public static Parser GetParserForFileExtension(FileExtension extension) {
 		switch (extension) {
 			case AAG:
@@ -55,18 +55,18 @@ public class Util {
 				throw new RuntimeException(String.format("Parser for extension \"%s\" not implemented", extension));
 		}
 	}
-	
+
 	public static String Join(String delimiter, Object[] list) {
-		StringBuilder s = new StringBuilder((String)list[0]);
-		
+		StringBuilder s = new StringBuilder((String) list[0]);
+
 		for (int i = 1; i < list.length; i++) {
 			s.append(delimiter);
 			s.append(list[i]);
 		}
-		
+
 		return s.toString();
 	}
-	
+
 	public static String ReadFile(String inputFilePath) {
 		BufferedReader reader = null;
 
@@ -99,10 +99,10 @@ public class Util {
 
 		return "";
 	}
-	
+
 	public static List<byte[]> ReadBinaryFile(String inputFilePath) {
 		File inputFile = new File(inputFilePath);
-		
+
 		DataInputStream inputStream = null;
 
 		try {
@@ -141,7 +141,7 @@ public class Util {
 			}
 		}
 	}
-	
+
 	public static boolean WriteFile(String filepath, String content) {
 		File outputFile = new File(filepath);
 
@@ -151,7 +151,7 @@ public class Util {
 
 		File parentDirectory = outputFile.getParentFile();
 
-		if (parentDirectory != null && ! parentDirectory.exists()) {
+		if (parentDirectory != null && !parentDirectory.exists()) {
 			parentDirectory.mkdirs();
 		}
 
@@ -180,7 +180,7 @@ public class Util {
 
 		return false;
 	}
-	
+
 	public static void RemoveFile(String outputFilePath) {
 		File tempFile = new File(outputFilePath);
 

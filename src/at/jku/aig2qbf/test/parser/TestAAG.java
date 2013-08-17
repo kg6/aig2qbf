@@ -39,7 +39,7 @@ public class TestAAG extends BaseTest {
 		assertTrue(o1 instanceof Output);
 		testComponent(o1, "3", 1, 0, null);
 
-		// output 2 (!  Q)
+		// output 2 (! Q)
 		Component o2 = tree.outputs.get(1);
 		assertTrue(o2 instanceof Output);
 		testComponent(o2, "NOT(3)", 1, 0, null);

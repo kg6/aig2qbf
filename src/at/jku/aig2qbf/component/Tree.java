@@ -52,7 +52,7 @@ public class Tree implements Cloneable {
 
 			return c.inputs.get(0).isLiteral();
 		}
-		else if (! (c instanceof And)) {
+		else if (!(c instanceof And)) {
 			return false;
 		}
 
@@ -137,11 +137,11 @@ public class Tree implements Cloneable {
 			q.push(o);
 		}
 
-		while (! q.isEmpty()) {
+		while (!q.isEmpty()) {
 			Component o = q.pop();
 
 			for (Component i : o.inputs) {
-				if (! components.containsKey(i)) {
+				if (!components.containsKey(i)) {
 					Component n = (Component) i.clone();
 
 					components.put(i, n);
@@ -168,7 +168,7 @@ public class Tree implements Cloneable {
 				}
 
 				// we have to clone unreferenced components as some latch outputs are not in the tree anymore!
-				if (! components.containsKey(o)) {
+				if (!components.containsKey(o)) {
 					Component n = (Component) o.clone();
 
 					cloneAddComponentConnections(o, n, components);
@@ -247,11 +247,11 @@ public class Tree implements Cloneable {
 			q.push(o);
 		}
 
-		while (! q.isEmpty()) {
+		while (!q.isEmpty()) {
 			Component o = q.pop();
 
 			for (Component i : o.inputs) {
-				if (! i.isLiteral() && ! components.containsKey(i)) {
+				if (!i.isLiteral() && !components.containsKey(i)) {
 					components.put(i, null);
 
 					if (i instanceof Latch) {
@@ -280,7 +280,7 @@ public class Tree implements Cloneable {
 		}
 
 		for (Output o : this.outputs) {
-			while (! o.inputs.isEmpty()) {
+			while (!o.inputs.isEmpty()) {
 				Component i = o.inputs.remove(0);
 				while (i.outputs.remove(o))
 					;
@@ -340,7 +340,7 @@ public class Tree implements Cloneable {
 			c.pushDistributive();
 		}
 
-		if (! nTree.isCNF()) {
+		if (!nTree.isCNF()) {
 			throw new RuntimeException("Tree still not in CNF!");
 		}
 
@@ -377,12 +377,12 @@ public class Tree implements Cloneable {
 		HashMap<Component, Component> seen = new HashMap<>();
 		Stack<Component> stack = new Stack<Component>();
 		stack.push(o.inputs.get(0));
-		
+
 		HashMap<Component, Component> stackVisitorHash = new HashMap<Component, Component>();
-		
+
 		// remember all universal/existential quantified variables
 		HashMap<Component, Component> quantifierHash = new HashMap<Component, Component>();
-		
+
 		// build a global and to connect the pieces of the tree
 		And globalAnd = new And();
 
@@ -411,9 +411,10 @@ public class Tree implements Cloneable {
 					}
 
 					// add every component to the stack that should get a Tseitin node
-					if(c instanceof Input) {
+					if (c instanceof Input) {
 						quantifierHash.put(c, null);
-					} else if(!stackVisitorHash.containsKey(c)) {
+					}
+					else if (!stackVisitorHash.containsKey(c)) {
 						stack.push(c);
 						stackVisitorHash.put(c, null);
 					}
@@ -427,9 +428,9 @@ public class Tree implements Cloneable {
 				// transform to structure of Tseitin
 				Input xi = new Input("x" + tseitinInputCounter);
 				tseitinInputCounter++;
-				
+
 				addNodeInTseitinForm(node, xi, globalAnd);
-				
+
 				// remember inputs for quantifiers
 				quantifierHash.put(xi, null);
 
@@ -437,12 +438,12 @@ public class Tree implements Cloneable {
 				tree.replaceComponent(node, xi);
 			}
 		}
-		
+
 		// manage quantifiers
 		Set<Component> quantifierSet = quantifierHash.keySet();
-		
-		for(Component c : quantifierSet) {
-			tree.addQuantifier((Input)c, Quantifier.EXISTENTIAL);
+
+		for (Component c : quantifierSet) {
+			tree.addQuantifier((Input) c, Quantifier.EXISTENTIAL);
 		}
 
 		// manage the tree output
@@ -450,10 +451,10 @@ public class Tree implements Cloneable {
 			throw new RuntimeException("Unable to convert the tree to Tseitin form: There must exactly one output variable, which was introduced by the tseitin conversion!");
 		}
 
-		if (! o.inputs.isEmpty()) {
+		if (!o.inputs.isEmpty()) {
 			Component c = o.inputs.remove(0);
 
-			if (! (c instanceof Input)) {
+			if (!(c instanceof Input)) {
 				throw new RuntimeException("Unable to convert the tree to Tseitin form: The last node in the tree must be a artificial tseitin variable!");
 			}
 
@@ -472,7 +473,7 @@ public class Tree implements Cloneable {
 
 		return tree;
 	}
-	
+
 	public void addNodeInTseitinForm(Component node, Component xi, And globalAnd) {
 		Component notXi = new Not();
 		notXi.addInput(xi);
@@ -481,7 +482,7 @@ public class Tree implements Cloneable {
 			Component overallOr = new Or();
 			overallOr.addInput(xi);
 
-			while (! node.inputs.isEmpty()) {
+			while (!node.inputs.isEmpty()) {
 				Component c = node.inputs.remove(0);
 				while (c.outputs.remove(node))
 					;
@@ -507,7 +508,7 @@ public class Tree implements Cloneable {
 			Component or1 = new Or();
 			or1.addInput(xi);
 
-			while (! node.inputs.isEmpty()) {
+			while (!node.inputs.isEmpty()) {
 				Component c = node.inputs.remove(0);
 				while (c.outputs.remove(node))
 					;
@@ -526,7 +527,7 @@ public class Tree implements Cloneable {
 			Component overallOr = new Or();
 			overallOr.addInput(notXi);
 
-			while (! node.inputs.isEmpty()) {
+			while (!node.inputs.isEmpty()) {
 				Component c = node.inputs.remove(0);
 				while (c.outputs.remove(node))
 					;
@@ -593,7 +594,7 @@ public class Tree implements Cloneable {
 			}
 		}
 
-		if (! componentFound) {
+		if (!componentFound) {
 			QuantifierSet q = getLastTreeQuantifierOfType(quantifier);
 
 			// merge literals with the same quantifier type if possible
@@ -623,7 +624,7 @@ public class Tree implements Cloneable {
 	}
 
 	public void replaceComponent(Component c1, Component c2) {
-		while (! c1.outputs.isEmpty()) {
+		while (!c1.outputs.isEmpty()) {
 			Component parent = c1.outputs.remove(0);
 			while (parent.inputs.remove(c1))
 				;
@@ -631,7 +632,7 @@ public class Tree implements Cloneable {
 			parent.addInput(c2);
 		}
 
-		while (! c1.inputs.isEmpty()) {
+		while (!c1.inputs.isEmpty()) {
 			Component child = c1.inputs.remove(0);
 			while (child.outputs.remove(c1))
 				;
@@ -652,7 +653,7 @@ public class Tree implements Cloneable {
 	public Tree unroll(int k) {
 		// because of k=0
 		k++;
-		
+
 		if (k < 1) {
 			throw new RuntimeException("k must be a positive number");
 		}
@@ -685,14 +686,14 @@ public class Tree implements Cloneable {
 			// convert true and false before using them (this is saver)
 			for (Tree t : ts) {
 				// convert True and False inputs to new tree
-				while (! t.cFalse.outputs.isEmpty()) {
+				while (!t.cFalse.outputs.isEmpty()) {
 					Component c = t.cFalse.outputs.remove(0);
 					c.inputs.remove(t.cFalse);
 
 					c.addInput(tree.cFalse);
 				}
 
-				while (! t.cTrue.outputs.isEmpty()) {
+				while (!t.cTrue.outputs.isEmpty()) {
 					Component c = t.cTrue.outputs.remove(0);
 					c.inputs.remove(t.cTrue);
 
@@ -714,11 +715,11 @@ public class Tree implements Cloneable {
 					Component cL = Component.componentHash.get(l.getId() + idOffset);
 					Component pL = Component.componentHash.get(l.getId() + prevIdOffset);
 
-					if (! (cL instanceof Latch)) {
+					if (!(cL instanceof Latch)) {
 						throw new RuntimeException("cL should be a latch!");
 					}
 
-					if (! (pL instanceof Latch)) {
+					if (!(pL instanceof Latch)) {
 						throw new RuntimeException("pL should be a latch!");
 					}
 
@@ -732,7 +733,7 @@ public class Tree implements Cloneable {
 					// connect latch.outputs to latch-1.input
 					Component pIn = pL.inputs.get(0);
 
-					while (! cL.outputs.isEmpty()) {
+					while (!cL.outputs.isEmpty()) {
 						Component o = cL.outputs.remove(0);
 						while (o.inputs.remove(cL))
 							;
@@ -757,7 +758,7 @@ public class Tree implements Cloneable {
 
 				// if the input of the latch has no purpose, remove it
 				for (Component in : tempLatchInputs) {
-					if (in.outputs.size() == 0 && ! usedLatchOutputs.containsKey(in)) {
+					if (in.outputs.size() == 0 && !usedLatchOutputs.containsKey(in)) {
 						removeCompletely(in);
 					}
 				}
@@ -765,7 +766,7 @@ public class Tree implements Cloneable {
 
 			// merge Ts into first t
 			for (Tree t : ts) {
-				while (! t.outputs.isEmpty()) {
+				while (!t.outputs.isEmpty()) {
 					Output i = t.outputs.remove(0);
 
 					tree.outputs.add(i);
@@ -773,9 +774,9 @@ public class Tree implements Cloneable {
 			}
 		}
 
-		if(latches.size() > 0) {
+		if (latches.size() > 0) {
 			tempLatchInputs = new ArrayList<>(latches.size());
-	
+
 			// set all latch outputs from first T to false
 			int iL = 0;
 			for (Latch l : latches) {
@@ -783,22 +784,22 @@ public class Tree implements Cloneable {
 				Component in = l.inputs.remove(0);
 				while (in.outputs.remove(l))
 					;
-	
+
 				tempLatchInputs.add(in);
-	
+
 				// replace all latch outputs of the current T with false
 				// Other Ts component inputs depend on the current T input
-				while (! l.outputs.isEmpty()) {
+				while (!l.outputs.isEmpty()) {
 					Component o = l.outputs.remove(0);
 					while (o.inputs.remove(l))
 						;
-	
+
 					o.addInput(tree.cFalse);
 				}
-	
+
 				// set current latch output
 				tree.latchOutputs[0][iL] = tree.cFalse;
-	
+
 				for (int x = 1; x < k; x++) {
 					for (int y = 0; y < latches.size(); y++) {
 						if (tree.latchOutputs[x][y] == l) {
@@ -806,26 +807,26 @@ public class Tree implements Cloneable {
 						}
 					}
 				}
-	
+
 				iL++;
 			}
-	
+
 			// if the input of the latch has no purpose, remove it
 			for (Component in : tempLatchInputs) {
-				if (in.outputs.size() == 0 && ! usedLatchOutputs.containsKey(in)) {
+				if (in.outputs.size() == 0 && !usedLatchOutputs.containsKey(in)) {
 					removeCompletely(in);
 				}
 			}
 		}
 
-//		System.out.println("latchOutputs: ");
-//		for (int x = 0; x < k; x++) {
-//			System.out.println("T " + x);
-//		
-//			for (int y = 0; y < latches.size(); y++) {
-//				System.out.println(String.format("\t%s (in=%d, out=%d)", tree.latchOutputs[x][y], tree.latchOutputs[x][y].inputs.size(), tree.latchOutputs[x][y].outputs.size()));
-//			}
-//		}
+		// System.out.println("latchOutputs: ");
+		// for (int x = 0; x < k; x++) {
+		// System.out.println("T " + x);
+		//
+		// for (int y = 0; y < latches.size(); y++) {
+		// System.out.println(String.format("\t%s (in=%d, out=%d)", tree.latchOutputs[x][y], tree.latchOutputs[x][y].inputs.size(), tree.latchOutputs[x][y].outputs.size()));
+		// }
+		// }
 
 		// verify the structure of the tree
 		if (Configuration.SANTIY) {
@@ -851,10 +852,10 @@ public class Tree implements Cloneable {
 
 		qin.add(c);
 
-		while (! qin.isEmpty()) {
+		while (!qin.isEmpty()) {
 			c = qin.pop();
 
-			while (! c.inputs.isEmpty()) {
+			while (!c.inputs.isEmpty()) {
 				Component j = c.inputs.remove(0);
 				while (j.outputs.remove(c))
 					;
@@ -865,7 +866,7 @@ public class Tree implements Cloneable {
 			}
 		}
 	}
-	
+
 	protected boolean containsLatchOutputs(Component c) {
 		for (int x = 0; x < this.latchOutputs.length; x++) {
 			for (int y = 0; y < this.latchOutputs[0].length; y++) {
@@ -874,7 +875,7 @@ public class Tree implements Cloneable {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -925,8 +926,8 @@ public class Tree implements Cloneable {
 			public void check(Tree tree, Component c) {
 				if (c instanceof Input) {
 					verify(c.inputs.size() == 0, c);
-					
-					if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+
+					if (c.outputs.size() == 0 && !tree.containsLatchOutputs(c)) {
 						verify(c.outputs.size() != 0, c);
 					}
 				}
@@ -946,8 +947,8 @@ public class Tree implements Cloneable {
 				else {
 					if (c instanceof And || c instanceof Or) {
 						verify(c.inputs.size() >= 1, c);
-						
-						if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+
+						if (c.outputs.size() == 0 && !tree.containsLatchOutputs(c)) {
 							verify(c.outputs.size() != 0, c);
 						}
 					}
@@ -958,8 +959,8 @@ public class Tree implements Cloneable {
 
 					if (c instanceof Not) {
 						verify(c.inputs.size() > 0, c);
-						
-						if (c.outputs.size() == 0 && ! tree.containsLatchOutputs(c)) {
+
+						if (c.outputs.size() == 0 && !tree.containsLatchOutputs(c)) {
 							verify(c.outputs.size() != 0, c);
 						}
 					}
@@ -981,7 +982,7 @@ public class Tree implements Cloneable {
 	}
 
 	private void verify(boolean b, Component c) {
-		if (! b) {
+		if (!b) {
 			System.out.println("Failed component " + c + "(" + c.getId() + ")");
 			throw new RuntimeException("Tree verification failed!");
 		}

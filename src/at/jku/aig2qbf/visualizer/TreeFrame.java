@@ -44,7 +44,7 @@ public class TreeFrame extends JFrame {
 					return;
 				}
 
-				if (! drawingPanel.saveBackgroundImageToFile(fileChooser.getSelectedFile())) {
+				if (!drawingPanel.saveBackgroundImageToFile(fileChooser.getSelectedFile())) {
 					JOptionPane.showMessageDialog(TreeFrame.this, "Unable to write the file to the storage location.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}

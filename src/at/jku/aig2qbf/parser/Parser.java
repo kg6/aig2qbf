@@ -17,17 +17,17 @@ public abstract class Parser {
 		if (inputFilePath == null) {
 			throw new IllegalArgumentException("Input file path must not be null.");
 		}
-		
+
 		File inputFile = new File(inputFilePath);
 
-		if (! inputFile.exists()) {
+		if (!inputFile.exists()) {
 			throw new IllegalArgumentException("Input file does not exist.");
 		}
 
 		String fileName = inputFile.getName();
 
 		int extensionPos = fileName.lastIndexOf('.');
-		
+
 		if (extensionPos >= 0) {
 			String extension = fileName.substring(extensionPos + 1).toLowerCase();
 
@@ -159,5 +159,6 @@ public abstract class Parser {
 	}
 
 	abstract public Tree parse(String inputFilePath);
+
 	abstract public Tree parse(byte[] input);
 }

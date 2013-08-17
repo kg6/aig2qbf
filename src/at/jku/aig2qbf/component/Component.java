@@ -49,10 +49,10 @@ public abstract class Component implements Cloneable {
 
 	public void addInput(Component c) {
 		if (Configuration.SANTIY) {
-			if (! this.inputs.contains(c)) {
+			if (!this.inputs.contains(c)) {
 				this.inputs.add(c);
 			}
-			if (! c.outputs.contains(this)) {
+			if (!c.outputs.contains(this)) {
 				c.outputs.add(this);
 			}
 		}
@@ -64,7 +64,7 @@ public abstract class Component implements Cloneable {
 		if (this instanceof Input) {
 			throw new RuntimeException("Unable to add input to component: Input must not get an additional input!");
 		}
-		else if (this.equals(c) && ! (c instanceof Latch)) {
+		else if (this.equals(c) && !(c instanceof Latch)) {
 			throw new RuntimeException("Unable to add input to component: Self loops are only valid for latches!");
 		}
 	}
@@ -98,7 +98,7 @@ public abstract class Component implements Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (! (obj instanceof Component)) {
+		if (!(obj instanceof Component)) {
 			return false;
 		}
 
@@ -154,7 +154,7 @@ public abstract class Component implements Cloneable {
 				c.outputs.remove(this);
 
 				for (Component i : c.inputs) {
-					if (! this.inputs.contains(i)) {
+					if (!this.inputs.contains(i)) {
 						this.addInput(i);
 					}
 
@@ -174,11 +174,11 @@ public abstract class Component implements Cloneable {
 		for (Component c : b.outputs) {
 			c.inputs.remove(b);
 
-			if (! c.inputs.contains(a)) {
+			if (!c.inputs.contains(a)) {
 				c.inputs.add(a);
 			}
 
-			if (! a.outputs.contains(c)) {
+			if (!a.outputs.contains(c)) {
 				a.outputs.add(c);
 			}
 		}
@@ -187,11 +187,11 @@ public abstract class Component implements Cloneable {
 		for (Component c : b.inputs) {
 			c.outputs.remove(b);
 
-			if (! c.outputs.contains(a)) {
+			if (!c.outputs.contains(a)) {
 				c.outputs.add(a);
 			}
 
-			if (! a.inputs.contains(c)) {
+			if (!a.inputs.contains(c)) {
 				a.inputs.add(c);
 			}
 		}
@@ -224,13 +224,13 @@ public abstract class Component implements Cloneable {
 
 		trace.push(new TracePair(this, 0));
 
-		while (! trace.isEmpty()) {
+		while (!trace.isEmpty()) {
 			TracePair t = trace.pop();
 
 			while (t.c.inputs.size() != t.i) {
 				Component child = t.c.inputs.get(t.i++);
 
-				if (! child.isLiteral() && ! (child instanceof Not)) {
+				if (!child.isLiteral() && !(child instanceof Not)) {
 					trace.push(t);
 
 					t = new TracePair(child, 0);
@@ -260,7 +260,7 @@ public abstract class Component implements Cloneable {
 		else if (this.isLiteral() || this instanceof Not) {
 			return;
 		}
-		else if (! (this instanceof And || this instanceof Or)) {
+		else if (!(this instanceof And || this instanceof Or)) {
 			throw new RuntimeException("pushDistributive cannot handle " + this.getName());
 		}
 
@@ -306,7 +306,7 @@ public abstract class Component implements Cloneable {
 		Component qcl0 = qcl.pollLast();
 		ArrayList<Component> ql = new ArrayList<>(qcl0.inputs.size());
 
-		while (! qcl0.inputs.isEmpty()) {
+		while (!qcl0.inputs.isEmpty()) {
 			Component i = qcl0.inputs.remove(0);
 			i.outputs.remove(qcl0);
 
@@ -316,7 +316,7 @@ public abstract class Component implements Cloneable {
 			ql.add(t);
 		}
 
-		while (! qcl.isEmpty()) {
+		while (!qcl.isEmpty()) {
 			Component cl = qcl.pollLast();
 
 			ArrayList<Component> nql = new ArrayList<>(ql.size() * cl.inputs.size());
@@ -330,13 +330,13 @@ public abstract class Component implements Cloneable {
 					nql.add(iCopy);
 				}
 
-				while (! i.inputs.isEmpty()) {
+				while (!i.inputs.isEmpty()) {
 					Component j = i.inputs.remove(0);
 					j.outputs.remove(i);
 				}
 			}
 
-			while (! cl.inputs.isEmpty()) {
+			while (!cl.inputs.isEmpty()) {
 				Component j = cl.inputs.remove(0);
 				j.outputs.remove(cl);
 			}
@@ -344,7 +344,7 @@ public abstract class Component implements Cloneable {
 			ql = nql;
 		}
 
-		if (! qliterals.isEmpty()) {
+		if (!qliterals.isEmpty()) {
 			for (Component i : ql) {
 				for (Component j : qliterals) {
 					i.addInput(j);
@@ -410,7 +410,7 @@ public abstract class Component implements Cloneable {
 
 			return;
 		}
-		else if (! (c instanceof And || c instanceof Or)) {
+		else if (!(c instanceof And || c instanceof Or)) {
 			throw new RuntimeException("pushNots cannot handle " + this.getName());
 		}
 
@@ -422,11 +422,11 @@ public abstract class Component implements Cloneable {
 	}
 
 	public void remove() {
-		while (! this.inputs.isEmpty()) {
+		while (!this.inputs.isEmpty()) {
 			Component r = this.inputs.remove(0);
 			r.outputs.remove(this);
 		}
-		while (! this.outputs.isEmpty()) {
+		while (!this.outputs.isEmpty()) {
 			Component r = this.outputs.remove(0);
 			r.inputs.remove(this);
 		}

@@ -11,14 +11,14 @@ public class AAG extends AIG {
 		this.checkInputFile(inputFilePath, EXPECTED_EXTENSION);
 
 		String[] lines = Util.ReadFile(inputFilePath).split("\n");
-		
+
 		return this.parse(lines);
 	}
-	
+
 	@Override
 	public Tree parse(byte[] input) {
 		String[] lines = new String(input).split("\n");
-		
+
 		return this.parse(lines);
 	}
 
@@ -86,8 +86,8 @@ public class AAG extends AIG {
 
 	private int[][] parseAnds(final String[] lines, final int numberOfInputs, final int numberOfLatches, final int numberOfOutputs, final int numberOfAndGates, final int multipliedMaximumVariableIndex) {
 		int[][] fileAnds = new int[numberOfAndGates][];
-		
-		if(numberOfAndGates == 0) {
+
+		if (numberOfAndGates == 0) {
 			return fileAnds;
 		}
 

@@ -1088,7 +1088,7 @@ public class TestTree extends BaseTest {
 			assertEquals(3, k3.outputs.size());
 
 			// k1
-			
+
 			Component k1o = k3.outputs.get(0);
 			assertTrue(k1o instanceof Output);
 			assertEquals(1, k1o.inputs.size());
@@ -1159,7 +1159,7 @@ public class TestTree extends BaseTest {
 			assertSame(k3.cFalse, k3a.inputs.get(1));
 			assertSame(k3a, k1f.outputs.get(2));
 		}
-		
+
 		Tree k4 = t.unroll(3);
 		this.unrollSanityCheckOriginalTreeSanity(t);
 
@@ -1169,7 +1169,7 @@ public class TestTree extends BaseTest {
 			assertEquals(4, k4.outputs.size());
 
 			// k1
-			
+
 			Component k1o = k4.outputs.get(0);
 			assertTrue(k1o instanceof Output);
 			assertEquals(1, k1o.inputs.size());
@@ -1345,21 +1345,21 @@ public class TestTree extends BaseTest {
 
 		assertSame(l1, i.outputs.get(1));
 	}
-	
+
 	@Test
 	public void regression3LatchPath() {
 		Tree t = new AAG().parse("input/basic/regression3.aag");
-		
+
 		Tree k1 = ((Tree) t.clone()).unroll(0);
-		
+
 		{
 			assertEquals(1, k1.outputs.size());
-	
+
 			Component o = k1.outputs.get(0);
 			assertTrue(o instanceof Output);
 			assertEquals(1, o.inputs.size());
 			assertEquals(0, o.outputs.size());
-			
+
 			Component f = o.inputs.get(0);
 			assertTrue(f instanceof False);
 			assertSame(k1.cFalse, f);
@@ -1367,65 +1367,65 @@ public class TestTree extends BaseTest {
 			assertEquals(1, f.outputs.size());
 			assertSame(o, f.outputs.get(0));
 		}
-		
+
 		Tree k2 = ((Tree) t.clone()).unroll(1);
-		
+
 		{
 			assertEquals(2, k2.outputs.size());
-	
+
 			Component o1 = k2.outputs.get(0);
 			assertTrue(o1 instanceof Output);
 			assertEquals(1, o1.inputs.size());
 			assertEquals(0, o1.outputs.size());
-			
+
 			Component f1 = o1.inputs.get(0);
 			assertTrue(f1 instanceof False);
 			assertSame(k2.cFalse, f1);
 			assertEquals(0, f1.inputs.size());
 			assertEquals(2, f1.outputs.size());
 			assertSame(o1, f1.outputs.get(0));
-			
+
 			Component o2 = k2.outputs.get(1);
 			assertTrue(o2 instanceof Output);
 			assertEquals(1, o2.inputs.size());
 			assertEquals(0, o2.outputs.size());
-			
+
 			Component f2 = o2.inputs.get(0);
 			assertSame(f2, f1);
 			assertSame(o2, f1.outputs.get(1));
 		}
-		
+
 		Tree k3 = ((Tree) t.clone()).unroll(2);
-		
+
 		{
 			assertEquals(3, k3.outputs.size());
-	
+
 			Component o1 = k3.outputs.get(0);
 			assertTrue(o1 instanceof Output);
 			assertEquals(1, o1.inputs.size());
 			assertEquals(0, o1.outputs.size());
-			
+
 			Component f1 = o1.inputs.get(0);
 			assertTrue(f1 instanceof False);
 			assertSame(k3.cFalse, f1);
 			assertEquals(0, f1.inputs.size());
 			assertEquals(2, f1.outputs.size());
 			assertSame(o1, f1.outputs.get(0));
-			
+
 			Component o2 = k3.outputs.get(1);
 			assertTrue(o2 instanceof Output);
 			assertEquals(1, o2.inputs.size());
 			assertEquals(0, o2.outputs.size());
-			
+
 			Component f2 = o2.inputs.get(0);
 			assertSame(f2, f1);
 			assertSame(o2, f1.outputs.get(1));
-			
+
 			Component o3 = k3.outputs.get(2);
 			assertTrue(o3 instanceof Output);
 			assertEquals(1, o3.inputs.size());
 			assertEquals(0, o3.outputs.size());
-			
+
 			Component i = o3.inputs.get(0);
 			assertTrue(i instanceof Input);
 			assertEquals(0, i.inputs.size());
@@ -1433,62 +1433,62 @@ public class TestTree extends BaseTest {
 			assertSame(o3, i.outputs.get(0));
 		}
 	}
-	
+
 	@Test
 	public void regression4() {
 		final int max_k = 10;
-		
+
 		SimplePathReduction reduction = new SimplePathReduction();
-		
+
 		Tree tree = new AIG().parse("input/basic/regression4.aig");
-		
-		for(int k = 0; k <= max_k; k++) {
+
+		for (int k = 0; k <= max_k; k++) {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
-			
+
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-			
+
 			Tree tseitinTree = reducedTree.toTseitinCNF();
-			
+
 			assertTrue(checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree));
 		}
 	}
-	
+
 	@Test
 	public void regression7() {
 		final int max_k = 10;
-		
+
 		SimplePathReduction reduction = new SimplePathReduction();
-		
+
 		Tree tree = new AIG().parse("input/basic/regression7.aig");
-		
-		for(int k = 0; k <= max_k; k++) {
+
+		for (int k = 0; k <= max_k; k++) {
 			Tree unrolledTree = tree.unroll(k);
 			unrolledTree.mergeToOneOutput();
-			
+
 			Tree reducedTree = reduction.reduceTree(unrolledTree, k);
-			
+
 			Tree tseitinTree = reducedTree.toTseitinCNF();
-			
+
 			assertTrue(checkSatisfiablity(TEMP_QDIMACS_FILE, tseitinTree));
 		}
 	}
-	
+
 	@Test
 	public void unrollAndReduceBasics() {
 		for (String file : new String[] {
 			"regression3",
 		}) {
 			Tree tB = new AIG().parse("input/basic/" + file + ".aig");
-			
+
 			for (int k = 1; k <= 3; k++) {
 				Tree t = (Tree) tB.clone();
 
 				t = t.unroll(k);
 				t.mergeToOneOutput();
-				
+
 				System.out.println(file + " - " + k);
-				
+
 				SimplePathReduction reduction = new SimplePathReduction();
 				t = reduction.reduceTree(t, k);
 

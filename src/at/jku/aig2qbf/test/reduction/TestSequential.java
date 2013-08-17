@@ -45,7 +45,7 @@ public class TestSequential extends BaseTest {
 	@Test
 	public void test() {
 		File[] benchmarkFiles = this.getBenchmarkInputFiles(INPUT_SEQUENTIAL_DIRECTORY, new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(INPUT_EXTENSION_AAG) || name.endsWith(INPUT_EXTENSION_AIG);
@@ -84,15 +84,15 @@ public class TestSequential extends BaseTest {
 		Parser parser = BaseTest.GetInputFileParser(inputFile);
 
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
-		
+
 		tree = tree.unroll(k);
 		tree.mergeToOneOutput();
-		
+
 		Tree unrolledTree = tree.unroll(k);
 		unrolledTree.mergeToOneOutput();
-		
+
 		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
-		
+
 		Tree tseitinTree = reducedTree.toTseitinCNF();
 
 		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, tseitinTree);
