@@ -28,10 +28,18 @@
     <target depends="clean" name="cleanall"/>
     <target depends="build-project" name="build"/>
     <target depends="init" name="build-project">
+        <mkdir dir="bin"/>
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="aig2qbf.classpath"/>
         </javac>
+        <jar destfile="bin/aig2qbf.jar">
+            <fileset dir="build/classes"/>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="at.jku.aig2qbf.aig2qbf"/>
+            </manifest>
+        </jar>
     </target>
 </project>
