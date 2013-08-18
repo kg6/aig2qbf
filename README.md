@@ -22,7 +22,7 @@ QBF is a short term for Quantified Boolean Formula and represents a family of pr
 
 ## What is the simple path constraint?
 
-The simple path constraint is an approach described in the paper [“Compressing BMC Encodings”](http://fmv.jku.at/papers/JussilaBiere-BMC06.pdf) to check the satisfiability of AIG data structures up to a certain length. It follows the idea that each state in the state space should be traversed only once, which allows to narrow down the number of states to be checked significantly. A state basically represents a sequential logic at a particular time frame and is encoded by a bit vector. If a state could be reached again, a formula would be unsatisfiable, because then a short-circuit would be found. Each bit in the bit vector of a state defines whether the state of a particular latch output is true or false. In order to find out whether two states Si and Sj, n² comparisons would be necessary. By using the QBF reformulation of the simple path constraint, the check for uniqueness can be done in O(n).
+The simple path constraint is an approach described in the paper [“Compressing BMC Encodings with QBF”](http://fmv.jku.at/papers/JussilaBiere-BMC06.pdf) to check the satisfiability of AIG data structures up to a certain length. It follows the idea that each state in the state space should be traversed only once, which allows to narrow down the number of states to be checked significantly. A state basically represents a sequential logic at a particular time frame and is encoded by a bit vector. If a state could be reached again, a formula would be unsatisfiable, because then a short-circuit would be found. Each bit in the bit vector of a state defines whether the state of a particular latch output is true or false. In order to find out whether two states Si and Sj, n² comparisons would be necessary. By using the QBF reformulation of the simple path constraint, the check for uniqueness can be done in O(n).
 
 ## How does aig2qbf work?
 
@@ -34,7 +34,7 @@ Besides the conversion functionality, aig2qbf is able to visualize the produced 
 
 ## How to setup aig2qbf?
 
-To compile aig2qbf only <code>make</code>, <code>Java</code> and <code>Apache Ant</code> is needed. After installing that <code>make</code> compiles and generates all needed files into a JAR file to bin/aig2qbf.jar.
+To compile aig2qbf only <code>make</code>, <code>Java</code> and <code>Apache Ant</code> is needed. After installing all requirements, <code>make</code> compiles and generates all needed files into a JAR file to bin/aig2qbf.jar.
 
 ```bash
 make
@@ -52,21 +52,22 @@ Besides the Java unit tests some external tools can be found in the <code>script
 ## How can aig2qbf be used?
 
 Some example arguments for aig2qbf:
-1. Unroll a given circuit and visualize the result
+
+* Unroll a given circuit and visualize the result
     java -jar bin/aig2qbf.jar -v -k 3 -vis --input input/basic/toggle-re.aag
-2. Unroll a given circuit for k = 10 steps
+* Unroll a given circuit for k = 10 steps
     java -jar bin/aig2qbf.jar -v -k 10 --input input/sequential/ken.flash^11.C.aig
-3. Unroll a given circuit and deactivate the sanity checks for performance improvement
+* Unroll a given circuit and deactivate the sanity checks for performance improvement
     java -jar bin/aig2qbf.jar -ns -k 10 --input input/sequential/ken.flash^11.C.aig
 
 The following parameters can be defined:
 
 ```bash
- -h,--help    Print help.
- -i,--input <FILE/AAG STRING>       The input file.
+ -h,--help                      Print help.
+ -i,--input <FILE/AAG STRING>   The input file.
  -it,--input-type <TYPE>        Overwrite the format type of the input file.
- -lit,--list-input-types    List all supported input type formats.
- -lot,--list-output-types    List all supported output type formats.
+ -lit,--list-input-types        List all supported input type formats.
+ -lot,--list-output-types       List all supported output type formats.
  -k,--unroll <INTEGER>          Number of unrolling steps. Default is 1.
  -nr,--no-reduction             Do not reduce the tree.
  -ns,--no-sanity                Do not apply any sanity checks.
