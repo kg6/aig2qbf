@@ -52,7 +52,7 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
 		options.addOption(getCommandlineOption("ot", "output-type", "Overwrite the format type of the output file.", true, "TYPE"));
 		options.addOption(getCommandlineOption("v", "verbose", "Enable verbose output.", false, null));
-		options.addOption(getCommandlineOption("vt", "verbose-times", "Enable verbose output.", false, null));
+		options.addOption(getCommandlineOption("vt", "verbose-times", "Output execution time of different conversion stages.", false, null));
 		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the parsed graph data structure after all processing steps were applied.", false, null));
 
 		try {
@@ -109,7 +109,7 @@ public class aig2qbf {
 				Tree t = null;
 
 				if (Configuration.VERBOSETIMES)
-					Configuration.timerStart();
+					Util.TimerStart();
 
 				if (inputFile.exists()) {
 					t = p.parse(input);
@@ -119,40 +119,40 @@ public class aig2qbf {
 				}
 
 				if (Configuration.VERBOSETIMES)
-					Configuration.timerEnd("TIME parse");
+					Util.TimerEnd("TIME parse");
 
 				int k = (commandLine.hasOption("k")) ? Integer.parseInt(commandLine.getOptionValue("k")) : 1;
 
 				if (!commandLine.hasOption("nu")) {
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerStart();
+						Util.TimerStart();
 
 					t = t.unroll(k);
 					t.mergeToOneOutput();
 
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerEnd("TIME unroll");
+						Util.TimerEnd("TIME unroll");
 
 					if (!commandLine.hasOption("nr")) {
 						if (Configuration.VERBOSETIMES)
-							Configuration.timerStart();
+							Util.TimerStart();
 
 						SimplePathReduction reduction = new SimplePathReduction();
 						t = reduction.reduceTree(t, k);
 
 						if (Configuration.VERBOSETIMES)
-							Configuration.timerEnd("TIME reduce tree");
+							Util.TimerEnd("TIME reduce tree");
 					}
 				}
 
 				if (!commandLine.hasOption("nt")) {
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerStart("TIME START tseitin");
+						Util.TimerStart("TIME START tseitin");
 
 					t = t.toTseitinCNF();
 
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerEnd("TIME tseitin");
+						Util.TimerEnd("TIME tseitin");
 				}
 
 				if (commandLine.hasOption("vis")) {
@@ -164,7 +164,7 @@ public class aig2qbf {
 					Formatter f = Util.GetFormatter(outputExtension);
 
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerStart();
+						Util.TimerStart();
 
 					if (output != null) {
 						if (!Util.WriteFile(output, f.format(t))) {
@@ -176,7 +176,7 @@ public class aig2qbf {
 					}
 
 					if (Configuration.VERBOSETIMES)
-						Configuration.timerEnd("TIME formatter");
+						Util.TimerEnd("TIME formatter");
 				}
 			}
 			else if (commandLine.hasOption("lit")) {

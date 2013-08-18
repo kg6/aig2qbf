@@ -85,7 +85,7 @@ public class AAG implements Formatter {
 			}
 		}
 
-		// reassign indizes
+		// reassign indices
 		int maxIndex = 2;
 		HashMap<Integer, Integer> indizes = new HashMap<>();
 

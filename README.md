@@ -49,7 +49,7 @@ For developing and testing <code>JUnit4</code>, <code>Perl</code> and some Perl 
 sudo cpan File::Basename File::Slurp Getopt::Compact Modern::Perl String::Util Time::HiRes
 ```
 
-Besides the Java unit tests some external tools can be found in the <code>scripts</code> folder.
+Besides the Java unit tests some external tools can be found in the <code>scripts</code> folder to support testing.
 
 ## How can aig2qbf be used?
 
@@ -85,5 +85,5 @@ The following CLI arguemnts can be used:
  -ot,--output-type <TYPE>       Overwrite the format type of the output file.
  -v,--verbose                   Enable verbose output.
  -vis,--visualize               Visualize the parsed graph data structure after all processing steps were applied.
- -vt,--verbose-times            Enable verbose output.
+ -vt,--verbose-times            Output execution time of different conversion stages.
 ```

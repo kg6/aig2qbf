@@ -19,6 +19,8 @@ import at.jku.aig2qbf.formatter.Formatter;
 import at.jku.aig2qbf.parser.Parser;
 
 public class Util {
+	private static long startTimer = 0;
+	
 	public enum FileExtension {
 		AIG, AAG, QDIMACS
 	}
@@ -201,6 +203,32 @@ public class Util {
 		if (tempFile.exists()) {
 			tempFile.delete();
 		}
+	}
+
+	public static void TimerStart() {
+		TimerStart("");
+	}
+
+	public static void TimerStart(String text) {
+		if (text.compareTo("") != 0) {
+			System.err.println(text);
+		}
+
+		startTimer = System.currentTimeMillis();
+	}
+
+	public static void TimerEnd() {
+		TimerEnd("");
+	}
+
+	public static long TimerEnd(String text) {
+		long time = System.currentTimeMillis() - startTimer;
+
+		if (text.compareTo("") != 0) {
+			System.err.println(text + " " + time + "ms");
+		}
+
+		return time;
 	}
 
 	public static boolean WriteFile(String filepath, String content) {

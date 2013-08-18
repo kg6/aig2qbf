@@ -11,7 +11,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import at.jku.aig2qbf.Util;
-import at.jku.aig2qbf.Util.FileExtension;
 import at.jku.aig2qbf.component.Tree;
 import at.jku.aig2qbf.parser.Parser;
 
