@@ -32,6 +32,8 @@ When aig2qbf is started, it basically tries to parse a graph from an input file.
 
 Besides the conversion functionality, aig2qbf is able to visualize the produced graph data structure. This however is only tractable for small graphs.
 
+![alt text](https://github.com/kg6/aig2qbf/raw/master/resources/screen01.png "Visualizing a sample structure with aig2qbf")
+
 ## How to setup aig2qbf?
 
 To compile aig2qbf only <code>make</code>, <code>Java</code> and <code>Apache Ant</code> is needed. After installing all requirements, <code>make</code> compiles and generates all needed files into a JAR file to bin/aig2qbf.jar.
@@ -66,7 +68,7 @@ java -jar bin/aig2qbf.jar -v -k 10 --input input/sequential/ken.flash^11.C.aig
 java -jar bin/aig2qbf.jar -ns -k 10 --input input/sequential/ken.flash^11.C.aig
 ```
 
-The following parameters can be defined:
+The following CLI arguemnts can be used:
 
 ```bash
  -h,--help                      Print help.
