@@ -132,7 +132,7 @@ public class QDIMACS implements Formatter {
 			id = -id;
 		}
 
-		builder.append(Integer.toString(id));
+		builder.append(id);
 		builder.append(" ");
 	}
 
@@ -154,12 +154,14 @@ public class QDIMACS implements Formatter {
 		while (!stack.isEmpty()) {
 			Component n = stack.pop();
 
-			if (n.getId() < minVariableIndex && n instanceof Input) {
-				minVariableIndex = n.getId();
-			}
-
-			if (n.getId() > maxVariableIndex && n instanceof Input) {
-				maxVariableIndex = n.getId();
+			if(n instanceof Input) {
+				if (n.getId() < minVariableIndex) {
+					minVariableIndex = n.getId();
+				}
+	
+				if (n.getId() > maxVariableIndex) {
+					maxVariableIndex = n.getId();
+				}
 			}
 
 			for (Component i : n.inputs) {
