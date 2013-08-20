@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.Stack;
 
 import at.jku.aig2qbf.Configuration;
@@ -368,103 +368,168 @@ public class Tree implements Cloneable {
 		tree.replaceTrueWithAig();
 		tree.replaceFalseWithAig();
 
-		// if input is directly mapped to output, just return the tree
-		if (o.inputs.get(0) instanceof Input) {
-			return tree;
-		}
-
-		// transform the tree from bottom to top using a stack and DFS
 		HashMap<Component, Component> seen = new HashMap<>();
-		Stack<Component> stack = new Stack<Component>();
-		stack.push(o.inputs.get(0));
+		Stack<Component> stack = new Stack<>();
 
-		HashMap<Component, Component> stackVisitorHash = new HashMap<Component, Component>();
+		Component oi = o.inputs.get(0);
 
-		// remember all universal/existential quantified variables
-		HashMap<Component, Component> quantifierHash = new HashMap<Component, Component>();
-
-		// build a global and to connect the pieces of the tree
-		And globalAnd = new And();
+		stack.add(oi);
 
 		int tseitinInputCounter = 0;
 
+		QuantifierSet q = null;
+		HashMap<Component, Component> seenInput = new HashMap<>();
+
+		// add all existing quantifier in the seen list
+		for (QuantifierSet i : this.quantifier) {
+			for (Input j : i.literals) {
+				seenInput.put(j, null);
+			}
+		}
+
+		if (oi instanceof Input) {
+			q = new QuantifierSet(Quantifier.EXISTENTIAL, (Input) oi);
+			seenInput.put(oi, null);
+
+			seen.put(oi, oi);
+		}
+		else {
+			Input xi = new Input("x" + tseitinInputCounter);
+			tseitinInputCounter++;
+
+			q = new QuantifierSet(Quantifier.EXISTENTIAL, xi);
+
+			seen.put(oi, xi);
+		}
+
 		while (!stack.isEmpty()) {
-			Component node = stack.pop();
+			Component n = stack.pop();
 
-			if (!seen.containsKey(node)) {
-				// mark this node as seen for the backward path
-				seen.put(node, null);
-
-				// push the current node again onto the stack to traverse it
-				// again in the backward path
-				stack.push(node);
-
-				// go deeper into the tree by pushing all children of the
-				// current node onto the stack
-				for (Component c : node.inputs) {
-					if (c instanceof Latch) {
+			for (Component i : n.inputs) {
+				if (!seen.containsKey(i)) {
+					if (i instanceof Latch) {
 						throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be a latch in the tree. Please unroll the tree first!");
 					}
 
-					if (c instanceof True || c instanceof False) {
+					if (i instanceof True || i instanceof False) {
 						throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be True/False in the tree. Please replace these components first!");
 					}
 
-					// add every component to the stack that should get a Tseitin node
-					if (c instanceof Input) {
-						quantifierHash.put(c, null);
+					if (!i.inputs.isEmpty()) {
+						stack.add(i);
 					}
-					else if (!stackVisitorHash.containsKey(c)) {
-						stack.push(c);
-						stackVisitorHash.put(c, null);
+
+					if (i instanceof Input) {
+						if (!seenInput.containsKey(i)) {
+							seenInput.put(i, null);
+
+							q.literals.add((Input) i);
+						}
+
+						seen.put(i, i);
+					}
+					else {
+						Input xi = new Input("x" + tseitinInputCounter);
+						tseitinInputCounter++;
+
+						q.literals.add(xi);
+
+						seen.put(i, xi);
 					}
 				}
+			}
+		}
+
+		this.quantifier.add(q);
+
+		And globalAnd = new And();
+
+		// transform to structure of Tseitin
+		for (Map.Entry<Component, Component> e : seen.entrySet()) {
+			Component node = e.getKey();
+			Component xi = e.getValue();
+
+			if (node instanceof Input) {
+				continue;
+			}
+
+			Component notXi = new Not();
+			notXi.addInput(xi);
+
+			if (node instanceof And) {
+				Component overallOr = new Or();
+				overallOr.addInput(xi);
+
+				for (Component i : node.inputs) {
+					Component c = seen.get(i);
+
+					Component or = new Or();
+					or.addInput(notXi);
+					or.addInput(c);
+
+					globalAnd.addInput(or);
+
+					Component notC = new Not();
+					notC.addInput(c);
+
+					overallOr.addInput(notC);
+				}
+
+				globalAnd.addInput(overallOr);
+			}
+			else if (node instanceof Not) {
+				Component or0 = new Or();
+				or0.addInput(notXi);
+
+				Component or1 = new Or();
+				or1.addInput(xi);
+
+				for (Component i : node.inputs) {
+					Component c = seen.get(i);
+
+					Component notC = new Not();
+					notC.addInput(c);
+
+					or0.addInput(notC);
+					or1.addInput(c);
+				}
+
+				globalAnd.addInput(or0);
+				globalAnd.addInput(or1);
+			}
+			else if (node instanceof Or) {
+				Component overallOr = new Or();
+				overallOr.addInput(notXi);
+
+				for (Component i : node.inputs) {
+					Component c = seen.get(i);
+
+					overallOr.addInput(c);
+
+					Component notC = new Not();
+					notC.addInput(c);
+
+					Component or = new Or();
+					or.addInput(xi);
+					or.addInput(notC);
+
+					globalAnd.addInput(or);
+				}
+
+				globalAnd.addInput(overallOr);
 			}
 			else {
-				if (node.inputs.isEmpty()) {
-					throw new RuntimeException("Unable to convert the tree to Tseitin form: The node of type " + node.getClass().getName() + " must have inputs!");
-				}
-
-				// transform to structure of Tseitin
-				Input xi = new Input("x" + tseitinInputCounter);
-				tseitinInputCounter++;
-
-				addNodeInTseitinForm(node, xi, globalAnd);
-
-				// remember inputs for quantifiers
-				quantifierHash.put(xi, null);
-
-				// replace node with xi in the tree
-				tree.replaceComponent(node, xi);
+				throw new RuntimeException("Unable to convert the tree to Tseitin form: Node type " + node + " is unknown!");
 			}
 		}
 
-		// manage quantifiers
-		Set<Component> quantifierSet = quantifierHash.keySet();
+		globalAnd.addInput(seen.get(oi));
 
-		for (Component c : quantifierSet) {
-			tree.addQuantifier((Input) c, Quantifier.EXISTENTIAL);
-		}
-
-		// manage the tree output
-		if (o.inputs.size() != 1) {
-			throw new RuntimeException("Unable to convert the tree to Tseitin form: There must exactly one output variable, which was introduced by the tseitin conversion!");
-		}
-
-		if (!o.inputs.isEmpty()) {
-			Component c = o.inputs.remove(0);
-
-			if (!(c instanceof Input)) {
-				throw new RuntimeException("Unable to convert the tree to Tseitin form: The last node in the tree must be a artificial tseitin variable!");
-			}
-
-			while (c.outputs.remove(o))
-				;
-
-			globalAnd.addInput(c);
-		}
-
+		o = new Output(o.getName());
 		o.addInput(globalAnd);
+
+		tree.outputs.clear();
+		tree.outputs.add(o);
 
 		// verify the structure of the tree
 		if (Configuration.SANTIY) {
@@ -584,13 +649,15 @@ public class Tree implements Cloneable {
 		return and;
 	}
 
-	public void addQuantifier(Input input, Quantifier quantifier) {
+	public void addQuantifier(Input input, Quantifier quantifier, boolean checkContains) {
 		boolean componentFound = false;
 
-		for (QuantifierSet q : this.quantifier) {
-			if (q.literals.contains(input)) {
-				componentFound = true;
-				break;
+		if (checkContains) {
+			for (QuantifierSet q : this.quantifier) {
+				if (q.literals.contains(input)) {
+					componentFound = true;
+					break;
+				}
 			}
 		}
 
@@ -607,6 +674,10 @@ public class Tree implements Cloneable {
 				q.literals.add(input);
 			}
 		}
+	}
+
+	public void addQuantifier(Input input, Quantifier quantifier) {
+		this.addQuantifier(input, quantifier, true);
 	}
 
 	private QuantifierSet getLastTreeQuantifierOfType(Quantifier quantifier) {

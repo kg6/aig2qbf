@@ -454,7 +454,7 @@ public class TestTree extends BaseTest {
 		Component outputX0 = outputNot0.inputs.get(0);
 		assertTrue(outputX0 instanceof Input);
 		assertEquals(outputX0, outputOr2.inputs.get(0));
-		assertEquals(outputX0, outputOr5.inputs.get(2));
+		assertEquals(outputX0, outputOr5.inputs.get(1));
 
 		// x1
 		Component outputX1 = outputOr3.inputs.get(0);

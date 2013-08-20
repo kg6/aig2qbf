@@ -20,7 +20,7 @@ import at.jku.aig2qbf.parser.Parser;
 
 public class Util {
 	private static long startTimer = 0;
-	
+
 	public enum FileExtension {
 		AIG, AAG, QDIMACS
 	}
