@@ -64,7 +64,6 @@ public class aig2qbf {
 			String output = null;
 			FileExtension outputExtension = FileExtension.QDIMACS;
 
-			Configuration.FAST = true;
 			Configuration.SANTIY = !commandLine.hasOption("ns");
 			Configuration.VERBOSE = commandLine.hasOption("v");
 			Configuration.VERBOSETIMES = commandLine.hasOption("vt");

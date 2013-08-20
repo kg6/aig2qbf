@@ -19,8 +19,6 @@ public class QDIMACS implements Formatter {
 
 	@Override
 	public String format(Tree cnfTree) {
-		cnfTree = Configuration.FAST ? cnfTree : (Tree) cnfTree.clone();
-
 		Output rootNode = null;
 
 		if (cnfTree.outputs.size() > 0 && cnfTree.outputs.get(0).inputs.size() > 0) {
