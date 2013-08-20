@@ -34,9 +34,6 @@ public class QDIMACS implements Formatter {
 			final int[] minMaxVariableIndex = getMinMaxVariableIndex(rootNode);
 			final int variableOffset = minMaxVariableIndex[0] - 1;
 
-			// define problem line
-			qdimacsBuilder.append("p cnf %s %s\n");
-
 			// define all quantifiers
 			for (QuantifierSet quantifier : cnfTree.quantifier) {
 				qdimacsBuilder.append(quantifier.quantifier == Quantifier.EXISTENTIAL ? "e" : "a");
@@ -53,7 +50,10 @@ public class QDIMACS implements Formatter {
 			// define CNF clauses
 			final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, variableOffset);
 
-			return String.format(qdimacsBuilder.toString(), minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses);
+			// define problem line
+			qdimacsBuilder.insert(0, String.format("p cnf %s %s\n", minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses));
+
+			return qdimacsBuilder.toString();
 		}
 
 		return "p cnf 0 0\n";
