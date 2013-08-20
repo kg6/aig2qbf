@@ -36,7 +36,7 @@ Besides the conversion functionality, aig2qbf is able to visualize the produced 
 
 ## How to setup aig2qbf?
 
-To compile aig2qbf only <code>make</code>, <code>Java</code> and <code>Apache Ant</code> is needed. After installing all requirements, <code>make</code> compiles and generates all needed files into a JAR file to bin/aig2qbf.jar.
+To compile aig2qbf only <code>make</code>, <code>Java</code> and <code>Apache Ant</code> are needed. After installing all requirements, <code>make</code> compiles and generates all needed files into a JAR file to bin/aig2qbf.jar.
 
 ```bash
 make
