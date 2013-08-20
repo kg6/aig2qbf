@@ -76,7 +76,7 @@ public class aig2qbf {
 				inputFile = new File(input);
 
 				if (!inputFile.exists()) {
-					inputExtension = FileExtension.AAG;
+					throw new RuntimeException(String.format("File \"%s\" does not exists.", input));
 				}
 
 				if (inputExtension == null) {
