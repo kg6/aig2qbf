@@ -20,6 +20,8 @@ public class Tree implements Cloneable {
 	public False cFalse;
 	public True cTrue;
 
+	public int[] minMaxTseitinVariables = null;
+
 	public Tree() {
 		this.outputs = new ArrayList<Output>();
 		this.latchOutputs = new Component[0][0];
@@ -380,10 +382,21 @@ public class Tree implements Cloneable {
 		QuantifierSet q = null;
 		HashMap<Component, Component> seenInput = new HashMap<>();
 
+		int minVariableIndex = Integer.MAX_VALUE;
+		int maxVariableIndex = 0;
+
 		// add all existing quantifier in the seen list
-		for (QuantifierSet i : this.quantifier) {
+		for (QuantifierSet i : tree.quantifier) {
 			for (Input j : i.literals) {
 				seenInput.put(j, null);
+
+				if (j.getId() < minVariableIndex) {
+					minVariableIndex = j.getId();
+				}
+
+				if (j.getId() > maxVariableIndex) {
+					maxVariableIndex = j.getId();
+				}
 			}
 		}
 
@@ -391,11 +404,27 @@ public class Tree implements Cloneable {
 			q = new QuantifierSet(Quantifier.EXISTENTIAL, (Input) oi);
 			seenInput.put(oi, null);
 
+			if (oi.getId() < minVariableIndex) {
+				minVariableIndex = oi.getId();
+			}
+
+			if (oi.getId() > maxVariableIndex) {
+				maxVariableIndex = oi.getId();
+			}
+
 			seen.put(oi, oi);
 		}
 		else {
 			Input xi = new Input("x" + tseitinInputCounter);
 			tseitinInputCounter++;
+
+			if (xi.getId() < minVariableIndex) {
+				minVariableIndex = xi.getId();
+			}
+
+			if (xi.getId() > maxVariableIndex) {
+				maxVariableIndex = xi.getId();
+			}
 
 			q = new QuantifierSet(Quantifier.EXISTENTIAL, xi);
 
@@ -423,6 +452,14 @@ public class Tree implements Cloneable {
 						if (!seenInput.containsKey(i)) {
 							seenInput.put(i, null);
 
+							if (i.getId() < minVariableIndex) {
+								minVariableIndex = i.getId();
+							}
+
+							if (i.getId() > maxVariableIndex) {
+								maxVariableIndex = i.getId();
+							}
+
 							q.literals.add((Input) i);
 						}
 
@@ -432,6 +469,14 @@ public class Tree implements Cloneable {
 						Input xi = new Input("x" + tseitinInputCounter);
 						tseitinInputCounter++;
 
+						if (xi.getId() < minVariableIndex) {
+							minVariableIndex = xi.getId();
+						}
+
+						if (xi.getId() > maxVariableIndex) {
+							maxVariableIndex = xi.getId();
+						}
+
 						q.literals.add(xi);
 
 						seen.put(i, xi);
@@ -440,7 +485,12 @@ public class Tree implements Cloneable {
 			}
 		}
 
-		this.quantifier.add(q);
+		tree.minMaxTseitinVariables = new int[] {
+			minVariableIndex,
+			maxVariableIndex
+		};
+
+		tree.quantifier.add(q);
 
 		And globalAnd = new And();
 
