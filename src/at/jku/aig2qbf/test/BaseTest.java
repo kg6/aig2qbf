@@ -34,6 +34,8 @@ public class BaseTest {
 	protected boolean checkSatisfiablity(String outputFilePath, Tree tree) {
 		Formatter formatter = new QDIMACS();
 
+		tree = tree.toTseitinCNF();
+
 		if (!Util.WriteFile(outputFilePath, formatter.format(tree))) {
 			fail("Unable to write SAT temporary file");
 			return false;

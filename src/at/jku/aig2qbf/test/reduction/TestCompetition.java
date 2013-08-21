@@ -88,9 +88,8 @@ public class TestCompetition extends BaseTest {
 		unrolledTree.mergeToOneOutput();
 
 		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
-		Tree tseitinTree = reducedTree.toTseitinCNF();
 
-		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, tseitinTree);
+		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, reducedTree);
 		final boolean originalSat = this.checkOriginalSat(aigerFile, k);
 
 		return currentSat == originalSat;

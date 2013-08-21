@@ -55,7 +55,7 @@ public abstract class Component implements Cloneable {
 			if (!c.outputs.contains(this)) {
 				c.outputs.add(this);
 			}
-			
+
 			if (this instanceof Input) {
 				throw new RuntimeException("Unable to add input to component: Input must not get an additional input!");
 			}

@@ -93,9 +93,7 @@ public class TestSequential extends BaseTest {
 
 		Tree reducedTree = reductionMethod.reduceTree(unrolledTree, k);
 
-		Tree tseitinTree = reducedTree.toTseitinCNF();
-
-		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, tseitinTree);
+		final boolean currentSat = this.checkSatisfiablity(OUTPUT_FILE, reducedTree);
 		final boolean originalSat = this.checkOriginalSat(inputFile, k);
 
 		return currentSat == originalSat;
