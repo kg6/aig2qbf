@@ -14,7 +14,7 @@ The AIGER format defines two different file extensions, namely .aag and .aig. Th
 
 ## What is QBF?
 
-QBF is a short term for Quantified Boolean Formula and represents a family of propositional formulas where every variable is quantified either existentially or universally and all terms are conjuncted like in CNF formulas. QBF is the basis for symbolic model checking, which allows to traverse a much bigger state space in comparison to explicit model checking.
+QBF is a short term for Quantified Boolean Formula and represents a family of propositional formulas where every variable is quantified either existentially or universally and all terms are conjuncted like in [Conjunctive normal form (CNF)](http://en.wikipedia.org/wiki/Conjunctive_normal_form) formulas. QBF is the basis for symbolic model checking, which allows to traverse a much bigger state space in comparison to explicit model checking.
 
 ## What is qDimacs?
 
@@ -26,9 +26,9 @@ The simple path constraint is an approach described in the paper [“Compressing
 
 ## How does aig2qbf work?
 
-aig2qbf is a conversion tool for AIGER to QBF files. For that, it implements the the simple path constraint described above. The tool allows different input formats such as .aig or .aag and different output formats such as .qbf. It uses [DepQBF](http://fmv.jku.at/depqbf/) to check the satisfiablity of a particular formula.
+aig2qbf is a conversion tool for AIGER to QBF files. For that, it implements the the simple path constraint described above. The tool allows different input formats such as .aig or .aag and different output formats such as .qbf. It uses [DepQBF](http://fmv.jku.at/depqbf/) to check the satisfiability of a particular formula.
 
-When aig2qbf is started, it basically tries to parse a graph from an input file. This graph will then be unrolled several times as specified and all branches will be connected to each other using a global OR component. Having this graph, the next step is to apply the simple path constraint to it. This adds a constraint to the graph which allows that each state (= bit vector) must be unique. Finally, it has to be ensured that the output formula has CNF format. For that, Tseitin encoding will be applied. The resulting formula in QBF format will then be written to a specified output file, which can be checked by DepQBF.
+When aig2qbf is started, it basically tries to parse a graph from an input file. This graph will then be unrolled several times as specified and all branches will be connected to each other using a global OR component. Having this graph, the next step is to apply the simple path constraint to it. This adds a constraint to the graph which allows that each state (= bit vector) must be unique. Finally, it has to be ensured that the output formula has CNF format. For that, Tseitin(http://en.wikipedia.org/wiki/Tseitin-Transformation) encoding will be applied. The resulting formula in QBF format will then be written to a specified output file, which can be checked by DepQBF.
 
 Besides the conversion functionality, aig2qbf is able to visualize the produced graph data structure. This however is only tractable for small graphs.
 
@@ -68,7 +68,7 @@ java -jar bin/aig2qbf.jar -v -k 10 --input input/sequential/ken.flash^11.C.aig
 java -jar bin/aig2qbf.jar -ns -k 10 --input input/sequential/ken.flash^11.C.aig
 ```
 
-The following CLI arguemnts can be used:
+The following CLI arguments can be used:
 
 ```bash
  -h,--help                      Print help.
