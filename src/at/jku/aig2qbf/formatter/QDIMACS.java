@@ -1,7 +1,6 @@
 package at.jku.aig2qbf.formatter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Stack;
 
 import at.jku.aig2qbf.Configuration;
@@ -33,114 +32,69 @@ public class QDIMACS implements Formatter {
 			return "p cnf 0 0\n";
 		}
 
-		StringBuilder qdimacsBuilder = new StringBuilder();
+		Component globalAnd = rootNode.inputs.get(0);
+
+		StringBuilder builder = new StringBuilder();
 
 		// determine the number of variables
-		final int[] minMaxVariableIndex = getMinMaxVariableIndex(rootNode);
+		final int[] minMaxVariableIndex = (cnfTree.minMaxTseitinVariables != null) ? cnfTree.minMaxTseitinVariables : getMinMaxVariableIndex(globalAnd);
 		final int variableOffset = minMaxVariableIndex[0] - 1;
+		final int numberOfClauses = (globalAnd instanceof And) ? globalAnd.inputs.size() : 1;
+
+		// define problem line
+		builder.append(String.format("p cnf %s %s\n", minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses));
 
 		// define all quantifiers
 		for (QuantifierSet quantifier : cnfTree.quantifier) {
-			qdimacsBuilder.append(quantifier.quantifier == Quantifier.EXISTENTIAL ? "e" : "a");
-			qdimacsBuilder.append(" ");
+			builder.append(quantifier.quantifier == Quantifier.EXISTENTIAL ? "e " : "a ");
 
 			for (Input input : quantifier.literals) {
-				qdimacsBuilder.append(input.getId() - variableOffset);
-				qdimacsBuilder.append(" ");
+				builder.append(input.getId() - variableOffset);
+				builder.append(" ");
 			}
 
-			qdimacsBuilder.append("0\n");
+			builder.append("0\n");
 		}
 
 		// define CNF clauses
-		final int numberOfClauses = defineCNFClauses(rootNode.inputs, qdimacsBuilder, variableOffset);
+		for (Component c : globalAnd.inputs) {
+			if (c instanceof Or) {
+				if (Configuration.SANTIY && c.inputs.size() < 2) {
+					throw new RuntimeException("OR should have more than two Inputs");
+				}
 
-		// define problem line
-		qdimacsBuilder.insert(0, String.format("p cnf %s %s\n", minMaxVariableIndex[1] - (minMaxVariableIndex[0] - 1), numberOfClauses));
-
-		return qdimacsBuilder.toString();
-	}
-
-	private int defineCNFClauses(List<Component> componentList, StringBuilder builder, int variableOffset) {
-		Stack<Component> componentStack = new Stack<Component>();
-
-		for (int i = componentList.size() - 1; i >= 0; i--) {
-			componentStack.push(componentList.get(i));
-		}
-
-		int clauseCounter = 0;
-		boolean lineHasLiterals = false;
-
-		while (!componentStack.isEmpty()) {
-			Component c = componentStack.pop();
-
-			if (c instanceof And || c instanceof Or) {
-				for (int i = c.inputs.size() - 1; i >= 0; i--) {
-					if (c instanceof And) {
-						componentStack.push(new NL());
+				for (Component i : c.inputs) {
+					if (i instanceof Not) {
+						builder.append(-(i.inputs.get(0).getId() - variableOffset));
+						builder.append(" ");
 					}
+					else { // Input, True, False
+						if (Configuration.SANTIY && !i.isLiteral()) {
+							throw new RuntimeException(i + " not allowed here");
+						}
 
-					componentStack.push(c.inputs.get(i));
+						builder.append(i.getId() - variableOffset);
+						builder.append(" ");
+					}
 				}
 			}
 			else if (c instanceof Not) {
-				boolean negated = true;
-				Component child = c.inputs.get(0);
-
-				while (child instanceof Not) {
-					child = child.inputs.get(0);
-					negated = !negated;
+				builder.append(-(c.inputs.get(0).getId() - variableOffset));
+				builder.append(" ");
+			}
+			else { // Input, True, False
+				if (Configuration.SANTIY && !c.isLiteral()) {
+					throw new RuntimeException(c + " not allowed here");
 				}
 
-				appendClause(builder, child.getId() - variableOffset, negated);
-
-				lineHasLiterals = true;
-			}
-			else if (c instanceof Input) {
-				appendClause(builder, c.getId() - variableOffset, false);
-
-				lineHasLiterals = true;
-			}
-			else if (c instanceof NL) {
-				if (lineHasLiterals) {
-					appendNL(builder);
-					clauseCounter++;
-
-					lineHasLiterals = false;
-				}
-			}
-			else {
-				throw new RuntimeException("Unable to convert tree to QDIMACS format: The  node type '" + c.getClass().getName() + "' is unknown!");
+				builder.append(c.getId() - variableOffset);
+				builder.append(" ");
 			}
 
-			if (componentStack.isEmpty() && !(c instanceof NL)) {
-				clauseCounter++;
-			}
+			builder.append("0\n");
 		}
 
-		if (builder.charAt(builder.length() - 1) == ' ') {
-			appendNL(builder);
-		}
-
-		return clauseCounter;
-	}
-
-	private void appendClause(StringBuilder builder, int id, boolean negated) {
-		if (id == 0) {
-			throw new RuntimeException("Unable to convert tree to QDIMACS format: The not id 0 is invalid!");
-		}
-
-		if (negated) {
-			id = -id;
-		}
-
-		builder.append(id);
-		builder.append(" ");
-	}
-
-	private void appendNL(StringBuilder builder) {
-		builder.append("0");
-		builder.append("\n");
+		return builder.toString();
 	}
 
 	private int[] getMinMaxVariableIndex(Component root) {
@@ -178,13 +132,5 @@ public class QDIMACS implements Formatter {
 			minVariableIndex,
 			maxVariableIndex
 		};
-	}
-
-	public class NL extends Component {
-
-		@Override
-		protected Object clone() {
-			return new NL();
-		}
 	}
 }
