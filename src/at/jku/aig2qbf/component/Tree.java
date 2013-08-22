@@ -203,7 +203,9 @@ public class Tree implements Cloneable {
 		}
 
 		for (Component i : o.outputs) {
-			if (components.get(i) == null) {
+			Component c = components.get(i);
+			
+			if (c == null) {
 				// IGNORE this output as it is NOT connected to an component
 				// that is the input directly or indirectly for an
 				// Tree.output
@@ -211,7 +213,7 @@ public class Tree implements Cloneable {
 				continue;
 			}
 
-			n.outputs.add(components.get(i));
+			n.outputs.add(c);
 		}
 	}
 
@@ -219,7 +221,7 @@ public class Tree implements Cloneable {
 		if (in instanceof False) {
 			return this.cFalse;
 		}
-		else if (in instanceof False) {
+		else if (in instanceof True) {
 			return this.cTrue;
 		}
 		else {
