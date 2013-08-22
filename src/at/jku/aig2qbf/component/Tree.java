@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import at.jku.aig2qbf.Configuration;
@@ -117,7 +118,7 @@ public class Tree implements Cloneable {
 		components.put(this.cFalse, nTree.cFalse);
 		components.put(this.cTrue, nTree.cTrue);
 
-		// clone quantors
+		// clone quantifiers
 		for (QuantifierSet oq : this.quantifier) {
 			List<Input> literalList = new ArrayList<Input>();
 
@@ -152,8 +153,10 @@ public class Tree implements Cloneable {
 				}
 			}
 		}
+		
+		Set<Component> oldComponents = components.keySet();
 
-		for (Component o : components.keySet()) {
+		for (Component o : oldComponents) {
 			cloneAddComponentConnections(o, components.get(o), components);
 		}
 
@@ -203,9 +206,9 @@ public class Tree implements Cloneable {
 		}
 
 		for (Component i : o.outputs) {
-			Component c = components.get(i);
+			Component nO = components.get(i);
 			
-			if (c == null) {
+			if (nO == null) {
 				// IGNORE this output as it is NOT connected to an component
 				// that is the input directly or indirectly for an
 				// Tree.output
@@ -213,7 +216,7 @@ public class Tree implements Cloneable {
 				continue;
 			}
 
-			n.outputs.add(c);
+			n.outputs.add(nO);
 		}
 	}
 
