@@ -97,16 +97,6 @@ public abstract class Component implements Cloneable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Component)) {
-			return false;
-		}
-
-		Component component = (Component) obj;
-		return this.id == component.id;
-	}
-
-	@Override
 	public int hashCode() {
 		return this.id;
 	}
