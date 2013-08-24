@@ -34,28 +34,18 @@ public abstract class Component implements Cloneable {
 		ComponentArray[id] = component;
 	}
 
-	private final int id;
+	private final int id = ComponentId++;
 	private String name;
 
-	public List<Component> inputs;
-	public List<Component> outputs;
+	public List<Component> inputs = new ArrayList<Component>();
+	public List<Component> outputs = new ArrayList<Component>();
 
 	public Component() {
-		this.id = ComponentId++;
-		this.name = null;
-
-		this.inputs = new ArrayList<Component>();
-		this.outputs = new ArrayList<Component>();
-
 		AddComponentToArray(this.id, this);
 	}
 
 	public Component(String name) {
-		this.id = ComponentId++;
 		this.name = name;
-
-		this.inputs = new ArrayList<Component>();
-		this.outputs = new ArrayList<Component>();
 
 		AddComponentToArray(this.id, this);
 	}
