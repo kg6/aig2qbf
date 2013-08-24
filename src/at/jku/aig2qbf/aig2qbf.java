@@ -199,7 +199,7 @@ public class aig2qbf {
 			else { // + h
 				HelpFormatter helpFormatter = new HelpFormatter();
 
-				helpFormatter.printHelp("aig2qbf", options);
+				helpFormatter.printHelp("aig2qbf v" + Configuration.VERSION, options);
 			}
 		}
 		catch (ParseException e) {
