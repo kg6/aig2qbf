@@ -16,8 +16,8 @@ my $options = Getopt::Compact->new(
 		[ 'input', 'Input aig/cnf file to check', '=s' ],
 		[ 'k', 'Unrolling step k', ':i' ],
 		[ 'no-reduction', 'Do not apply any reduction' ],
-		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
+		[ 'with-sanity', 'Apply sanity checks.' ],
 	]
 );
 
@@ -45,11 +45,11 @@ my $file = $opts->{input};
 
 if ($file =~ m/\.cnf$/) {
 	my $cnf2aig_out = `"$script_path/../tools/cnf2aig" "$file" "$file-aig.aig"`;
-	
+
 	if ($opts->{verbose}) {
 		say $cnf2aig_out;
 	}
-	
+
 	$file = "$file-aig.aig";
 }
 
@@ -59,7 +59,7 @@ my $build_file = "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class";
 
 if (not -f $build_file) {
 	print `make -C "$script_path/../" 2>&1`;
-	
+
 	if (not -f $build_file) {
 		print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
 
@@ -88,14 +88,14 @@ while (my ($sum, $msg) = each %ignore_files) {
 
 my $aig2qbf_options = '';
 
-if ($opts->{'no-sanity'}) {
-	$aig2qbf_options .= ' --no-sanity';
-}
-if ($opts->{verbose}) {
-	$aig2qbf_options .= ' --verbose';
-}
 if ($opts->{'no-reduction'}) {
 	$aig2qbf_options .= ' --no-reduction';
+}
+if ($opts->{'verbose'}) {
+	$aig2qbf_options .= ' --verbose';
+}
+if ($opts->{'with-sanity'}) {
+	$aig2qbf_options .= ' --with-sanity';
 }
 
 my $mcaiger_options = '-r';
@@ -120,14 +120,14 @@ for my $k (@ks) {
 
 		exit 1;
 	}
-	
+
 	write_file("$file-$k.qbf", $out);
 
 	time_start();
 	my $depqbf_out = trim(`"$script_path/../tools/depqbf" "$file-$k.qbf" 2>&1`);
 	time_end();
 	print_elapsed_time('depqbf');
-	
+
 	my $depqbf_sat;
 
 	if ($depqbf_out and $depqbf_out eq 'SAT') {
@@ -139,15 +139,15 @@ for my $k (@ks) {
 	else {
 		print "depqbf solve error on k=$k\n";
 		print "\n$depqbf_out\n";
-	
+
 		exit 2;
 	}
-	
+
 	if ($opts->{verbose}) {
 		print "depqbf says " . ($depqbf_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
 
-	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`; 
+	print `"$script_path/../tools/aigor" "$file" "$file-or.aig"`;
 
 	time_start();
 	my $mcaiger_out = trim(`"$script_path/../tools/mcaiger" $mcaiger_options $k "$file-or.aig" 2>&1`);
@@ -164,18 +164,18 @@ for my $k (@ks) {
 	}
 	elsif ($mcaiger_out eq '2') {
 		$mcaiger_sat = 0;
-		
+
 		#print "mcaiger's output is 2\n";
-	
+
 		#exit 8;
 	}
 	else {
 		print "mcaiger solve error on k=$k\n";
 		print "\n$mcaiger_out\n";
-	
+
 		exit 3;
 	}
-	
+
 	if ($opts->{verbose}) {
 		print "mcaiger says " . ($mcaiger_sat ? 'SAT' : 'UNSAT') . "\n";
 	}
@@ -187,7 +187,7 @@ for my $k (@ks) {
 
 		exit 4;
 	}
-	
+
 	if ($opts->{verbose}) {
 		print "AGREED\n";
 	}

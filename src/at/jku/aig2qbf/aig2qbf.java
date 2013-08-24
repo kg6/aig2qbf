@@ -46,7 +46,6 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("lit", "list-input-types", "List all supported input type formats.", false, null));
 		options.addOption(getCommandlineOption("lot", "list-output-types", "List all supported output type formats.", false, null));
 		options.addOption(getCommandlineOption("nr", "no-reduction", "Do not reduce the tree.", false, null));
-		options.addOption(getCommandlineOption("ns", "no-sanity", "Do not apply any sanity checks.", false, null));
 		options.addOption(getCommandlineOption("nt", "no-tseitin", "Do not apply Tseitin conversion. The output is not necessarily in CNF.", false, null));
 		options.addOption(getCommandlineOption("nu", "no-unrolling", "No unrolling will be applied. Implies --no-reduction.", false, null));
 		options.addOption(getCommandlineOption("o", "output", "The output file.", true, "FILE"));
@@ -54,6 +53,7 @@ public class aig2qbf {
 		options.addOption(getCommandlineOption("v", "verbose", "Enable verbose output.", false, null));
 		options.addOption(getCommandlineOption("vt", "verbose-times", "Output execution time of different conversion stages.", false, null));
 		options.addOption(getCommandlineOption("vis", "visualize", "Visualize the parsed graph data structure after all processing steps were applied.", false, null));
+		options.addOption(getCommandlineOption("ws", "with-sanity", "Apply sanity checks.", false, null));
 
 		try {
 			CommandLine commandLine = argParser.parse(options, args);
@@ -64,7 +64,7 @@ public class aig2qbf {
 			String output = null;
 			FileExtension outputExtension = FileExtension.QDIMACS;
 
-			Configuration.SANTIY = !commandLine.hasOption("ns");
+			Configuration.SANTIY = commandLine.hasOption("ws");
 			Configuration.VERBOSE = commandLine.hasOption("v");
 			Configuration.VERBOSETIMES = commandLine.hasOption("vt");
 

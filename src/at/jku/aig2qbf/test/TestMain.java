@@ -35,12 +35,12 @@ public class TestMain {
 		parameterList.add(new ParameterPair("-i", "input/basic/and.aag"));
 		parameterList.add(new ParameterPair("-it", "aag"));
 		parameterList.add(new ParameterPair("-nr"));
-		parameterList.add(new ParameterPair("-ns"));
 		parameterList.add(new ParameterPair("-nu"));
 		parameterList.add(new ParameterPair("-o", TEMP_QDIMACS_FILE));
 		parameterList.add(new ParameterPair("-ot", "qbf"));
 		parameterList.add(new ParameterPair("-v"));
 		// parameterList.add(new ParameterPair("-vis"));
+		parameterList.add(new ParameterPair("-ws"));
 
 		final int max_iterations = 100;
 

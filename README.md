@@ -78,7 +78,6 @@ The following CLI arguments can be used:
  -lot,--list-output-types       List all supported output type formats.
  -k,--unroll <INTEGER>          Number of unrolling steps. Default is 1.
  -nr,--no-reduction             Do not reduce the tree.
- -ns,--no-sanity                Do not apply any sanity checks.
  -nt,--no-tseitin               Do not apply Tseitin conversion. The output is not necessarily in CNF.
  -nu,--no-unrolling             No unrolling will be applied. Implies --no-reduction.
  -o,--output <FILE>             The output file.
@@ -86,4 +85,5 @@ The following CLI arguments can be used:
  -v,--verbose                   Enable verbose output.
  -vis,--visualize               Visualize the parsed graph data structure after all processing steps were applied.
  -vt,--verbose-times            Output execution time of different conversion stages.
+ -ws,--with-sanity              Apply sanity checks.
 ```

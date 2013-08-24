@@ -17,8 +17,8 @@ my $options = Getopt::Compact->new(
 		[ 'l', 'Generate large circuits' ],
 		[ 'no-reduction', 'Do not apply any reduction' ],
 		[ 'no-dd', 'Do not delta debug any errors' ],
-		[ 'no-sanity', 'Do not do any sanity checks' ],
 		[ 'verbose', 'Verbose output' ],
+		[ 'with-sanity', 'Apply sanity checks.' ],
 	]
 );
 
@@ -46,7 +46,7 @@ my $build_file = "$script_path/../build/classes/at/jku/aig2qbf/aig2qbf.class";
 
 if (not -f $build_file) {
 	print `make -C "$script_path/../" 2>&1`;
-	
+
 	if (not -f $build_file) {
 		print "Cannot find aig2qbf class. aig2qbf not built into folder 'build'!\n";
 
@@ -60,14 +60,14 @@ if ($opts->{verbose}) {
 
 my $checker_options = '';
 
-if ($opts->{'no-sanity'}) {
-	$checker_options .= ' --no-sanity';
+if ($opts->{'no-reduction'}) {
+	$checker_options .= ' --no-reduction';
 }
 if ($opts->{'verbose'}) {
 	$checker_options .= ' --verbose';
 }
-if ($opts->{'no-reduction'}) {
-	$checker_options .= ' --no-reduction';
+if ($opts->{'with-sanity'}) {
+	$checker_options .= ' --with-sanity';
 }
 
 my $fuzzer_options = '-m -1';
@@ -86,7 +86,7 @@ while (1) {
 	else {
 		print "---\n";
 	}
-	
+
 	my $base_file = "$script_path/../output/fuzz-tt";
 	print `"$script_path/../tools/aigfuzz" $fuzzer_options > "$base_file.aig"`;
 
@@ -117,7 +117,7 @@ while (1) {
 			if (not $opts->{verbose}) {
 				print "\n";
 			}
-		
+
 			print "CHECK NOT OK\n";
 
 			if ($check_out =~ m/error on k=(\d+)/) {
@@ -128,14 +128,14 @@ while (1) {
 
 					print `"$script_path/../scripts/dd.sh" "$base_file.aig" "$base_file-reduced.aig" $k $checker_options`;
 					print "Done\n";
-					
+
 					exit 1;
 				}
 			}
 			else {
 				print "Error in check\n";
 				print "$check_out\n";
-				
+
 				exit 4;
 			}
 		}
