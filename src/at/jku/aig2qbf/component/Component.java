@@ -9,7 +9,7 @@ import at.jku.aig2qbf.Configuration;
 
 public abstract class Component implements Cloneable {
 	private static final int COMPONENT_ARRAY_SIZE = 32768;
-	
+
 	public static int ComponentId = 0;
 	public static Component[] ComponentArray = new Component[COMPONENT_ARRAY_SIZE];
 
@@ -17,20 +17,20 @@ public abstract class Component implements Cloneable {
 		ComponentId = 0;
 		ComponentArray = new Component[COMPONENT_ARRAY_SIZE];
 	}
-	
-	private static void AddComponentToArray(int id, Component component)  {
-		if(id >= ComponentArray.length) {
+
+	private static void AddComponentToArray(int id, Component component) {
+		if (id >= ComponentArray.length) {
 			final int componentArrayLength = ComponentArray.length;
-			
+
 			Component[] tmp = new Component[componentArrayLength * 2];
-			
-			for(int i = 0; i < componentArrayLength; i++) {
+
+			for (int i = 0; i < componentArrayLength; i++) {
 				tmp[i] = ComponentArray[i];
 			}
-			
+
 			ComponentArray = tmp;
 		}
-		
+
 		ComponentArray[id] = component;
 	}
 

@@ -153,7 +153,7 @@ public class Tree implements Cloneable {
 				}
 			}
 		}
-		
+
 		Set<Component> oldComponents = components.keySet();
 
 		for (Component o : oldComponents) {
@@ -207,7 +207,7 @@ public class Tree implements Cloneable {
 
 		for (Component i : o.outputs) {
 			Component nO = components.get(i);
-			
+
 			if (nO == null) {
 				// IGNORE this output as it is NOT connected to an component
 				// that is the input directly or indirectly for an

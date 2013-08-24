@@ -79,7 +79,9 @@ public class aig2qbf {
 				}
 
 				if (inputExtension == null) {
-					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", inputExtension));
+					int i = input.lastIndexOf('.');
+
+					throw new RuntimeException(String.format("Unknown extension for input file \"%s\"", (i == -1) ? null : input.substring(i).toLowerCase()));
 				}
 			}
 			if (commandLine.hasOption("o")) {
@@ -87,7 +89,9 @@ public class aig2qbf {
 				outputExtension = Util.GetFileExtension((commandLine.hasOption("ot")) ? "." + commandLine.getOptionValue("ot") : output);
 
 				if (outputExtension == null) {
-					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", output));
+					int i = output.lastIndexOf('.');
+
+					throw new RuntimeException(String.format("Unknown extension for output file \"%s\"", (i == -1) ? null : output.substring(i).toLowerCase()));
 				}
 			}
 			else if (commandLine.hasOption("ot")) {

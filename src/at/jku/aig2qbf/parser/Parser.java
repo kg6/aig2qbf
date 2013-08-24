@@ -23,20 +23,6 @@ public abstract class Parser {
 		if (!inputFile.exists()) {
 			throw new IllegalArgumentException("Input file does not exist.");
 		}
-
-		String fileName = inputFile.getName();
-
-		int extensionPos = fileName.lastIndexOf('.');
-
-		if (extensionPos >= 0) {
-			String extension = fileName.substring(extensionPos + 1).toLowerCase();
-
-			if (extension.compareTo(expectedExtension) == 0) {
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Input file does not have the expected file extension of '" + expectedExtension + "'.");
 	}
 
 	protected Tree createTree(final int numberOfInputs, final int maximumVariableIndex, final int multipliedMaximumVariableIndex, final int[][] fileLatches, final int[] fileOutputs, final int[][] fileAnds) {
