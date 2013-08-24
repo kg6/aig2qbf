@@ -1,7 +1,6 @@
 package at.jku.aig2qbf.component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -9,12 +8,30 @@ import java.util.Stack;
 import at.jku.aig2qbf.Configuration;
 
 public abstract class Component implements Cloneable {
-	public static int ComponentId = 1;
-	public static HashMap<Integer, Component> componentHash = new HashMap<Integer, Component>();
+	private static final int COMPONENT_ARRAY_SIZE = 32768;
+	
+	public static int ComponentId = 0;
+	public static Component[] ComponentArray = new Component[COMPONENT_ARRAY_SIZE];
 
-	public static void Reset() {
-		componentHash.clear();
-		ComponentId = 1;
+	public static void ResetComponentArray() {
+		ComponentId = 0;
+		ComponentArray = new Component[COMPONENT_ARRAY_SIZE];
+	}
+	
+	private static void AddComponentToArray(int id, Component component)  {
+		if(id >= ComponentArray.length) {
+			final int componentArrayLength = ComponentArray.length;
+			
+			Component[] tmp = new Component[componentArrayLength * 2];
+			
+			for(int i = 0; i < componentArrayLength; i++) {
+				tmp[i] = ComponentArray[i];
+			}
+			
+			ComponentArray = tmp;
+		}
+		
+		ComponentArray[id] = component;
 	}
 
 	private final int id;
@@ -30,7 +47,7 @@ public abstract class Component implements Cloneable {
 		this.inputs = new ArrayList<Component>();
 		this.outputs = new ArrayList<Component>();
 
-		componentHash.put(this.id, this);
+		AddComponentToArray(this.id, this);
 	}
 
 	public Component(String name) {
@@ -40,7 +57,7 @@ public abstract class Component implements Cloneable {
 		this.inputs = new ArrayList<Component>();
 		this.outputs = new ArrayList<Component>();
 
-		componentHash.put(this.id, this);
+		AddComponentToArray(this.id, this);
 	}
 
 	public int getId() {

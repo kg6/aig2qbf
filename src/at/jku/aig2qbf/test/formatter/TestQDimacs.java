@@ -32,7 +32,7 @@ public class TestQDimacs extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Component.Reset();
+		Component.ResetComponentArray();
 	}
 
 	@After

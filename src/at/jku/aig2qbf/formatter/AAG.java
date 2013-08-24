@@ -115,22 +115,22 @@ public class AAG implements Formatter {
 		s.append(String.format("aag %d %d %d %d %d\n", HEADER_M, HEADER_I, HEADER_L, HEADER_O, HEADER_A));
 
 		for (Integer i : inputs) {
-			Component n = Component.componentHash.get(i);
+			Component n = Component.ComponentArray[i];
 
 			s.append(String.format("%d\n", indizes.get(n.getId())));
 		}
 		for (Integer i : latches) {
-			Component n = Component.componentHash.get(i);
+			Component n = Component.ComponentArray[i];
 
 			s.append(String.format("%d %d\n", indizes.get(n.getId()), this.aigerInput(indizes, n.inputs.get(0))));
 		}
 		for (Integer i : outputs) {
-			Component n = Component.componentHash.get(i);
+			Component n = Component.ComponentArray[i];
 
 			s.append(String.format("%d\n", this.aigerInput(indizes, n.inputs.get(0))));
 		}
 		for (Integer i : ands) {
-			Component n = Component.componentHash.get(i);
+			Component n = Component.ComponentArray[i];
 
 			s.append(String.format("%d %d %d\n", indizes.get(n.getId()), this.aigerInput(indizes, n.inputs.get(0)), this.aigerInput(indizes, n.inputs.get(1))));
 		}

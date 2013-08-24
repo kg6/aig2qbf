@@ -838,8 +838,8 @@ public class Tree implements Cloneable {
 
 				int iL = 0;
 				for (Latch l : latches) {
-					Component cL = Component.componentHash.get(l.getId() + idOffset);
-					Component pL = Component.componentHash.get(l.getId() + prevIdOffset);
+					Component cL = Component.ComponentArray[l.getId() + idOffset];
+					Component pL = Component.ComponentArray[l.getId() + prevIdOffset];
 
 					if (!(cL instanceof Latch)) {
 						throw new RuntimeException("cL should be a latch!");

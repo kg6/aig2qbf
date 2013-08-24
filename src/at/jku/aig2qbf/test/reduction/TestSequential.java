@@ -34,7 +34,7 @@ public class TestSequential extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Component.Reset();
+		Component.ResetComponentArray();
 	}
 
 	@After
@@ -75,7 +75,7 @@ public class TestSequential extends BaseTest {
 					System.out.println(String.format("			runtime: %sms", System.currentTimeMillis() - startTime));
 				}
 
-				Component.Reset();
+				Component.ResetComponentArray();
 			}
 		}
 	}

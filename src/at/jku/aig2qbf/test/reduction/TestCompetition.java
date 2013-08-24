@@ -1,6 +1,6 @@
 package at.jku.aig2qbf.test.reduction;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -32,7 +32,7 @@ public class TestCompetition extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Component.Reset();
+		Component.ResetComponentArray();
 	}
 
 	@After
@@ -67,7 +67,7 @@ public class TestCompetition extends BaseTest {
 					System.out.println(String.format("			runtime: %sms", System.currentTimeMillis() - startTime));
 				}
 
-				Component.Reset();
+				Component.ResetComponentArray();
 			}
 		}
 	}

@@ -27,7 +27,7 @@ public class TestAIG extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Component.Reset();
+		Component.ResetComponentArray();
 	}
 
 	@Test
