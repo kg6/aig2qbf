@@ -55,17 +55,21 @@ Besides the Java unit tests some external tools can be found in the <code>script
 
 Some example arguments for aig2qbf:
 
-* Unroll a given circuit and visualize the result
+* Unroll and reduce a given circuit with the default k = 1. The result is printed to STDOUT.
 ```
-java -jar bin/aig2qbf.jar -v -k 3 -vis --input input/basic/toggle-re.aag
+java -jar bin/aig2qbf.jar --input input/basic/toggle-re.aag
 ```
-* Unroll a given circuit for k = 10 steps
+* Unroll and reduce a given circuit and visualize the result.
 ```
-java -jar bin/aig2qbf.jar -v -k 10 --input input/sequential/ken.flash^11.C.aig
+java -jar bin/aig2qbf.jar -v -k 3 -vis --input input/sequential/texas.PI_main^15.E.aig
 ```
-* Unroll a given circuit and deactivate the sanity checks for performance improvement
+* Unroll and reduce a given circuit for k = 10 steps.
 ```
-java -jar bin/aig2qbf.jar -ns -k 10 --input input/sequential/ken.flash^11.C.aig
+java -jar bin/aig2qbf.jar -v -k 10 --input input/sequential/nusmv.tcas^1.B.aig
+```
+* Unroll and reduce a given circuit and activate the sanity checks (note: this is very time-consuming!).
+```
+java -jar bin/aig2qbf.jar -ws -k 10 --input input/sequential/ken.flash^11.C.aig
 ```
 
 The following CLI arguments can be used:
