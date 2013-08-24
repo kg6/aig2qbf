@@ -441,12 +441,13 @@ public class Tree implements Cloneable {
 
 			for (Component i : n.inputs) {
 				if (!seen.containsKey(i)) {
-					if (i instanceof Latch) {
-						throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be a latch in the tree. Please unroll the tree first!");
-					}
-
-					if (i instanceof True || i instanceof False) {
-						throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be True/False in the tree. Please replace these components first!");
+					if (Configuration.SANTIY) {
+						if (i instanceof Latch) {
+							throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be a latch in the tree. Please unroll the tree first!");
+						}
+						else if (i instanceof True || i instanceof False) {
+							throw new RuntimeException("Unable to convert the tree to Tseitin form: There must not be True/False in the tree. Please replace these components first!");
+						}
 					}
 
 					if (!i.inputs.isEmpty()) {
