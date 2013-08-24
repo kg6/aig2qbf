@@ -24,9 +24,7 @@ public abstract class Component implements Cloneable {
 
 			Component[] tmp = new Component[componentArrayLength * 2];
 
-			for (int i = 0; i < componentArrayLength; i++) {
-				tmp[i] = ComponentArray[i];
-			}
+			System.arraycopy(ComponentArray, 0, tmp, 0, componentArrayLength);
 
 			ComponentArray = tmp;
 		}
