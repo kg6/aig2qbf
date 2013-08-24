@@ -85,9 +85,6 @@ public class TestSequential extends BaseTest {
 
 		Tree tree = parser.parse(inputFile.getAbsolutePath());
 
-		tree = tree.unroll(k);
-		tree.mergeToOneOutput();
-
 		Tree unrolledTree = tree.unroll(k);
 		unrolledTree.mergeToOneOutput();
 
